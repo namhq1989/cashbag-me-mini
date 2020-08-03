@@ -29,3 +29,12 @@ func PatchBranch(c echo.Context) error {
 	result := services.PatchBranch(idBranch)
 	return c.JSON(http.StatusOK, result)
 }
+
+//PutBranch
+func PutBranch(c echo.Context) error {
+	id := c.Param("id")
+	idBranch, _ := primitive.ObjectIDFromHex(id)
+	body := c.Get("body").(*models.PutBranch)
+	result := services.PutBranch(idBranch, *body)
+	return c.JSON(http.StatusOK, result)
+}

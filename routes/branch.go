@@ -15,5 +15,6 @@ func Branch(g *echo.Group) {
 	g.POST("", controllers.CreateBranch, validations.CreateBranch)
 	//Method Patch
 	g.PATCH("/:id", controllers.PatchBranch)
-
+	//Method Put
+	g.PUT("/:id", controllers.PutBranch, validations.UpdateBranch)
 }

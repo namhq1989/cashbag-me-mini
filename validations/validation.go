@@ -6,6 +6,7 @@ import (
 	"github.com/asaskevich/govalidator"
 	"github.com/labstack/echo"
 )
+
 //CreateBranch ...
 func CreateBranch(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
@@ -14,6 +15,20 @@ func CreateBranch(next echo.HandlerFunc) echo.HandlerFunc {
 		result, _ := govalidator.ValidateStruct(postBranch)
 		if result == true {
 			c.Set("body", postBranch)
+			next(c)
+		}
+		return echo.ErrBadRequest
+	}
+}
+
+//UpdateBranch
+func UpdateBranch(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		putBranch := new(models.PutBranch)
+		c.Bind(putBranch)
+		result, _ := govalidator.ValidateStruct(putBranch)
+		if result == true {
+			c.Set("body", putBranch)
 			next(c)
 		}
 		return echo.ErrBadRequest
