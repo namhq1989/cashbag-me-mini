@@ -13,9 +13,9 @@ func CompanyList(c echo.Context) error {
 	return c.JSON(http.StatusOK, companies)
 }
 
-//CompanyCreate func to ...
-func CompanyCreate(c echo.Context) error {
-	company := services.CompanyCreate(c)
+//CreateCompany func to ...
+func CreateCompany(c echo.Context) error {
+	company := services.CreateCompany(c)
 	return c.JSON(http.StatusCreated, company)
 }
 //CompanyUpdate func to ... 

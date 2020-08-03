@@ -45,8 +45,8 @@ func GetNameCompanyById(id interface{}) string {
 	return result.Name
 }
 
-//CompanyCreate func to ....
-func CompanyCreate(c echo.Context) *models.CompanyDetail {
+//CreateCompany func to ....
+func CreateCompany(c echo.Context) *models.CompanyDetail {
 	var companyCollection = database.ConnectCol("companies")
 	company := new(models.CompanyDetail)
 	c.Bind(company)

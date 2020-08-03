@@ -10,7 +10,7 @@ import (
 func CompanyRoute(g *echo.Group) {
 
 	g.GET("", controllers.CompanyList)
-	g.POST("", controllers.CompanyCreate)
+	g.POST("", controllers.CreateCompany)
 	g.PUT("/:id", controllers.CompanyUpdate)
-	g.PATCH("/:id",controllers.CompanyActive)
+	g.PATCH("/:id", controllers.CompanyActive)
 }
