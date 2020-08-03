@@ -1,10 +1,10 @@
 package dao
 
 import (
+	"cashbag-me-mini/models"
 	"cashbag-me-mini/modules/database"
 	"context"
 	"log"
-
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -17,6 +17,22 @@ func CreateCompany(company interface{}) *mongo.InsertOneResult {
 	if err != nil {
 		log.Fatal(err)
 	}
+	return result
+}
+
+//ListCompany ...
+func ListCompany() []models.CompanyBSON {
+	var (
+		companyCollection = database.ConnectCol("companies")
+		ctx               = context.Background()
+		result            []models.CompanyBSON
+	)
+	cursor, err := companyCollection.Find(ctx, bson.M{})
+	defer cursor.Close(ctx)
+	if err != nil {
+		log.Fatal(err)
+	}
+	cursor.All(ctx, &result)
 	return result
 }
 

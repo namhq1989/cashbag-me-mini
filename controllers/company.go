@@ -14,4 +14,9 @@ func CreateCompany(c echo.Context) error {
 	return c.JSON(http.StatusCreated, company)
 }
 
+//ListCompany to
+func ListCompany(c echo.Context) error {
+	companies := services.ListCompany()
+	return c.JSON(http.StatusOK, companies)
+}
 
