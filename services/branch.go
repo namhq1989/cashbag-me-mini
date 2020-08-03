@@ -64,3 +64,9 @@ func ConvertBodyToBranchBSON(body models.PostBranch) models.BranchBSON {
 	}
 	return result
 }
+
+// PatchBranch ...
+func PatchBranch(idBranch interface{}) *mongo.UpdateResult {
+	result := dao.PatchBranch(idBranch)
+	return result
+}

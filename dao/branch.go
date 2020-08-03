@@ -39,3 +39,18 @@ func CreateBranch(branch interface{}) *mongo.InsertOneResult {
 	}
 	return result
 }
+
+//PatchBranch ...
+func PatchBranch(idBranch interface{}) *mongo.UpdateResult {
+	var (
+		branchCollection = database.ConnectCol("branches")
+		ctx              = context.Background()
+	)
+	filter := bson.M{"_id": idBranch}
+	update := bson.M{"$set": bson.M{"active": true}}
+	result, err := branchCollection.UpdateOne(ctx, filter, update)
+	if err != nil {
+		fmt.Println(err)
+	}
+	return result
+}
