@@ -4,7 +4,9 @@ import (
 	"cashbag-me-mini/models"
 	"cashbag-me-mini/modules/database"
 	"context"
+
 	"log"
+
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -33,6 +35,18 @@ func ListCompany() []models.CompanyBSON {
 		log.Fatal(err)
 	}
 	cursor.All(ctx, &result)
+	return result
+}
+
+//PatchCompany  func to ...
+func PatchCompany(idCompany interface{}) *mongo.UpdateResult {
+	var companyCollection = database.ConnectCol("companies")
+	filter := bson.M{"_id": idCompany}
+	update := bson.M{"$set": bson.M{"active": true}}
+	result, err := companyCollection.UpdateOne(context.TODO(), filter, update)
+	if err != nil {
+		log.Fatal(err)
+	}
 	return result
 }
 

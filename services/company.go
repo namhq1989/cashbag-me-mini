@@ -36,6 +36,12 @@ func ListCompany() []models.CompanyDetail {
 	return result
 }
 
+//PatchCompany func to. ...
+func PatchCompany(idCompany interface{}) *mongo.UpdateResult{
+	result :=dao.PatchCompany(idCompany)
+	return result
+}
+
 //convertToCompanyDetail to ..
 func convertToCompanyDetail(x models.CompanyBSON) models.CompanyDetail {
 	result := models.CompanyDetail{
