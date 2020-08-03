@@ -70,3 +70,9 @@ func PatchBranch(idBranch interface{}) *mongo.UpdateResult {
 	result := dao.PatchBranch(idBranch)
 	return result
 }
+
+// PutBranch ...
+func PutBranch(idBranch interface{}, body models.PutBranch) *mongo.UpdateResult {
+	result := dao.PutBranch(idBranch, body)
+	return result
+}

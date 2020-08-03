@@ -6,6 +6,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -48,6 +49,26 @@ func PatchBranch(idBranch interface{}) *mongo.UpdateResult {
 	)
 	filter := bson.M{"_id": idBranch}
 	update := bson.M{"$set": bson.M{"active": true}}
+	result, err := branchCollection.UpdateOne(ctx, filter, update)
+	if err != nil {
+		fmt.Println(err)
+	}
+	return result
+}
+
+//PutBranch ...
+func PutBranch(idBranch interface{}, body models.PutBranch) *mongo.UpdateResult {
+	var (
+		branchCollection = database.ConnectCol("branches")
+		ctx              = context.Background()
+	)
+	filter := bson.M{"_id": idBranch}
+	update := bson.M{"$set": bson.M{
+		"name":     body.Name,
+		"address":  body.Address,
+		"active":   body.Active,
+		"updateAt": time.Now(),
+	}}
 	result, err := branchCollection.UpdateOne(ctx, filter, update)
 	if err != nil {
 		fmt.Println(err)
