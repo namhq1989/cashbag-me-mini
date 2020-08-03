@@ -1,15 +1,17 @@
 package main
 
 import (
-	"github.com/labstack/echo"
-	"cashbag-me-mini/routes"
 	"cashbag-me-mini/modules/database"
+	"cashbag-me-mini/routes"
+
+	"github.com/labstack/echo"
 )
+
 func init() {
 	database.Connectdb("CashBag")
 }
 func main() {
 	server := echo.New()
-	routes.Branch(server.Group("/branchs"))
+	routes.Branch(server.Group("/branches"))
 	server.Logger.Fatal(server.Start(":8080"))
 }
