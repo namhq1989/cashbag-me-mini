@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 //ListBranch ...
@@ -18,5 +19,13 @@ func ListBranch(c echo.Context) error {
 func CreateBranch(c echo.Context) error {
 	body := c.Get("body").(*models.PostBranch)
 	result := services.CreateBranch(*body)
+	return c.JSON(http.StatusOK, result)
+}
+
+//PatchBranch ...
+func PatchBranch(c echo.Context) error {
+	id := c.Param("id")
+	idBranch, _ := primitive.ObjectIDFromHex(id)
+	result := services.PatchBranch(idBranch)
 	return c.JSON(http.StatusOK, result)
 }
