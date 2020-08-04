@@ -26,7 +26,7 @@ func ListCompany(c echo.Context) error {
 func PatchCompany(c echo.Context) error {
 	id := c.Param("id")
 	idCompany, _ := primitive.ObjectIDFromHex(id)
-	result := services.PatchBranch(idCompany)
+	result := services.PatchCompany(idCompany)
 	return c.JSON(http.StatusOK, result)
 }
 
