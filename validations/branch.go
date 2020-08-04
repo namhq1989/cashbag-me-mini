@@ -21,8 +21,8 @@ func CreateBranch(next echo.HandlerFunc) echo.HandlerFunc {
 		return echo.ErrBadRequest
 	}
 }
-
-//UpdateBranch
+ 
+//UpdateBranch func ..
 func UpdateBranch(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		putBranch := new(models.PutBranch)

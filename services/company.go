@@ -37,8 +37,14 @@ func ListCompany() []models.CompanyDetail {
 }
 
 //PatchCompany func to. ...
-func PatchCompany(idCompany interface{}) *mongo.UpdateResult{
-	result :=dao.PatchCompany(idCompany)
+func PatchCompany(idCompany interface{}) *mongo.UpdateResult {
+	result := dao.PatchCompany(idCompany)
+	return result
+}
+
+//PutCompany func ....
+func PutCompany(idCompany interface{}, body models.PutCompany) *mongo.UpdateResult {
+	result := dao.PutCompany(idCompany, body)
 	return result
 }
 

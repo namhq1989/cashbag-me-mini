@@ -6,7 +6,7 @@ import (
 	"context"
 
 	"log"
-
+	"time"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -49,6 +49,24 @@ func PatchCompany(idCompany interface{}) *mongo.UpdateResult {
 	}
 	return result
 }
+
+//PutCompany  func to ...
+func PutCompany(idCompany interface{},body models.PutCompany) *mongo.UpdateResult {
+	var companyCollection = database.ConnectCol("companies")
+	filter := bson.M{"_id": idCompany}
+	update := bson.M{"$set": bson.M{
+		"name":     body.Name,
+		"address":  body.Address,
+		"active":   body.Active,
+		"updateAt": time.Now(),
+}}
+	result, err := companyCollection.UpdateOne(context.TODO(), filter, update)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return result
+}
+
 
 //GetNameCompanyById ....
 func GetNameCompanyById(id interface{}) string {
