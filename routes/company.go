@@ -10,7 +10,9 @@ import (
 //CompanyRoute to ...
 func CompanyRoute(g *echo.Group) {
 
-	
 	g.POST("", controllers.CreateCompany, validations.CreateCompany)
-	
+	g.GET("", controllers.ListCompany)
+	g.PATCH("/:id", controllers.PatchCompany)
+	g.PUT("/:id", controllers.PutCompany, validations.PutCompany)
+
 }

@@ -20,3 +20,17 @@ func CreateCompany(next echo.HandlerFunc) echo.HandlerFunc {
 		return echo.ErrBadRequest
 	}
 }
+
+//PutCompany func ...
+func PutCompany(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		putCompany := new(models.PutCompany)
+		c.Bind(putCompany)
+		result, _ := govalidator.ValidateStruct(putCompany)
+		if result == true {
+			c.Set("body", putCompany)
+			next(c)
+		}
+		return echo.ErrBadRequest
+	}
+}
