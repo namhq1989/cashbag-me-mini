@@ -26,7 +26,6 @@ func Connectdb(dbName string) *mongo.Database {
 		fmt.Println(err)
 	}
 	db = client.Database(dbName)
-
 	fmt.Println("Connected to db:", dbName)
 	return db
 }

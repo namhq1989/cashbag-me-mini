@@ -44,8 +44,9 @@ func ConvertToBranchDetail(x models.BranchBSON) models.BranchDetail {
 func CreateBranch(body models.PostBranch) *mongo.InsertOneResult {
 	var (
 		branch    models.BranchBSON
-		companyId primitive.ObjectID
+		companyId  primitive.ObjectID
 	)
+
 	companyId = dao.GetIdCompanyByName(body.NameCompany)
 	branch = ConvertBodyToBranchBSON(body)
 	branch.CompanyId = companyId
