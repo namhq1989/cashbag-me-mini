@@ -6,5 +6,5 @@ import (
 
 // ConnectCol ...
 func ConnectCol(nameCol string) *mongo.Collection {
-	return db.Collection(nameCol)
+	return DB.Collection(nameCol)
 }
