@@ -5,14 +5,12 @@ import (
 	"fmt"
 	"time"
 
-	//"time"
-
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 var (
-	db     *mongo.Database
+	DB *mongo.Database
 )
 
 //Connectdb ...
@@ -23,12 +21,11 @@ func Connectdb(dbName string) *mongo.Database {
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	err = client.Connect(ctx)	
+	err = client.Connect(ctx)
 	if err != nil {
 		fmt.Println(err)
 	}
-	db = client.Database(dbName)
-
+	DB = client.Database(dbName)
 	fmt.Println("Connected to db:", dbName)
-	return db
+	return DB
 }
