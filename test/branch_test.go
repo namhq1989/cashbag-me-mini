@@ -52,7 +52,7 @@ func (s *BranchSuite) TestListBranch() {
 		res      []models.BranchDetail
 	)
 	e := echo.New()
-	req := httptest.NewRequest(http.MethodGet, "/banches", nil)
+	req := httptest.NewRequest(http.MethodGet, "/branches", nil)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 	controllers.ListBranch(c)
