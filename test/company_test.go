@@ -1,14 +1,12 @@
 package test
 
 import (
-	//"bytes"
 	"cashbag-me-mini/controllers"
 	"cashbag-me-mini/models"
 	"cashbag-me-mini/modules/database"
 	"cashbag-me-mini/services"
 	"context"
 	"encoding/json"
-	//"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -141,7 +139,7 @@ func (s *CreateModelSuite) TestPutCompany() {
 	assert.Equal(s.T(), "", x.UpsertedID)
 }
 
-//addRecord ...
+//addRecordCompany  ...
 func addRecordCompany(id primitive.ObjectID) {
 	var (
 		company = models.CompanyBSON{
@@ -154,11 +152,6 @@ func addRecordCompany(id primitive.ObjectID) {
 	database.DB.Collection("companies").InsertOne(context.TODO(), company)
 }
 
-// //ToIOReader ...
-// func ToIOReader(i interface{}) io.Reader {
-// 	b, _ := json.Marshal(i)
-// 	return bytes.NewReader(b)
-// }
 func TestCreateModelSuite(t *testing.T) {
 	suite.Run(t, new(CreateModelSuite))
 }
