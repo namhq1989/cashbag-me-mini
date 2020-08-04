@@ -13,6 +13,6 @@ func init() {
 func main() {
 	server := echo.New()
 	routes.CompanyRoute(server.Group("/companies"))
-	routes.Branch(server.Group("/branchs"))
+	routes.Branch(server.Group("/branch"))
 	server.Logger.Fatal(server.Start(":8080"))
 }
