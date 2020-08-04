@@ -1,18 +1,15 @@
 package test
 
 import (
-	"bytes"
 	"cashbag-me-mini/controllers"
 	"cashbag-me-mini/models"
 	"cashbag-me-mini/modules/database"
 	"cashbag-me-mini/services"
 	"context"
 	"encoding/json"
-	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
-	"time"
 
 	"github.com/labstack/echo"
 	"github.com/stretchr/testify/assert"
@@ -27,18 +24,20 @@ type CreateModelSuite struct {
 }
 
 var idPatch = primitive.NewObjectID()
+var idPut = primitive.NewObjectID()
 
 func (s CreateModelSuite) SetupSuite() {
 	database.Connectdb("CashBag-test")
-	removeOldData()
-	addRecord(idPatch)
+	//removeOldDataCompany()
+	addRecordCompany(idPatch)
+	addRecordCompany(idPut)
 
 }
 
 func (s CreateModelSuite) TearDownSuite() {
-	//removeOldData()
+	removeOldDataCompany()
 }
-func removeOldData() {
+func removeOldDataCompany() {
 	database.DB.Collection("companies").DeleteMany(context.Background(), bson.M{})
 }
 
@@ -62,7 +61,7 @@ func (s *CreateModelSuite) TestCreateCompany() {
 	e := echo.New()
 	var (
 		company = models.PostCompany{
-			Name:    "HighLand",
+			Name:    "Highland",
 			Address: " 48 Nguyen Chanh",
 			Active:  true,
 		}
@@ -80,23 +79,74 @@ func (s *CreateModelSuite) TestCreateCompany() {
 	json.Unmarshal([]byte(rec.Body.String()), &res)
 	assert.NotEqual(s.T(), res, nil)
 }
+func (s *CreateModelSuite) TestPatchCompany() {
+	var (
+		x = struct {
+			MatchedCount  int    `json:"MatchedCount"`
+			ModifiedCount int    `json:"ModifiedCount"`
+			UpsertedCount int    `json:"UpsertedCount"`
+			UpsertedID    string `json:"UpsertedID"`
+		}{}
+	)
 
+	e := echo.New()
+	req, _ := http.NewRequest(http.MethodPatch, "/companies/:id", nil)
+	req.Header.Set("Content-Type", "application/json")
+	rec := httptest.NewRecorder()
+	c := e.NewContext(req, rec)
+	c.SetParamNames("id")
+	c.SetParamValues(idPatch.Hex())
 
-
-
-func ToIOReader(i interface{}) io.Reader {
-	b, _ := json.Marshal(i)
-	return bytes.NewReader(b)
+	controllers.PatchCompany(c)
+	assert.Equal(s.T(), http.StatusOK, rec.Code)
+	json.Unmarshal(rec.Body.Bytes(), &x)
+	assert.Equal(s.T(), 1, x.MatchedCount)
+	assert.Equal(s.T(), 1, x.ModifiedCount)
+	assert.Equal(s.T(), 0, x.UpsertedCount)
+	assert.Equal(s.T(), "", x.UpsertedID)
 }
 
-//addRecord ...
-func addRecord(id primitive.ObjectID) {
+func (s *CreateModelSuite) TestPutCompany() {
+	var (
+		company = models.PutCompany{
+			Name:           "the coffee house",
+			Address:        "67 Nguyen Huy Tuong",
+			Balance:        100000,
+			LoyaltyProgram: 100,
+			Active:         false,
+		}
+		x = struct {
+			MatchedCount  int    `json:"MatchedCount"`
+			ModifiedCount int    `json:"ModifiedCount"`
+			UpsertedCount int    `json:"UpsertedCount"`
+			UpsertedID    string `json:"UpsertedID"`
+		}{}
+	)
+	e := echo.New()
+	req, _ := http.NewRequest(http.MethodPut, "/companies/:id", ToIOReader(company))
+	req.Header.Set("Content-Type", "application/json")
+	rec := httptest.NewRecorder()
+	c := e.NewContext(req, rec)
+	c.SetParamNames("id")
+	c.SetParamValues(idPut.Hex())
+	c.Set("body", &company)
+	controllers.PutCompany(c)
+	assert.Equal(s.T(), http.StatusOK, rec.Code)
+	json.Unmarshal([]byte(rec.Body.String()), &x)
+	assert.Equal(s.T(), 1, x.MatchedCount)
+	assert.Equal(s.T(), 1, x.ModifiedCount)
+	assert.Equal(s.T(), 0, x.UpsertedCount)
+	assert.Equal(s.T(), "", x.UpsertedID)
+}
+
+//addRecordCompany  ...
+func addRecordCompany(id primitive.ObjectID) {
 	var (
 		company = models.CompanyBSON{
-			Name:     "HightLand",
-			Address:  "Nguyen Huy Tuong",
-			Active:   false,
-			CreateAt: time.Now(),
+			ID:      id,
+			Name:    "tch",
+			Address: "Nguyen Huy Tuong",
+			Active:  false,
 		}
 	)
 	database.DB.Collection("companies").InsertOne(context.TODO(), company)

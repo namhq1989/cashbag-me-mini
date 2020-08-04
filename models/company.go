@@ -1,8 +1,11 @@
 package models
+
 import (
 	"time"
+
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
+
 type (
 	CompanyBSON struct {
 		ID             primitive.ObjectID `bson:"_id"`
@@ -25,13 +28,15 @@ type (
 		UpdateAt       time.Time          `json:"updateAt"`
 	}
 	PostCompany struct {
-		Name        string `json:"name" valid:"stringlength(3|30),type(string)"`
-		Address     string `json:"address" valid:"stringlength(3|100),type(string)"`
-		Active      bool   `json:"active"`
-	}
-	PutCompany struct {
 		Name    string `json:"name" valid:"stringlength(3|30),type(string)"`
 		Address string `json:"address" valid:"stringlength(3|100),type(string)"`
 		Active  bool   `json:"active"`
+	}
+	PutCompany struct {
+		Name           string  `json:"name" valid:"stringlength(3|30),type(string)"`
+		Address        string  `json:"address" valid:"stringlength(3|100),type(string)"`
+		Balance        float64 `json:"balance" valid:"required"`
+		LoyaltyProgram float64 `json:"loyaltyProgram" valid:"required"`
+		Active         bool    `json:"active"`
 	}
 )
