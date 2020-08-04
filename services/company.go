@@ -73,7 +73,7 @@ func ConvertBodyToCompanyBSON(body models.PostCompany) models.CompanyBSON {
 	return result
 }
 
-//GetNameCompanyById ....
+//GetNameCompanyById func ....
 func GetNameCompanyById(id interface{}) string {
 	var (
 		companyCollection = database.ConnectCol("companies")
@@ -90,7 +90,7 @@ func GetNameCompanyById(id interface{}) string {
 	return result.Name
 }
 
-//GetIdCompanyByName ...
+//GetIdCompanyByName func ....
 func GetIdCompanyByName(nameCompany interface{}) primitive.ObjectID {
 	var (
 		//db                = database.Connectdb("CashBag")
