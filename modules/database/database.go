@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	db *mongo.Database
+	DB *mongo.Database
 )
 
 //Connectdb ...
@@ -25,7 +25,7 @@ func Connectdb(dbName string) *mongo.Database {
 	if err != nil {
 		fmt.Println(err)
 	}
-	db = client.Database(dbName)
+	DB = client.Database(dbName)
 	fmt.Println("Connected to db:", dbName)
-	return db
+	return DB
 }
