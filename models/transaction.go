@@ -7,7 +7,7 @@ import (
 )
 
 type (
-	//TransactionBSON ...
+
 	TransactionBSON struct {
 		ID             primitive.ObjectID `bson:"_id"`
 		CompanyID      primitive.ObjectID `bson:"companyId"`
