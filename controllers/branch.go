@@ -30,7 +30,7 @@ func PatchBranch(c echo.Context) error {
 	return c.JSON(http.StatusOK, result)
 }
 
-//PutBranch
+//PutBranch ...
 func PutBranch(c echo.Context) error {
 	id := c.Param("id")
 	idBranch, _ := primitive.ObjectIDFromHex(id)

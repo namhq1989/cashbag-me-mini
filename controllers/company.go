@@ -4,6 +4,7 @@ import (
 	"cashbag-me-mini/models"
 	"cashbag-me-mini/services"
 	"net/http"
+
 	"github.com/labstack/echo"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -25,15 +26,16 @@ func ListCompany(c echo.Context) error {
 func PatchCompany(c echo.Context) error {
 	id := c.Param("id")
 	idCompany, _ := primitive.ObjectIDFromHex(id)
-	result := services.PatchBranch(idCompany)
+	result := services.PatchCompany(idCompany)
 	return c.JSON(http.StatusOK, result)
 }
-//PutCompany func ... 
-func PutCompany(c echo.Context) error{
+
+//PutCompany func ...
+func PutCompany(c echo.Context) error {
 	id := c.Param("id")
-	idCompany,_ :=primitive.ObjectIDFromHex(id)
+	idCompany, _ := primitive.ObjectIDFromHex(id)
 	body := c.Get("body").(*models.PutCompany)
-	result :=services.PutCompany(idCompany,*body)
+	result := services.PutCompany(idCompany, *body)
 	return c.JSON(http.StatusOK, result)
-	
+
 }

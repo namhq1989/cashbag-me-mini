@@ -4,9 +4,9 @@ import (
 	"cashbag-me-mini/models"
 	"cashbag-me-mini/modules/database"
 	"context"
-
 	"log"
 	"time"
+
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -40,10 +40,13 @@ func ListCompany() []models.CompanyBSON {
 
 //PatchCompany  func to ...
 func PatchCompany(idCompany interface{}) *mongo.UpdateResult {
-	var companyCollection = database.ConnectCol("companies")
+	var (
+		companyCollection = database.ConnectCol("companies")
+		ctx               = context.Background()
+	)
 	filter := bson.M{"_id": idCompany}
 	update := bson.M{"$set": bson.M{"active": true}}
-	result, err := companyCollection.UpdateOne(context.TODO(), filter, update)
+	result, err := companyCollection.UpdateOne(ctx, filter, update)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -55,18 +58,19 @@ func PutCompany(idCompany interface{},body models.PutCompany) *mongo.UpdateResul
 	var companyCollection = database.ConnectCol("companies")
 	filter := bson.M{"_id": idCompany}
 	update := bson.M{"$set": bson.M{
-		"name":     body.Name,
-		"address":  body.Address,
-		"active":   body.Active,
-		"updateAt": time.Now(),
-}}
+		"name":           body.Name,
+		"address":        body.Address,
+		"active":         body.Active,
+		"balance":        body.Balance,
+		"loyaltyProgram": body.LoyaltyProgram,
+		"updateAt":       time.Now(),
+	}}
 	result, err := companyCollection.UpdateOne(context.TODO(), filter, update)
 	if err != nil {
 		log.Fatal(err)
 	}
 	return result
 }
-
 
 //GetNameCompanyById ....
 func GetNameCompanyById(id interface{}) string {

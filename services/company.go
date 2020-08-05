@@ -43,8 +43,8 @@ func PatchCompany(idCompany interface{}) *mongo.UpdateResult {
 }
 
 //PutCompany func ....
-func PutCompany(idCompany interface{}, body models.PutCompany) *mongo.UpdateResult {
-	result := dao.PutCompany(idCompany, body)
+func PutCompany(idCompany interface{},body models.PutCompany) *mongo.UpdateResult {
+	result := dao.PutCompany(idCompany,body)
 	return result
 }
 

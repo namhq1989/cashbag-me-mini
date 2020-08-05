@@ -53,5 +53,6 @@ type (
 		Name    string `json:"name" valid:"stringlength(3|30),type(string)"`
 		Address string `json:"address" valid:"stringlength(3|100),type(string)"`
 		Active  bool   `json:"active"`
+	
 	}
 )
