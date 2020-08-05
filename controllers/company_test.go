@@ -34,7 +34,7 @@ func (s CreateModelSuite) SetupSuite() {
 }
 
 func (s CreateModelSuite) TearDownSuite() {
-	removeOldDataCompany()
+	//removeOldDataCompany()
 }
 func removeOldDataCompany() {
 	database.DB.Collection("companies").DeleteMany(context.Background(), bson.M{})

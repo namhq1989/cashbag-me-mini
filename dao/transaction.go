@@ -5,9 +5,10 @@ import (
 	"cashbag-me-mini/modules/database"
 	"context"
 	"fmt"
+
 	//"log"
 
-//	"go.mongodb.org/mongo-driver/bson"
+	//	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -21,10 +22,7 @@ func CreateTransaction(id models.TransactionBSON) *mongo.InsertOneResult {
 	if err != nil {
 		fmt.Println(err)
 	}
-	//log.Println("err")
-	//updateBalance()
-	//log.Println("err")
-	HandleTranAnalytic(id)
+		HandleTranAnalytic(id)
 
 	return result
 }

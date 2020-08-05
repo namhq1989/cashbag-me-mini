@@ -3,8 +3,8 @@ package services
 import (
 	"cashbag-me-mini/dao"
 	"cashbag-me-mini/models"
-
 	"log"
+
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -47,7 +47,6 @@ func CreateTransaction(body models.PostTransaction) *mongo.InsertOneResult {
 
 }
 
-
 //ConvertBodyToTransactionBSON func ...
 func ConvertBodyToTransactionBSON(body models.PostTransaction) models.TransactionBSON {
 	result := models.TransactionBSON{
@@ -56,4 +55,3 @@ func ConvertBodyToTransactionBSON(body models.PostTransaction) models.Transactio
 	}
 	return result
 }
-

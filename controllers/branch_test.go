@@ -38,7 +38,7 @@ func (s BranchSuite) SetupSuite() {
 }
 
 func (s BranchSuite) TearDownSuite() {
-	removeOldData()
+	//removeOldData()
 }
 
 func removeOldData() {
