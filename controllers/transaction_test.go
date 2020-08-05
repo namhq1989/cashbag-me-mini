@@ -1,7 +1,6 @@
-package test
+package controllers
 
 import (
-	"cashbag-me-mini/controllers"
 	"cashbag-me-mini/models"
 	"cashbag-me-mini/modules/database"
 	"context"
@@ -35,10 +34,10 @@ func removeOldDataTransaction() {
 func (s *TransactionSuite) TestCreateTransaction() {
 	var (
 		transaction = models.PostTransaction{
-			NameCompany: "Hightland",
-			NameBranch:  "Hinght HaiPhong",
+			NameCompany: "Highland",
+			NameBranch:  "Hight QuangTri",
 			User:        "Mars",
-			Amount:      10000,
+			Amount:      100,
 		}
 		res = struct {
 			InsertedID string `json:"InsertedID"`
@@ -50,12 +49,12 @@ func (s *TransactionSuite) TestCreateTransaction() {
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 	c.Set("body", &transaction)
-	controllers.CreateTransaction(c)
+	CreateTransaction(c)
 	assert.Equal(s.T(), http.StatusCreated, rec.Code)
 	json.Unmarshal(rec.Body.Bytes(), &res)
 	assert.NotEqual(s.T(), res, nil)
 }
 
 func TestTransactionSuite(t *testing.T) {
-	suite.Run(t, new(BranchSuite))
+	suite.Run(t, new(TransactionSuite))
 }

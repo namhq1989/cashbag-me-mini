@@ -1,0 +1,33 @@
+version: '3'
+services:
+    web:
+        depends_on: 
+            - zoo
+            - redis
+        build: .
+        ports:
+            - "8080:8080"
+        networks: 
+            - web-go
+    redis:
+        image: redis:alpine
+        container_name: redis
+        ports:
+            - 6479:6479
+        networks:
+            - web-go
+    zoo:
+        image: zookeeper
+        container_name: zookeeper
+        restart: always
+        hostname: zoo1
+        volumes:
+            - zoodata:/data/db
+        ports:
+            - 2181:2181
+        networks: 
+            - web-go   
+volumes: 
+    zoodata:
+networks: 
+    web-go:
