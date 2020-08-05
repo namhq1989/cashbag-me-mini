@@ -3,7 +3,6 @@ package main
 import (
 	"cashbag-me-mini/modules/database"
 	"cashbag-me-mini/routes"
-
 	"github.com/labstack/echo"
 )
 
@@ -15,5 +14,6 @@ func main() {
 	routes.Branch(server.Group("/branches"))
 	routes.CompanyRoute(server.Group("/companies"))
 	routes.TransactionRoute(server.Group("/transactions"))
+	routes.TranAnalytic(server.Group("/tranAnalytic"))
 	server.Logger.Fatal(server.Start(":8080"))
 }

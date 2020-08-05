@@ -183,6 +183,7 @@ func addCompany() {
 	)
 	database.DB.Collection("companies").InsertOne(context.TODO(), company)
 }
+
 func TestBranchSuite(t *testing.T) {
 	suite.Run(t, new(BranchSuite))
 }

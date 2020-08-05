@@ -3,12 +3,9 @@ package services
 import (
 	"cashbag-me-mini/dao"
 	"cashbag-me-mini/models"
-	"cashbag-me-mini/modules/database"
-	"context"
-	"log"
+
 	"time"
 
-	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -16,13 +13,22 @@ import (
 //CreateTransaction func ....
 func CreateTransaction(body models.PostTransaction) *mongo.InsertOneResult {
 	var (
-		transaction models.TransactionBSON
-		companyID   primitive.ObjectID
-		branchID    primitive.ObjectID
+		transaction    models.TransactionBSON
+		companyID      primitive.ObjectID
+		branchID       primitive.ObjectID
+		commission     float64
+		loyaltyProgram float64
+		amount         float64
 	)
+
 	companyID = dao.GetIdCompanyByName(body.NameCompany)
-	branchID = GetIdBranchByName(body.NameBranch)
+	branchID = dao.GetIdBranchByName(body.NameBranch)
+	loyaltyProgram = dao.GetLoyaltyProgramByCompany(body.NameCompany)
 	transaction = ConvertBodyToTransactionBSON(body)
+	amount = body.Amount
+	commission = (loyaltyProgram / 100) * amount
+	transaction.LoyaltyProgram = loyaltyProgram
+	transaction.Commission = commission
 	transaction.CompanyID = companyID
 	transaction.BranchID = branchID
 	transaction.ID = primitive.NewObjectID()
@@ -40,21 +46,14 @@ func ConvertBodyToTransactionBSON(body models.PostTransaction) models.Transactio
 	return result
 }
 
+// //CalCulateCommission func ...
+// func CalCulateCommission(body models.PostTransaction) float64{
+// 	var ( transaction    models.TransactionBSON
+// 		loyaltyProgram float64
+// 		)
+// 	CreateTransaction(*body)
+// 	loyaltyProgram = dao.GetLoyaltyProgramByCompany(body.NameCompany)
+// 	commission = loyaltyProgram * (transaction.Amount)
+// 	transaction.Commission = commission
 
-//GetIdBranchByName .....
-func GetIdBranchByName(NameBranch interface{}) primitive.ObjectID {
-
-	var (
-		branchCollection = database.ConnectCol("branches")
-		ctx              = context.Background()
-		result           = struct {
-			ID primitive.ObjectID `bson:"_id"`
-		}{}
-		filter = bson.M{"name": NameBranch}
-	)
-	err := branchCollection.FindOne(ctx, filter).Decode(&result)
-	if err != nil {
-		log.Fatal(err)
-	}
-	return result.ID
-}
+// }

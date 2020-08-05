@@ -25,6 +25,12 @@ type (
 		Name string             `json:"name"`
 	}
 
+	// BranchBrief
+	BranchBrief struct {
+		ID   primitive.ObjectID `json:"_id"`
+		Name string             `json:"name"`
+	}
+
 	//BranchDetail ...
 	BranchDetail struct {
 		ID        primitive.ObjectID `json:"_id"`

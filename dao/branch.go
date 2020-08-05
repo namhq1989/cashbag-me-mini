@@ -7,8 +7,10 @@ import (
 	"fmt"
 	"log"
 	"time"
+
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 //ListBranch ...
@@ -73,4 +75,39 @@ func PutBranch(idBranch interface{}, body models.PutBranch) *mongo.UpdateResult 
 		fmt.Println(err)
 	}
 	return result
+}
+
+//GetNameBranchById ....
+func GetNameBranchById(id interface{}) string {
+	var (
+		branchCollection = database.ConnectCol("branches")
+		ctx              = context.Background()
+		result           = struct {
+			Name string `bson:"name"`
+		}{}
+		filter = bson.M{"_id": id}
+	)
+	err := branchCollection.FindOne(ctx, filter).Decode(&result)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return result.Name
+}
+
+//GetIdBranchByName .....
+func GetIdBranchByName(NameBranch interface{}) primitive.ObjectID {
+
+	var (
+		branchCollection = database.ConnectCol("branches")
+		ctx              = context.Background()
+		result           = struct {
+			ID primitive.ObjectID `bson:"_id"`
+		}{}
+		filter = bson.M{"name": NameBranch}
+	)
+	err := branchCollection.FindOne(ctx, filter).Decode(&result)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return result.ID
 }

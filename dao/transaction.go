@@ -1,6 +1,7 @@
 package dao
 
 import (
+	"cashbag-me-mini/models"
 	"cashbag-me-mini/modules/database"
 	"context"
 	"fmt"
@@ -9,7 +10,7 @@ import (
 )
 
 //CreateTransaction ...
-func CreateTransaction(id interface{}) *mongo.InsertOneResult {
+func CreateTransaction(id models.TransactionBSON) *mongo.InsertOneResult {
 	var (
 		collection = database.ConnectCol("transaction")
 		ctx        = context.Background()
@@ -18,5 +19,6 @@ func CreateTransaction(id interface{}) *mongo.InsertOneResult {
 	if err != nil {
 		fmt.Println(err)
 	}
+	HandleTranAnalytic(id)
 	return result
 }

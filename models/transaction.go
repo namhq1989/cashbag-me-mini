@@ -13,7 +13,7 @@ type (
 		CompanyID      primitive.ObjectID `bson:"companyId"`
 		BranchID       primitive.ObjectID `bson:"branchId"`
 		User           string             `bson:"user"`
-		Amount         float64            `bson:"Amount"`
+		Amount         float64            `bson:"amount"`
 		Commission     float64            `bson:"commission"`
 		LoyaltyProgram float64            `bson:"loyaltyprogram"`
 		CreateAt       time.Time          `bson:"createAt"`
@@ -35,5 +35,6 @@ type (
 		NameBranch     string  `json:"nameBranch" valid:"stringlength(3|30),type(string)"`
 		User           string  `json:"user" valid:"stringlength(3|30),type(string)"`
 		Amount         float64 `json:"amount" valid:"required"`
+		Commission float64     `json:"commission"`
 	}
 )
