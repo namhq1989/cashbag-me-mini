@@ -1,7 +1,6 @@
-package test
+package controllers
 
 import (
-	"cashbag-me-mini/controllers"
 	"cashbag-me-mini/models"
 	"cashbag-me-mini/modules/database"
 	"cashbag-me-mini/services"
@@ -50,7 +49,7 @@ func (s *CreateModelSuite) TestListCompany() {
 	req, _ := http.NewRequest(http.MethodGet, "/companies", nil)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
-	controllers.ListCompany(c)
+	ListCompany(c)
 	assert.Equal(s.T(), http.StatusOK, rec.Code)
 	list = services.ListCompany()
 	json.Unmarshal(rec.Body.Bytes(), &res)
@@ -74,7 +73,7 @@ func (s *CreateModelSuite) TestCreateCompany() {
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 	c.Set("body", &company)
-	controllers.CreateCompany(c)
+	CreateCompany(c)
 	assert.Equal(s.T(), http.StatusCreated, rec.Code)
 	json.Unmarshal([]byte(rec.Body.String()), &res)
 	assert.NotEqual(s.T(), res, nil)
@@ -97,7 +96,7 @@ func (s *CreateModelSuite) TestPatchCompany() {
 	c.SetParamNames("id")
 	c.SetParamValues(idPatch.Hex())
 
-	controllers.PatchCompany(c)
+	PatchCompany(c)
 	assert.Equal(s.T(), http.StatusOK, rec.Code)
 	json.Unmarshal(rec.Body.Bytes(), &x)
 	assert.Equal(s.T(), 1, x.MatchedCount)
@@ -130,7 +129,7 @@ func (s *CreateModelSuite) TestPutCompany() {
 	c.SetParamNames("id")
 	c.SetParamValues(idPut.Hex())
 	c.Set("body", &company)
-	controllers.PutCompany(c)
+	PutCompany(c)
 	assert.Equal(s.T(), http.StatusOK, rec.Code)
 	json.Unmarshal([]byte(rec.Body.String()), &x)
 	assert.Equal(s.T(), 1, x.MatchedCount)
