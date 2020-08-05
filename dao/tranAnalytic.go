@@ -46,10 +46,10 @@ func FindTranAnalytic(transaction models.TransactionBSON) (models.TranAnalyticBS
 	var (
 		tranAnalyticColl = database.ConnectCol("transactionAnalytic")
 		ctx              = context.Background()
-		startOfDate      = BeginningOfDay(transaction.CreateAT)
+		startOfDate      = BeginningOfDay(transaction.CreateAt)
 		filter           = bson.M{
-			"companyId": transaction.CompanyId,
-			"branchId":  transaction.BranchId,
+			"companyId": transaction.CompanyID,
+			"branchId":  transaction.BranchID,
 			"date":      startOfDate,
 		}
 		tranAnalytic models.TranAnalyticBSON
@@ -66,11 +66,11 @@ func CreateTranAnalytic(transaction models.TransactionBSON) {
 	var (
 		branchCollection = database.ConnectCol("transactionAnalytic")
 		ctx              = context.Background()
-		startOfDate      = BeginningOfDay(transaction.CreateAT)
+		startOfDate      = BeginningOfDay(transaction.CreateAt)
 		tranAnalytic     = models.TranAnalyticBSON{
 			ID:               primitive.NewObjectID(),
-			CompanyId:        transaction.CompanyId,
-			BranchId:         transaction.BranchId,
+			CompanyId:        transaction.CompanyID,
+			BranchId:         transaction.BranchID,
 			Date:             startOfDate,
 			TotalTransaction: 1,
 			TotalRevenue:     transaction.Amount,
