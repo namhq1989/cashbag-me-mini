@@ -34,7 +34,6 @@ type (
 		NameCompany    string  `json:"nameCompany" valid:"stringlength(3|30),type(string)"`
 		NameBranch     string  `json:"nameBranch" valid:"stringlength(3|30),type(string)"`
 		User           string  `json:"user" valid:"stringlength(3|30),type(string)"`
-		Amount         float64 `json:"amount" valid:"required"`
-		Commission float64     `json:"commission"`
+		Amount         float64 `json:"amount"`
 	}
 )

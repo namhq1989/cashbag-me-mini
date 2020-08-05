@@ -4,58 +4,24 @@ import (
 	"cashbag-me-mini/models"
 	"cashbag-me-mini/modules/database"
 	"context"
-	"fmt"
-	//"log"
+	"log"
 
-//	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
 //CreateTransaction ...
-func CreateTransaction(id models.TransactionBSON) *mongo.InsertOneResult {
+func CreateTransaction(transaction models.TransactionBSON, balance float64) *mongo.InsertOneResult {
 	var (
-		collection = database.ConnectCol("transaction")
-		ctx        = context.Background()
+		collection     = database.ConnectCol("transaction")
+		ctx            = context.Background()
 	)
-	result, err := collection.InsertOne(ctx, id)
+	balanceCurrent := balance - transaction.Commission
+	result, err := collection.InsertOne(ctx, transaction)
 	if err != nil {
-		fmt.Println(err)
+		log.Fatal(err)
 	}
-	//log.Println("err")
-	//updateBalance()
-	//log.Println("err")
-	HandleTranAnalytic(id)
+	UpdateBalance(transaction.CompanyID,balanceCurrent)
+	HandleTranAnalytic(transaction)
 
 	return result
 }
-
-//GetCommissionByCompanyId func ...
-// func GetCommissionByCompanyId(companyId interface{}) float64 {
-// 	var (
-// 		transactionCollection = database.ConnectCol("transaction")
-// 		ctx                   = context.Background()
-// 		result                = struct {
-// 			Commission float64 `json:"commission"`
-// 		}{}
-// 		filter = bson.M{"companyId": companyId}
-// 	)
-// 	err := transactionCollection.FindOne(ctx, filter).Decode(&result)
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-// 	log.Println("1")
-// 	return result.Commission
-// }
-// func updateBalance() float64 {
-// 	var (
-// 		companyId  models.TransactionBSON
-// 		name       models.CompanyBSON
-// 		commission float64
-// 		balance    float64
-// 	)
-// 	commission = GetCommissionByCompanyId(companyId.CompanyID)
-// 	log.Println(commission)
-// 	balance = GetBalanceByCompanyName(name.Name)
-// 	balance = balance - commission
-// 	return balance
-// }

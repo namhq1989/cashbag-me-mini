@@ -17,7 +17,6 @@ func ConnectRDB(){
 		Password: "",               // no password set
 		DB:       0,                // use default DB
 	})	
-
 	pong, err := rdb.Ping().Result()
 	fmt.Println(pong, err)
 }

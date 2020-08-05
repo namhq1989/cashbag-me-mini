@@ -108,35 +108,33 @@ func GetIdCompanyByName(nameCompany interface{}) primitive.ObjectID {
 }
 
 //GetLoyaltyProgramByCompany func ...
-func GetLoyaltyProgramByCompany(NameCompany interface{}) float64 {
+func GetIFCompanyByName(NameCompany interface{}) models.IFCompany {
 	var (
 		CompanyCollection = database.ConnectCol("companies")
 		ctx               = context.Background()
-		result            = struct {
-			LoyaltyProgram float64 `json:"loyaltyProgram"`
-		}{}
-		filter = bson.M{"name": NameCompany}
+		result            = models.IFCompany{}
+		filter            = bson.M{"name": NameCompany}
 	)
 	err := CompanyCollection.FindOne(ctx, filter).Decode(&result)
 	if err != nil {
 		log.Fatal(err)
 	}
-	return result.LoyaltyProgram
+	return result
 }
 
-//GetBalanceByCompanyName
-func GetBalanceByCompanyName(nameCompany interface{}) float64 {
+//UpdateBalance ...
+func UpdateBalance(idCompany interface{}, balance float64) {
 	var (
 		companyCollection = database.ConnectCol("companies")
 		ctx               = context.Background()
-		result            = struct {
-			Balance float64 `json:"balance"`
-		}{}
-		filter = bson.M{"name": nameCompany}
 	)
-	err := companyCollection.FindOne(ctx, filter).Decode(&result)
+	filter := bson.M{"_id": idCompany}
+	update := bson.M{"$set": bson.M{
+		"balance": balance,
+	}}
+	log.Println(balance)
+	_, err := companyCollection.UpdateOne(ctx, filter, update)
 	if err != nil {
 		log.Fatal(err)
 	}
-	return result.Balance
 }
