@@ -11,10 +11,10 @@ type (
 		ID             primitive.ObjectID `bson:"_id"`
 		CompanyID      primitive.ObjectID `bson:"companyId"`
 		BranchID       primitive.ObjectID `bson:"branchId"`
-		UserID         string             `bson:"userId"`
-		Amount         float64            `bson:"amount" `
-		Commission     float64            `bson:"commission" `
-		LoyaltyProgram float64            `bson:"loyaltyProgram" `
-		CreateAt       time.Time          `bson:"createAT"`
+		User           string             `bson:"user"`
+		Amount         float64            `bson:"amount"`
+		Commission     float64            `bson:"commission"`
+		LoyaltyProgram float64            `bson:"loyaltyprogram"`
+		CreateAt       time.Time          `bson:"createAt"`
 	}
 )
