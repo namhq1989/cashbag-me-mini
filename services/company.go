@@ -43,8 +43,8 @@ func PatchCompany(idCompany interface{}) *mongo.UpdateResult {
 }
 
 //PutCompany func ....
-func PutCompany(idCompany interface{},body models.PutCompany) *mongo.UpdateResult {
-	result := dao.PutCompany(idCompany,body)
+func PutCompany(idCompany interface{}, body models.PutCompany) *mongo.UpdateResult {
+	result := dao.PutCompany(idCompany, body)
 	return result
 }
 
@@ -73,7 +73,7 @@ func ConvertBodyToCompanyBSON(body models.PostCompany) models.CompanyBSON {
 	return result
 }
 
-//GetNameCompanyById ....
+//GetNameCompanyById func ....
 func GetNameCompanyById(id interface{}) string {
 	var (
 		companyCollection = database.ConnectCol("companies")
@@ -90,7 +90,7 @@ func GetNameCompanyById(id interface{}) string {
 	return result.Name
 }
 
-//GetIdCompanyByName ...
+//GetIdCompanyByName func ....
 func GetIdCompanyByName(nameCompany interface{}) primitive.ObjectID {
 	var (
 		//db                = database.Connectdb("CashBag")
@@ -107,3 +107,4 @@ func GetIdCompanyByName(nameCompany interface{}) primitive.ObjectID {
 	}
 	return result.ID
 }
+ 

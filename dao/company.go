@@ -54,7 +54,7 @@ func PatchCompany(idCompany interface{}) *mongo.UpdateResult {
 }
 
 //PutCompany  func to ...
-func PutCompany(idCompany interface{},body models.PutCompany) *mongo.UpdateResult {
+func PutCompany(idCompany interface{}, body models.PutCompany) *mongo.UpdateResult {
 	var companyCollection = database.ConnectCol("companies")
 	filter := bson.M{"_id": idCompany}
 	update := bson.M{"$set": bson.M{
@@ -105,4 +105,38 @@ func GetIdCompanyByName(nameCompany interface{}) primitive.ObjectID {
 		log.Fatal(err)
 	}
 	return result.ID
+}
+
+//GetLoyaltyProgramByCompany func ...
+func GetLoyaltyProgramByCompany(NameCompany interface{}) float64 {
+	var (
+		CompanyCollection = database.ConnectCol("companies")
+		ctx               = context.Background()
+		result            = struct {
+			LoyaltyProgram float64 `json:"loyaltyProgram"`
+		}{}
+		filter = bson.M{"name": NameCompany}
+	)
+	err := CompanyCollection.FindOne(ctx, filter).Decode(&result)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return result.LoyaltyProgram
+}
+
+//GetBalanceByCompanyName
+func GetBalanceByCompanyName(nameCompany interface{}) float64 {
+	var (
+		companyCollection = database.ConnectCol("companies")
+		ctx               = context.Background()
+		result            = struct {
+			Balance float64 `json:"balance"`
+		}{}
+		filter = bson.M{"name": nameCompany}
+	)
+	err := companyCollection.FindOne(ctx, filter).Decode(&result)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return result.Balance
 }
