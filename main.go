@@ -2,6 +2,7 @@ package main
 
 import (
 	"cashbag-me-mini/modules/database"
+	"cashbag-me-mini/modules/redis"
 	"cashbag-me-mini/routes"
 
 	"github.com/labstack/echo"
@@ -9,6 +10,7 @@ import (
 
 func init() {
 	database.Connectdb("CashBag")
+	redis.ConnectRDB()
 }
 func main() {
 	server := echo.New()
