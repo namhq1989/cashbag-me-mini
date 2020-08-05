@@ -9,12 +9,12 @@ import (
 type (
 	TransactionBSON struct {
 		ID             primitive.ObjectID `bson:"_id"`
-		CompanyId      primitive.ObjectID `bson:"companyId"`
-		BranchId       primitive.ObjectID `bson:"branchId"`
-		UserId         string             `bson:"userId"`
+		CompanyID      primitive.ObjectID `bson:"companyId"`
+		BranchID       primitive.ObjectID `bson:"branchId"`
+		UserID         string             `bson:"userId"`
 		Amount         float64            `bson:"amount" `
 		Commission     float64            `bson:"commission" `
 		LoyaltyProgram float64            `bson:"loyaltyProgram" `
-		CreateAT       time.Time          `bson:"createAT"`
+		CreateAt       time.Time          `bson:"createAT"`
 	}
 )
