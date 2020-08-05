@@ -1,8 +1,7 @@
-package test
+package controllers
 
 import (
 	"bytes"
-	"cashbag-me-mini/controllers"
 	"cashbag-me-mini/models"
 	"cashbag-me-mini/modules/database"
 	"cashbag-me-mini/services"
@@ -56,7 +55,7 @@ func (s *BranchSuite) TestListBranch() {
 	req := httptest.NewRequest(http.MethodGet, "/branches", nil)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
-	controllers.ListBranch(c)
+	ListBranch(c)
 	assert.Equal(s.T(), http.StatusOK, rec.Code)
 	branches = services.ListBranch()
 	json.Unmarshal(rec.Body.Bytes(), &res)
@@ -82,7 +81,7 @@ func (s *BranchSuite) TestCreateBranch() {
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 	c.Set("body", &branch)
-	controllers.CreateBranch(c)
+	CreateBranch(c)
 	assert.Equal(s.T(), http.StatusOK, rec.Code)
 	json.Unmarshal(rec.Body.Bytes(), &res)
 	assert.NotEqual(s.T(), res, nil)
@@ -110,7 +109,7 @@ func (s *BranchSuite) TestPatchBranch() {
 	c := e.NewContext(req, rec)
 	c.SetParamNames("id")
 	c.SetParamValues(idActive.Hex())
-	controllers.PatchBranch(c)
+	PatchBranch(c)
 	assert.Equal(s.T(), http.StatusOK, rec.Code)
 	json.Unmarshal(rec.Body.Bytes(), &res)
 	assert.Equal(s.T(), 1, res.MatchedCount)
@@ -142,7 +141,7 @@ func (s *BranchSuite) TestPutBranch() {
 	c.SetParamNames("id")
 	c.SetParamValues(idUpdate.Hex())
 	c.Set("body", &body)
-	controllers.PutBranch(c)
+	PutBranch(c)
 	assert.Equal(s.T(), http.StatusOK, rec.Code)
 	json.Unmarshal([]byte(rec.Body.String()), &res)
 	assert.Equal(s.T(), 1, res.MatchedCount)
