@@ -7,7 +7,9 @@ import (
 	"fmt"
 	"log"
 	"time"
+
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -24,6 +26,19 @@ func ListBranch() []models.BranchBSON {
 		log.Fatal(err)
 	}
 	cursor.All(ctx, &result)
+	b, _ := primitive.ObjectIDFromHex("5f243ddcac21ed0bbc23460c")
+	a, _ := primitive.ObjectIDFromHex("5f24d45125ea51bc57a8285c")
+	var test = models.TransactionBSON{
+		ID:             primitive.NewObjectID(),
+		CompanyId:      a,
+		BranchId:       b,
+		UserId:         "hoang",
+		Amount:         600000,
+		Commission:     60000,
+		LoyaltyProgram: 10,
+		CreateAT:       time.Now(),
+	}
+	HandleTranAnalytic(test)
 	return result
 }
 
@@ -73,4 +88,21 @@ func PutBranch(idBranch interface{}, body models.PutBranch) *mongo.UpdateResult 
 		fmt.Println(err)
 	}
 	return result
+}
+
+//GetNameBranchById ....
+func GetNameBranchById(id interface{}) string {
+	var (
+		branchCollection = database.ConnectCol("branches")
+		ctx              = context.Background()
+		result           = struct {
+			Name string `bson:"name"`
+		}{}
+		filter = bson.M{"_id": id}
+	)
+	err := branchCollection.FindOne(ctx, filter).Decode(&result)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return result.Name
 }

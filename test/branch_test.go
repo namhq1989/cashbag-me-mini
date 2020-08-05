@@ -35,6 +35,7 @@ func (s BranchSuite) SetupSuite() {
 	database.Connectdb("CashBag-test")
 	addRecord(idActive) // for test Patch
 	addRecord(idUpdate) // for test Put
+	addCompany()        //for test Put
 }
 
 func (s BranchSuite) TearDownSuite() {
@@ -52,7 +53,7 @@ func (s *BranchSuite) TestListBranch() {
 		res      []models.BranchDetail
 	)
 	e := echo.New()
-	req := httptest.NewRequest(http.MethodGet, "/banches", nil)
+	req := httptest.NewRequest(http.MethodGet, "/branches", nil)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 	controllers.ListBranch(c)
@@ -164,6 +165,23 @@ func addRecord(id primitive.ObjectID) {
 		}
 	)
 	database.DB.Collection("branches").InsertOne(context.TODO(), branch)
+}
+
+//addCompany
+func addCompany() {
+	var (
+		companyID, _ = primitive.ObjectIDFromHex("5f24d45125ea51bc57a8285b")
+		company      = models.CompanyBSON{
+			ID:             companyID,
+			Name:           "Hightland",
+			Address:        "HaiPhong",
+			Balance:        10000000,
+			LoyaltyProgram: 10,
+			Active:         false,
+			CreateAt:       time.Now(),
+		}
+	)
+	database.DB.Collection("companies").InsertOne(context.TODO(), company)
 }
 
 func TestBranchSuite(t *testing.T) {
