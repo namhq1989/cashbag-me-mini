@@ -4,6 +4,7 @@ import (
 	"cashbag-me-mini/dao"
 	"cashbag-me-mini/models"
 
+	"log"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -19,11 +20,13 @@ func CreateTransaction(body models.PostTransaction) *mongo.InsertOneResult {
 		commission     float64
 		loyaltyProgram float64
 		amount         float64
+		balance        float64
+		result         *mongo.InsertOneResult
 	)
-
 	companyID = dao.GetIdCompanyByName(body.NameCompany)
 	branchID = dao.GetIdBranchByName(body.NameBranch)
 	loyaltyProgram = dao.GetLoyaltyProgramByCompany(body.NameCompany)
+	balance = dao.GetBalanceByCompanyName(body.NameCompany)
 	transaction = ConvertBodyToTransactionBSON(body)
 	amount = body.Amount
 	commission = (loyaltyProgram / 100) * amount
@@ -33,9 +36,17 @@ func CreateTransaction(body models.PostTransaction) *mongo.InsertOneResult {
 	transaction.BranchID = branchID
 	transaction.ID = primitive.NewObjectID()
 	transaction.CreateAt = time.Now()
-	result := dao.CreateTransaction(transaction)
+	if balance > commission {
+		result := dao.CreateTransaction(transaction)
+		return result
+
+	} else {
+		log.Println("can't create transaction")
+	}
 	return result
+
 }
+
 
 //ConvertBodyToTransactionBSON func ...
 func ConvertBodyToTransactionBSON(body models.PostTransaction) models.TransactionBSON {
@@ -46,14 +57,3 @@ func ConvertBodyToTransactionBSON(body models.PostTransaction) models.Transactio
 	return result
 }
 
-// //CalCulateCommission func ...
-// func CalCulateCommission(body models.PostTransaction) float64{
-// 	var ( transaction    models.TransactionBSON
-// 		loyaltyProgram float64
-// 		)
-// 	CreateTransaction(*body)
-// 	loyaltyProgram = dao.GetLoyaltyProgramByCompany(body.NameCompany)
-// 	commission = loyaltyProgram * (transaction.Amount)
-// 	transaction.Commission = commission
-
-// }

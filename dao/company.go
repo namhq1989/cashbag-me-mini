@@ -123,3 +123,20 @@ func GetLoyaltyProgramByCompany(NameCompany interface{}) float64 {
 	}
 	return result.LoyaltyProgram
 }
+
+//GetBalanceByCompanyName
+func GetBalanceByCompanyName(nameCompany interface{}) float64 {
+	var (
+		companyCollection = database.ConnectCol("companies")
+		ctx               = context.Background()
+		result            = struct {
+			Balance float64 `json:"balance"`
+		}{}
+		filter = bson.M{"name": nameCompany}
+	)
+	err := companyCollection.FindOne(ctx, filter).Decode(&result)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return result.Balance
+}
