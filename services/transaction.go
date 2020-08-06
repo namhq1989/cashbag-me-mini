@@ -3,6 +3,8 @@ package services
 import (
 	"cashbag-me-mini/dao"
 	"cashbag-me-mini/models"
+	"cashbag-me-mini/modules/redis"
+
 	"log"
 
 	"time"
@@ -13,38 +15,30 @@ import (
 
 //CreateTransaction func ....
 func CreateTransaction(body models.PostTransaction) *mongo.InsertOneResult {
+	userReq := redis.GetValueRedis("user")
+	if userReq == body.User {
+		log.Fatal("User dang thuc hien giao dich")
+	}
+	redis.SetValueRedis("user", body.User)
 	var (
-		transaction    models.TransactionBSON
-		companyID      primitive.ObjectID
-		branchID       primitive.ObjectID
-		commission     float64
-		loyaltyProgram float64
-		amount         float64
-		balance        float64
-		result         *mongo.InsertOneResult
+		result *mongo.InsertOneResult
 	)
-	companyID = dao.GetIdCompanyByName(body.NameCompany)
-	branchID = dao.GetIdBranchByName(body.NameBranch)
-	loyaltyProgram = dao.GetLoyaltyProgramByCompany(body.NameCompany)
-	balance = dao.GetBalanceByCompanyName(body.NameCompany)
-	transaction = ConvertBodyToTransactionBSON(body)
-	amount = body.Amount
-	commission = (loyaltyProgram / 100) * amount
-	transaction.LoyaltyProgram = loyaltyProgram
+	branchID := dao.GetIdBranchByName(body.NameBranch)
+	ifCompany := dao.GetIFCompanyByName(body.NameCompany)
+	transaction := ConvertBodyToTransactionBSON(body)
+	commission := (ifCompany.LoyaltyProgram / 100) * body.Amount
+	transaction.LoyaltyProgram = ifCompany.LoyaltyProgram
 	transaction.Commission = commission
-	transaction.CompanyID = companyID
+	transaction.CompanyID = ifCompany.ID
 	transaction.BranchID = branchID
 	transaction.ID = primitive.NewObjectID()
 	transaction.CreateAt = time.Now()
-	if balance > commission {
-		result := dao.CreateTransaction(transaction)
-		return result
-
+	if ifCompany.Balance >= commission {
+		result = dao.CreateTransaction(transaction, ifCompany.Balance)
 	} else {
-		log.Println("can't create transaction")
+		log.Fatal("So tien hoan tra cua cong ty da het")
 	}
 	return result
-
 }
 
 //ConvertBodyToTransactionBSON func ...
