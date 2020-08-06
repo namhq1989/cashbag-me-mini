@@ -15,22 +15,16 @@ func CreateTransaction(c echo.Context) error {
 	body := c.Get("body").(*models.PostTransaction)
 	userZoo := zookeeper.GetValueFromZoo("/Users")
 	users := strings.Split(userZoo, ",")
-	//userBody := (*body).User
-	// checktran, _ := redis.RDB.Get("user").Result()
-	// fmt.Println(checktran)
-	// if checktran == userBody{
-	// 	return c.String(http.StatusBadRequest, "User dang request")
-	// }
+	check := 0
 	for _, user := range users {
 		if user == body.User {
-			// err := redis.RDB.Set("user", body.User, 30000000000)
-			// if err != nil {
-			// 	log.Println(err)
-			// }
-			result := services.CreateTransaction(*body)
-			return c.JSON(http.StatusCreated, result)
+			check = 1
 		}
 	}
-	return c.String(http.StatusBadRequest, "User khong nam trong danh sach hoan tien")
+	if check == 0 {
+		return c.String(http.StatusBadRequest, "User khong nam trong danh sach hoan tien")
+	}
+	result := services.CreateTransaction(*body)
+	return c.JSON(http.StatusCreated, result)
 
 }
