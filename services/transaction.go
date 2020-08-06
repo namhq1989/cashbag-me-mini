@@ -3,6 +3,7 @@ package services
 import (
 	"cashbag-me-mini/dao"
 	"cashbag-me-mini/models"
+	"cashbag-me-mini/modules/redis"
 
 	"log"
 	"time"
@@ -13,11 +14,16 @@ import (
 
 //CreateTransaction func ....
 func CreateTransaction(body models.PostTransaction) *mongo.InsertOneResult {
+	userReq := redis.GetValueRedis("user")
+	if userReq == body.User {
+		log.Fatal("User dang thuc hien giao dich")
+	}
+	redis.SetValueRedis("user", body.User)
 	var (
-		result         *mongo.InsertOneResult
+		result *mongo.InsertOneResult
 	)
 	branchID := dao.GetIdBranchByName(body.NameBranch)
-	ifCompany :=dao.GetIFCompanyByName(body.NameCompany)
+	ifCompany := dao.GetIFCompanyByName(body.NameCompany)
 	transaction := ConvertBodyToTransactionBSON(body)
 	commission := (ifCompany.LoyaltyProgram / 100) * body.Amount
 	transaction.LoyaltyProgram = ifCompany.LoyaltyProgram
@@ -27,13 +33,12 @@ func CreateTransaction(body models.PostTransaction) *mongo.InsertOneResult {
 	transaction.ID = primitive.NewObjectID()
 	transaction.CreateAt = time.Now()
 	if ifCompany.Balance >= commission {
-		result = dao.CreateTransaction(transaction,ifCompany.Balance)
+		result = dao.CreateTransaction(transaction, ifCompany.Balance)
 	} else {
 		log.Fatal("So tien hoan tra cua cong ty da het")
 	}
 	return result
 }
-
 
 //ConvertBodyToTransactionBSON func ...
 func ConvertBodyToTransactionBSON(body models.PostTransaction) models.TransactionBSON {
@@ -43,4 +48,3 @@ func ConvertBodyToTransactionBSON(body models.PostTransaction) models.Transactio
 	}
 	return result
 }
-
