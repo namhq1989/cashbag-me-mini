@@ -5,7 +5,6 @@ import (
 	"cashbag-me-mini/models"
 	"cashbag-me-mini/modules/redis"
 
-	"log"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -16,7 +15,9 @@ import (
 func CreateTransaction(body models.PostTransaction) *mongo.InsertOneResult {
 	userReq := redis.GetValueRedis("user")
 	if userReq == body.User {
-		log.Fatal("User dang thuc hien giao dich")
+		result := new(mongo.InsertOneResult)
+		result.InsertedID = "User dang thuc hien giao dich"
+		return result
 	}
 	redis.SetValueRedis("user", body.User)
 	var (
@@ -35,7 +36,9 @@ func CreateTransaction(body models.PostTransaction) *mongo.InsertOneResult {
 	if ifCompany.Balance >= commission {
 		result = dao.CreateTransaction(transaction, ifCompany.Balance)
 	} else {
-		log.Fatal("So tien hoan tra cua cong ty da het")
+		result := new(mongo.InsertOneResult)
+		result.InsertedID = "So tien hoan tra cua cong ty da het"
+		return result
 	}
 	return result
 }
