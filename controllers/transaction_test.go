@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"cashbag-me-mini/dao"
 	"cashbag-me-mini/models"
 	"cashbag-me-mini/modules/database"
 	"context"
@@ -24,7 +25,7 @@ func (s TransactionSuite) SetupSuite() {
 	database.Connectdb("CashBag-test")
 }
 func (s TransactionSuite) TearDownSuite() {
-	removeOldDataTransaction()
+	//removeOldDataTransaction()
 }
 
 func removeOldDataTransaction() {
@@ -34,14 +35,18 @@ func removeOldDataTransaction() {
 func (s *TransactionSuite) TestCreateTransaction() {
 	var (
 		transaction = models.PostTransaction{
-			NameCompany: "Highland",
+			NameCompany: "Hightland",
 			NameBranch:  "Hight QuangTri",
-			User:        "Mars",
+			User: "Win",
 			Amount:      100,
 		}
 		res = struct {
 			InsertedID string `json:"InsertedID"`
 		}{}
+		commission  float64
+		balance    float64
+		loyaltyProgram  float64
+		amount         float64
 	)
 	e := echo.New()
 	req := httptest.NewRequest(http.MethodPost, "/transactions", ToIOReader(transaction))
@@ -49,8 +54,14 @@ func (s *TransactionSuite) TestCreateTransaction() {
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 	c.Set("body", &transaction)
-	CreateTransaction(c)
-	assert.Equal(s.T(), http.StatusCreated, rec.Code)
+	loyaltyProgram = dao.GetLoyaltyProgramByCompany(transaction.NameCompany)
+	balance = dao.GetBalanceByCompanyName(transaction.NameCompany)
+	amount = transaction.Amount
+	commission = (loyaltyProgram / 100) * amount
+	assert.Equal(s.T(), http.StatusOK, rec.Code)
+	if balance > commission {
+		CreateTransaction(c)
+	}
 	json.Unmarshal(rec.Body.Bytes(), &res)
 	assert.NotEqual(s.T(), res, nil)
 }
