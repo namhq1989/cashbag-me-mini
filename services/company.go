@@ -6,44 +6,42 @@ import (
 	"cashbag-me-mini/modules/database"
 	"context"
 	"log"
-	"time"
+	
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-//CreateCompany func to ...
-func CreateCompany(body models.PostCompany) *mongo.InsertOneResult {
-	var company models.CompanyBSON
-	company = ConvertBodyToCompanyBSON(body)
-	company.ID = primitive.NewObjectID()
-	company.CreateAt = time.Now()
-	result := dao.CreateCompany(company)
-	return result
+// CompanyCreate func to ...
+func CompanyCreate(body models.CompanyCreate) (models.CompanyBSON ,error){
+	company := ConvertBodyToCompanyBSON(body)
+	doc,err	:= dao.CompanyCreate(company)
+	return doc,err
 }
 
-//ListCompany to ...
-func ListCompany() []models.CompanyDetail {
+// CompanyList ...
+func CompanyList() ([]models.CompanyDetail,error) {
 	var (
 		result []models.CompanyDetail
 	)
-	companies := dao.ListCompany()
-	for _, item := range companies {
+	doc ,err := dao.CompanyList()
+	for _, item := range doc {
 		company := convertToCompanyDetail(item)
 		result = append(result, company)
 	}
-	return result
+	return result,err
 }
 
-//PatchCompany func to. ...
-func PatchCompany(idCompany interface{}) *mongo.UpdateResult {
-	result := dao.PatchCompany(idCompany)
-	return result
+// CompanyChangeActiveStatus func to. ...
+func CompanyChangeActiveStatus(id primitive.ObjectID, status models.CompanyUpdate) (models.CompanyUpdate,error) {
+	doc,err := dao.CompanyChangeActiveStatus(id,status)
+	return doc,err
+	
 }
 
 //PutCompany func ....
-func PutCompany(idCompany interface{}, body models.PutCompany) *mongo.UpdateResult {
+func PutCompany(idCompany interface{}, body models.CompanyUpdate) *mongo.UpdateResult {
 	result := dao.PutCompany(idCompany, body)
 	return result
 }
@@ -57,14 +55,14 @@ func convertToCompanyDetail(x models.CompanyBSON) models.CompanyDetail {
 		Balance:        x.Balance,
 		LoyaltyProgram: x.LoyaltyProgram,
 		Active:         x.Active,
-		CreateAt:       x.CreateAt,
-		UpdateAt:       x.UpdateAt,
+		CreatedAt:       x.CreatedAt,
+		UpdatedAt:       x.UpdatedAt,
 	}
 	return result
 }
 
 // ConvertBodyToCompanyBSON func ...
-func ConvertBodyToCompanyBSON(body models.PostCompany) models.CompanyBSON {
+func ConvertBodyToCompanyBSON(body models.CompanyCreate) models.CompanyBSON {
 	result := models.CompanyBSON{
 		Name:    body.Name,
 		Address: body.Address,

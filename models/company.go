@@ -14,8 +14,8 @@ type (
 		Balance        float64            `bson:"balance" `
 		LoyaltyProgram float64            `bson:"loyaltyProgram" `
 		Active         bool               `bson:"active" `
-		CreateAt       time.Time          `bson:"createAt"`
-		UpdateAt       time.Time          `bson:"updateAt"`
+		CreatedAt       time.Time          `bson:"createdAt"`
+		UpdatedAt       time.Time          `bson:"updatedAt"`
 	}
 	CompanyDetail struct {
 		ID             primitive.ObjectID `json:"_id"`
@@ -24,15 +24,15 @@ type (
 		Balance        float64            `json:"balance"`
 		LoyaltyProgram float64            `json:"loyaltyProgram"`
 		Active         bool               `json:"active"`
-		CreateAt       time.Time          `json:"createAt"`
-		UpdateAt       time.Time          `json:"updateAt"`
+		CreatedAt       time.Time          `json:"createdAt"`
+		UpdatedAt       time.Time          `json:"updatedAt"`
 	}
-	PostCompany struct {
+	CompanyCreate struct {
 		Name    string `json:"name" valid:"stringlength(3|30),type(string)"`
 		Address string `json:"address" valid:"stringlength(3|100),type(string)"`
 		Active  bool   `json:"active"`
 	}
-	PutCompany struct {
+	CompanyUpdate struct {
 		Name           string  `json:"name" valid:"stringlength(3|30),type(string)"`
 		Address        string  `json:"address" valid:"stringlength(3|100),type(string)"`
 		Balance        float64 `json:"balance" valid:"required"`

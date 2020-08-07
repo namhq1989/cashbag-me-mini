@@ -1,8 +1,6 @@
 package dao
 
 import (
-	"cashbag-me-mini/models"
-	"cashbag-me-mini/modules/database"
 	"context"
 	"log"
 	"time"
@@ -10,52 +8,59 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+
+	"cashbag-me-mini/models"
+	"cashbag-me-mini/modules/database"
 )
 
-//CreateCompany func to ....
-func CreateCompany(company interface{}) *mongo.InsertOneResult {
-	var companyCollection = database.ConnectCol("companies")
-	result, err := companyCollection.InsertOne(context.TODO(), company)
-	if err != nil {
-		log.Fatal(err)
+// CompanyCreate ....
+func CompanyCreate(doc models.CompanyBSON) (models.CompanyBSON, error) {
+	var (
+		companyCol = database.CompanyCol()
+		ctx        = context.Background()
+	)
+
+	//Add update information
+	if doc.ID.IsZero() {
+		doc.ID = primitive.NewObjectID()
 	}
-	return result
+	doc.UpdatedAt = time.Now()
+
+	_, err := companyCol.InsertOne(ctx, doc)
+	return doc, err
 }
 
-//ListCompany ...
-func ListCompany() []models.CompanyBSON {
+// CompanyList  ...
+func CompanyList() ([]models.CompanyBSON ,error) {
 	var (
-		companyCollection = database.ConnectCol("companies")
-		ctx               = context.Background()
-		result            []models.CompanyBSON
+		companyCol = database.CompanyCol()
+		ctx        = context.Background()
+		result     = make([]models.CompanyBSON,0)
 	)
-	cursor, err := companyCollection.Find(ctx, bson.M{})
+
+	cursor, err := companyCol.Find(ctx, bson.M{})
 	defer cursor.Close(ctx)
-	if err != nil {
-		log.Fatal(err)
-	}
 	cursor.All(ctx, &result)
-	return result
+	return result, err
 }
 
-//PatchCompany  func to ...
-func PatchCompany(idCompany interface{}) *mongo.UpdateResult {
+//CompanyChangeActiveStatus func to ...
+func CompanyChangeActiveStatus(id primitive.ObjectID,status models.CompanyUpdate) (models.CompanyUpdate,error) {
 	var (
-		companyCollection = database.ConnectCol("companies")
-		ctx               = context.Background()
+		companyCol = database.CompanyCol()
+		ctx        = context.Background()
+		filter = bson.M{"_id": id}
+		update = bson.M{"$set": bson.M{"active": !(status.Active)}}
 	)
-	filter := bson.M{"_id": idCompany}
-	update := bson.M{"$set": bson.M{"active": true}}
-	result, err := companyCollection.UpdateOne(ctx, filter, update)
-	if err != nil {
-		log.Fatal(err)
-	}
-	return result
+	
+	_, err := companyCol.UpdateOne(ctx, filter, update)
+	log.Println("status 1",status)
+	return status,err
 }
 
 //PutCompany  func to ...
-func PutCompany(idCompany interface{}, body models.PutCompany) *mongo.UpdateResult {
-	var companyCollection = database.ConnectCol("companies")
+func PutCompany(idCompany interface{}, body models.CompanyUpdate) *mongo.UpdateResult {
+	var companyCol = database.CompanyCol()
 	filter := bson.M{"_id": idCompany}
 	update := bson.M{"$set": bson.M{
 		"name":           body.Name,
@@ -65,7 +70,7 @@ func PutCompany(idCompany interface{}, body models.PutCompany) *mongo.UpdateResu
 		"loyaltyProgram": body.LoyaltyProgram,
 		"updateAt":       time.Now(),
 	}}
-	result, err := companyCollection.UpdateOne(context.TODO(), filter, update)
+	result, err := companyCol.UpdateOne(context.TODO(), filter, update)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -75,14 +80,14 @@ func PutCompany(idCompany interface{}, body models.PutCompany) *mongo.UpdateResu
 //GetNameCompanyById ....
 func GetNameCompanyById(id interface{}) string {
 	var (
-		companyCollection = database.ConnectCol("companies")
-		ctx               = context.Background()
-		result            = struct {
+		companyCol = database.CompanyCol()
+		ctx        = context.Background()
+		result     = struct {
 			Name string `bson:"name"`
 		}{}
 		filter = bson.M{"_id": id}
 	)
-	err := companyCollection.FindOne(ctx, filter).Decode(&result)
+	err := companyCol.FindOne(ctx, filter).Decode(&result)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -92,15 +97,14 @@ func GetNameCompanyById(id interface{}) string {
 // GetIdCompanyByName ...
 func GetIdCompanyByName(nameCompany interface{}) primitive.ObjectID {
 	var (
-		//db                = database.Connectdb("CashBag")
-		companyCollection = database.ConnectCol("companies")
-		ctx               = context.Background()
-		result            = struct {
+		companyCol = database.CompanyCol()
+		ctx        = context.Background()
+		result     = struct {
 			ID primitive.ObjectID `bson:"_id"`
 		}{}
 		filter = bson.M{"name": nameCompany}
 	)
-	err := companyCollection.FindOne(ctx, filter).Decode(&result)
+	err := companyCol.FindOne(ctx, filter).Decode(&result)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -110,12 +114,12 @@ func GetIdCompanyByName(nameCompany interface{}) primitive.ObjectID {
 //GetLoyaltyProgramByCompany func ...
 func GetIFCompanyByName(NameCompany interface{}) models.IFCompany {
 	var (
-		CompanyCollection = database.ConnectCol("companies")
-		ctx               = context.Background()
-		result            = models.IFCompany{}
-		filter            = bson.M{"name": NameCompany}
+		companyCol = database.CompanyCol()
+		ctx        = context.Background()
+		result     = models.IFCompany{}
+		filter     = bson.M{"name": NameCompany}
 	)
-	err := CompanyCollection.FindOne(ctx, filter).Decode(&result)
+	err := companyCol.FindOne(ctx, filter).Decode(&result)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -125,15 +129,15 @@ func GetIFCompanyByName(NameCompany interface{}) models.IFCompany {
 //UpdateBalance ...
 func UpdateBalance(idCompany interface{}, balance float64) {
 	var (
-		companyCollection = database.ConnectCol("companies")
-		ctx               = context.Background()
+		companyCol = database.CompanyCol()
+		ctx        = context.Background()
 	)
 	filter := bson.M{"_id": idCompany}
 	update := bson.M{"$set": bson.M{
 		"balance": balance,
 	}}
 	log.Println(balance)
-	_, err := companyCollection.UpdateOne(ctx, filter, update)
+	_, err := companyCol.UpdateOne(ctx, filter, update)
 	if err != nil {
 		log.Fatal(err)
 	}

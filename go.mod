@@ -4,6 +4,7 @@ go 1.14
 
 require (
 	github.com/asaskevich/govalidator v0.0.0-20200428143746-21a406dcc535
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
 	github.com/go-delve/delve v1.5.0 // indirect
 	github.com/go-redis/redis v6.15.8+incompatible
 	github.com/jinzhu/now v1.1.1
