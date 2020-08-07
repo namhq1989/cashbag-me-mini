@@ -1,36 +1,47 @@
 package validations
 
 import (
-	"cashbag-me-mini/models"
+	
 
 	"github.com/asaskevich/govalidator"
 	"github.com/labstack/echo"
+
+	"cashbag-me-mini/models"
+	"cashbag-me-mini/ultis"
 )
 
-//CreateCompany func ...
-func CreateCompany(next echo.HandlerFunc) echo.HandlerFunc {
+//CompanyCreate func ...
+func CompanyCreate(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		postCompany := new(models.PostCompany)
-		c.Bind(postCompany)
-		result, _ := govalidator.ValidateStruct(postCompany)
-		if result == true {
-			c.Set("body", postCompany)
-			next(c)
+		doc := new(models.CompanyCreate)
+		c.Bind(doc)
+		_, err := govalidator.ValidateStruct(doc)
+
+		//if err
+		if err != nil{
+			return ultis.Response400(c,nil,err.Error())
 		}
-		return echo.ErrBadRequest
+		
+		//Success
+		c.Set("body", doc)
+		return next(c)
+		
 	}
 }
 
-//PutCompany func ...
-func PutCompany(next echo.HandlerFunc) echo.HandlerFunc {
+// CompanyUpdate func ...
+func CompanyUpdate(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		putCompany := new(models.PutCompany)
-		c.Bind(putCompany)
-		result, _ := govalidator.ValidateStruct(putCompany)
-		if result == true {
-			c.Set("body", putCompany)
-			next(c)
+		doc := new(models.CompanyUpdate)
+		c.Bind(doc)
+		_, err := govalidator.ValidateStruct(doc)
+
+		//if err
+		if err != nil{
+			return ultis.Response400(c,nil,err.Error())
 		}
-		return echo.ErrBadRequest
+		//Success
+		c.Set("body", doc)
+		return next(c)
 	}
 }

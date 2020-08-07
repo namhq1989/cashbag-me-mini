@@ -3,7 +3,10 @@ package database
 import (
 	"context"
 	"fmt"
+	"log"
 	"time"
+
+	"cashbag-me-mini/config"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -13,18 +16,23 @@ var (
 	DB *mongo.Database
 )
 
-//Connectdb ...
-func Connectdb(dbName string) *mongo.Database {
-	client, err := mongo.NewClient(options.Client().ApplyURI("mongodb+srv://CashbagMe:Cashbag@cluster0.epe8y.gcp.mongodb.net/Cluster0?retryWrites=true&w=majority"))
+//Connect ...
+func Connect(dbName string) *mongo.Database {
+	cfg := config.GetEnv()
+	//connect
+	client, err := mongo.NewClient(options.Client().ApplyURI(cfg.DatabaseURI))
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
+		log.Fatal("Cannot connect to database ", cfg.DatabaseURI)
 	}
+
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	err = client.Connect(ctx)
 	if err != nil {
 		fmt.Println(err)
 	}
+
 	DB = client.Database(dbName)
 	fmt.Println("Connected to db:", dbName)
 	return DB

@@ -6,7 +6,7 @@ import (
 	"github.com/labstack/echo"
 )
 
-//TransactionRoute func ...
-func TransactionRoute(g *echo.Group) {
+//Transaction func ...
+func Transaction(g *echo.Group) {
 	g.POST("", controllers.CreateTransaction, validations.CreateTransaction)
 }

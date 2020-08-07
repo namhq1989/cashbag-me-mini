@@ -1,23 +1,42 @@
 package main
 
 import (
-	"cashbag-me-mini/modules/zookeeper"
+
+	"github.com/labstack/echo"
+	"github.com/labstack/echo/middleware"
+
+	"cashbag-me-mini/config"
 	"cashbag-me-mini/modules/database"
 	"cashbag-me-mini/modules/redis"
+	"cashbag-me-mini/modules/zookeeper"
 	"cashbag-me-mini/routes"
-	"github.com/labstack/echo"
 )
 
 func init() {
-	database.Connectdb("CashBag")
+	database.Connect("CashBag")
 	redis.ConnectRDB()
 	zookeeper.ConnectZookeeper()
 }
 func main() {
+
+	cfg := config.GetEnv()
 	server := echo.New()
-	routes.Branch(server.Group("/branches"))
-	routes.CompanyRoute(server.Group("/companies"))
-	routes.TransactionRoute(server.Group("/transactions"))
-	routes.TranAnalytic(server.Group("/tranAnalytic"))
-	server.Logger.Fatal(server.Start(":8080"))
+
+	//CORS
+	server.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins:     []string{"*"},
+		AllowHeaders:     []string{"Origin", "Content-Length", "Content-Type", "Authorization"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTION"},
+		MaxAge:           600,
+		AllowCredentials: false,
+	}))
+
+	// Middleware
+	server.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
+		Format: "${time_rfc3339} | ${remote_ip} | ${method} ${uri} - ${status} - ${latency_human}\n",
+	}))
+	server.Use(middleware.Recover())
+
+	routes.Boostrap(server)
+	server.Logger.Fatal(server.Start(cfg.Port))
 }
