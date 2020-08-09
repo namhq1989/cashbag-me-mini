@@ -5,13 +5,15 @@ import (
 	"time"
 
 	"github.com/samuel/go-zookeeper/zk"
+	"cashbag-me-mini/config"
 )
 
 var ZDB *zk.Conn
 
-//ConnectZookeeper ...
-func ConnectZookeeper() {
-	c, _, err := zk.Connect([]string{"127.0.0.1:2181"}, time.Second)
+//Connect ...
+func Connect() {
+	envVars := config.GetEnv()
+	c, _, err := zk.Connect([]string{envVars.ZookeeperURI}, time.Second*30)
 	if err != nil {
 		panic(err)
 	}

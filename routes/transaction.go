@@ -8,5 +8,5 @@ import (
 
 //Transaction func ...
 func Transaction(g *echo.Group) {
-	g.POST("", controllers.CreateTransaction, validations.CreateTransaction)
+	g.POST("", controllers.TransactionCreate, validations.TransactionCreate)
 }
