@@ -30,21 +30,34 @@ type (
 		CreatedAt      time.Time          `json:"createdAt"`
 		UpdatedAt      time.Time          `json:"updatedAt"`
 	}
+<<<<<<< HEAD
 
 	// CompanyCreatePayload ...
+=======
+>>>>>>> 35bc62c3407eecf25d9e630ee81dc51e89f7e4bb
 	CompanyCreatePayload struct {
 		Name    string `json:"name" valid:"stringlength(3|30),type(string)"`
 		Address string `json:"address" valid:"stringlength(3|100),type(string)"`
 		Active  bool   `json:"active"`
+		CreatedAt       time.Time          `json:"createdAt"`
+
 	}
+<<<<<<< HEAD
 
 	// CompanyUpdatePayload ...
+=======
+>>>>>>> 35bc62c3407eecf25d9e630ee81dc51e89f7e4bb
 	CompanyUpdatePayload struct {
 		Name           string  `json:"name" valid:"stringlength(3|30),type(string)"`
 		Address        string  `json:"address" valid:"stringlength(3|100),type(string)"`
 		Balance        float64 `json:"balance" valid:"required"`
 		LoyaltyProgram float64 `json:"loyaltyProgram" valid:"required"`
 		Active         bool    `json:"active"`
+		UpdatedAt       time.Time          `json:"updatedAt"`
+
+	}
+	CompanyStatus struct {
+		Active bool `json:"active"`
 	}
 
 	// CompanyBrief ...

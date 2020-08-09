@@ -22,12 +22,12 @@ func BranchCol() *mongo.Collection {
 	return db.Collection(branch)
 }
 
-// TranscationCol ...
+// TransactionCol ...
 func TransactionCol() *mongo.Collection {
 	return db.Collection(transaction)
 }
 
-// transactionAnalycticCol ...
+// TransactionAnalyticCol ...
 func TransactionAnalyticCol() *mongo.Collection {
 	return db.Collection(transactionAnalytic)
 }
