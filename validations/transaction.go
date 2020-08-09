@@ -7,14 +7,14 @@ import (
 	"github.com/labstack/echo"
 )
 
-//CreateTransaction  ...
-func CreateTransaction(next echo.HandlerFunc) echo.HandlerFunc {
+// TransactionCreate ...
+func TransactionCreate(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		postTransaction := new(models.PostTransaction)
-		c.Bind(postTransaction)
-		result, _ := govalidator.ValidateStruct(postTransaction)
+		doc := new(models.TransactionCreatePayload)
+		c.Bind(doc)
+		result, _ := govalidator.ValidateStruct(doc)
 		if result == true {
-			c.Set("body", postTransaction)
+			c.Set("body", doc)
 			next(c)
 		}
 		return echo.ErrBadRequest

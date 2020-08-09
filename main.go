@@ -14,8 +14,8 @@ import (
 
 func init() {
 	database.Connect("CashBag")
-	redis.ConnectRDB()
-	zookeeper.ConnectZookeeper()
+	redis.Connect()
+	zookeeper.Connect()
 }
 func main() {
 

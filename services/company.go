@@ -1,68 +1,75 @@
 package services
 
 import (
+	"go.mongodb.org/mongo-driver/bson/primitive"
+
 	"cashbag-me-mini/dao"
 	"cashbag-me-mini/models"
-	"cashbag-me-mini/modules/database"
-	"context"
-	"log"
-	
-
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
 )
 
-// CompanyCreate func to ...
-func CompanyCreate(body models.CompanyCreate) (models.CompanyBSON ,error){
-	company := ConvertBodyToCompanyBSON(body)
-	doc,err	:= dao.CompanyCreate(company)
-	return doc,err
+// CompanyCreate ...
+func CompanyCreate(body models.CompanyCreatePayload) (models.CompanyBSON, error) {
+	var (
+		company = CompanyCreatePayloadToBSON(body)
+	)
+
+	// create company
+	doc, err := dao.CompanyCreate(company)
+
+	return doc, err
 }
 
 // CompanyList ...
-func CompanyList() ([]models.CompanyDetail,error) {
+func CompanyList() ([]models.CompanyDetail, error) {
 	var (
 		result []models.CompanyDetail
 	)
-	doc ,err := dao.CompanyList()
+
+	doc, err := dao.CompanyList()
+
 	for _, item := range doc {
-		company := convertToCompanyDetail(item)
+		company := ConvertToCompanyDetail(item)
 		result = append(result, company)
 	}
-	return result,err
+
+	return result, err
 }
 
-// CompanyChangeActiveStatus func to. ...
-func CompanyChangeActiveStatus(id primitive.ObjectID, status models.CompanyUpdate) (models.CompanyUpdate,error) {
-	doc,err := dao.CompanyChangeActiveStatus(id,status)
-	return doc,err
-	
+// CompanyChangeActiveStatus . ...
+func CompanyChangeActiveStatus(id primitive.ObjectID) (models.CompanyBSON, error) {
+	doc, err := dao.CompanyChangeActiveStatus(id)
+
+	return doc, err
 }
 
-//PutCompany func ....
-func PutCompany(idCompany interface{}, body models.CompanyUpdate) *mongo.UpdateResult {
-	result := dao.PutCompany(idCompany, body)
-	return result
+// CompanyUpdate ....
+func CompanyUpdate(id primitive.ObjectID, body models.CompanyUpdatePayload) (models.CompanyBSON, error) {
+	var (
+		company = CompanyUpdatePayloadToBSON(body)
+	)
+	//update company
+	doc, err := dao.CompanyUpdate(id, company)
+
+	return doc, err
 }
 
-//convertToCompanyDetail to ..
-func convertToCompanyDetail(x models.CompanyBSON) models.CompanyDetail {
+// ConvertToCompanyDetail ....
+func ConvertToCompanyDetail(doc models.CompanyBSON) models.CompanyDetail {
 	result := models.CompanyDetail{
-		ID:             x.ID,
-		Name:           x.Name,
-		Address:        x.Address,
-		Balance:        x.Balance,
-		LoyaltyProgram: x.LoyaltyProgram,
-		Active:         x.Active,
-		CreatedAt:       x.CreatedAt,
-		UpdatedAt:       x.UpdatedAt,
+		ID:             doc.ID,
+		Name:           doc.Name,
+		Address:        doc.Address,
+		Balance:        doc.Balance,
+		LoyaltyProgram: doc.LoyaltyProgram,
+		Active:         doc.Active,
+		CreatedAt:      doc.CreatedAt,
+		UpdatedAt:      doc.UpdatedAt,
 	}
 	return result
 }
 
-// ConvertBodyToCompanyBSON func ...
-func ConvertBodyToCompanyBSON(body models.CompanyCreate) models.CompanyBSON {
+// CompanyCreatePayloadToBSON ....
+func CompanyCreatePayloadToBSON(body models.CompanyCreatePayload) models.CompanyBSON {
 	result := models.CompanyBSON{
 		Name:    body.Name,
 		Address: body.Address,
@@ -71,38 +78,14 @@ func ConvertBodyToCompanyBSON(body models.CompanyCreate) models.CompanyBSON {
 	return result
 }
 
-//GetNameCompanyById func ....
-func GetNameCompanyById(id interface{}) string {
-	var (
-		companyCollection = database.ConnectCol("companies")
-		ctx               = context.Background()
-		result            = struct {
-			Name string `bson:"name"`
-		}{}
-		filter = bson.M{"_id": id}
-	)
-	err := companyCollection.FindOne(ctx, filter).Decode(&result)
-	if err != nil {
-		log.Fatal(err)
+// CompanyUpdatePayloadToBSON ....
+func CompanyUpdatePayloadToBSON(body models.CompanyUpdatePayload) models.CompanyBSON {
+	result := models.CompanyBSON{
+		Name:           body.Name,
+		Address:        body.Address,
+		Balance:        body.Balance,
+		LoyaltyProgram: body.LoyaltyProgram,
+		Active:         body.Active,
 	}
-	return result.Name
+	return result
 }
-
-//GetIdCompanyByName func ....
-func GetIdCompanyByName(nameCompany interface{}) primitive.ObjectID {
-	var (
-		//db                = database.Connectdb("CashBag")
-		companyCollection = database.ConnectCol("companies")
-		ctx               = context.Background()
-		result            = struct {
-			ID primitive.ObjectID `bson:"_id"`
-		}{}
-		filter = bson.M{"name": nameCompany}
-	)
-	err := companyCollection.FindOne(ctx, filter).Decode(&result)
-	if err != nil {
-		log.Fatal(err)
-	}
-	return result.ID
-}
- 

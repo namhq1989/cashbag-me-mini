@@ -27,17 +27,24 @@ type (
 		CreatedAt       time.Time          `json:"createdAt"`
 		UpdatedAt       time.Time          `json:"updatedAt"`
 	}
-	CompanyCreate struct {
+	CompanyCreatePayload struct {
 		Name    string `json:"name" valid:"stringlength(3|30),type(string)"`
 		Address string `json:"address" valid:"stringlength(3|100),type(string)"`
 		Active  bool   `json:"active"`
+		CreatedAt       time.Time          `json:"createdAt"`
+
 	}
-	CompanyUpdate struct {
+	CompanyUpdatePayload struct {
 		Name           string  `json:"name" valid:"stringlength(3|30),type(string)"`
 		Address        string  `json:"address" valid:"stringlength(3|100),type(string)"`
 		Balance        float64 `json:"balance" valid:"required"`
 		LoyaltyProgram float64 `json:"loyaltyProgram" valid:"required"`
 		Active         bool    `json:"active"`
+		UpdatedAt       time.Time          `json:"updatedAt"`
+
+	}
+	CompanyStatus struct {
+		Active bool `json:"active"`
 	}
 	IFCompany struct {
 		ID             primitive.ObjectID `bson:"_id"`

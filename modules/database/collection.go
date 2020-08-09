@@ -7,6 +7,7 @@ import (
 //collection name
 const (
 	company = "companies"
+	transaction ="transactions"
 )
 // ConnectCol ...
 func ConnectCol(nameCol string) *mongo.Collection {
@@ -15,4 +16,8 @@ func ConnectCol(nameCol string) *mongo.Collection {
 // CompanyCol ...
 func CompanyCol() *mongo.Collection{
 	return DB.Collection(company)
+}
+//TransactionCol ...
+func TransactionCol() *mongo.Collection{
+	return DB.Collection(transaction)
 }
