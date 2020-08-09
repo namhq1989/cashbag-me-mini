@@ -9,12 +9,8 @@ import (
 
 // Branch ...
 func Branch(g *echo.Group) {
-	//Method Get
-	g.GET("", controllers.ListBranch)
-	//Method Post
-	g.POST("", controllers.CreateBranch, validations.CreateBranch)
-	//Method Patch
-	g.PATCH("/:id", controllers.PatchBranch)
-	//Method Put
-	g.PUT("/:id", controllers.PutBranch, validations.UpdateBranch)
+	g.GET("", controllers.BranchList)
+	g.POST("", controllers.BranchCreate, validations.BranchCreate)
+	g.PATCH("/:id", controllers.BranchChangeActiveStatus, validations.BranchCheckID)
+	g.PUT("/:id", controllers.PutBranch,validations.BranchCheckID, validations.BranchUpdate)
 }

@@ -1,80 +1,81 @@
 package controllers
 
 import (
-	"net/http"
-
-	"github.com/labstack/echo"
-	"go.mongodb.org/mongo-driver/bson/primitive"
-
 	"cashbag-me-mini/models"
 	"cashbag-me-mini/services"
 	"cashbag-me-mini/ultis"
+
+	"github.com/labstack/echo/v4"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 // CompanyCreate func to ...
 func CompanyCreate(c echo.Context) error {
 	var (
-		body = c.Get("body").(*models.CompanyCreate)
+		body = c.Get("body").(*models.CompanyCreatePayload)
 	)
 
-	//Process data
+	// Process data
 	rawData, err := services.CompanyCreate(*body)
 
-	//if err
+	// if err
 	if err != nil {
 		return ultis.Response400(c, nil, err.Error())
 	}
 
-	//Success
-	return ultis.Response200(c, echo.Map{
-		"_id":     rawData.ID,
-		"name":    rawData.Name,
-		"address": rawData.Address,
-	}, "")
+	// Success
+	return ultis.Response200(c, rawData, "")
 }
 
 // CompanyList to
 func CompanyList(c echo.Context) error {
-	//Process data
+	// Process data
 	rawData, err := services.CompanyList()
 
-	//if err
+	// if err
 	if err != nil {
 		return ultis.Response400(c, nil, err.Error())
 	}
 
-	//success
-	return ultis.Response200(c, echo.Map{
-		"data": rawData,
-	}, "")
-
+	// Success
+	return ultis.Response200(c, rawData, "")
 }
 
 // CompanyChangeActiveStatus ...
 func CompanyChangeActiveStatus(c echo.Context) error {
+	var (
+		id           = c.Param("id")
+		companyID, _ = primitive.ObjectIDFromHex(id)
+	)
 
-	id := c.Param("id")
+	// Process data
+	rawData, err := services.CompanyChangeActiveStatus(companyID)
 
-	idCompany, _ := primitive.ObjectIDFromHex(id)
-	body := c.Get("body").(*models.CompanyUpdate)
-	rawData, err := services.CompanyChangeActiveStatus(idCompany,*body)
-	//if err
+	// if err
 	if err != nil {
 		return ultis.Response400(c, nil, err.Error())
 	}
 
-	//success
-	return ultis.Response200(c, echo.Map{
-		"data": rawData,
-	}, "")
+	// Success
+	return ultis.Response200(c, rawData, "")
 }
 
-// PutCompany func ...
-func PutCompany(c echo.Context) error {
-	id := c.Param("id")
-	idCompany, _ := primitive.ObjectIDFromHex(id)
-	body := c.Get("body").(*models.CompanyUpdate)
-	result := services.PutCompany(idCompany, *body)
-	return c.JSON(http.StatusOK, result)
+// CompanyUpdate ...
+func CompanyUpdate(c echo.Context) error {
+	var (
+		id           = c.Param("id")
+		body         = c.Get("body").(*models.CompanyUpdate)
+		companyID, _ = primitive.ObjectIDFromHex(id)
+	)
 
+	// Process data
+	rawData, err := services.CompanyUpdate(companyID, *body)
+
+	// if err
+	if err != nil {
+		return ultis.Response400(c, nil, err.Error())
+	}
+
+	// Success
+	return ultis.Response200(c, rawData, "")
 }

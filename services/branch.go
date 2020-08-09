@@ -1,80 +1,105 @@
 package services
 
 import (
+	"go.mongodb.org/mongo-driver/bson/primitive"
+
 	"cashbag-me-mini/dao"
 	"cashbag-me-mini/models"
-	"time"
-
-	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
 )
 
-//ListBranch ...
-func ListBranch() []models.BranchDetail {
+// BranchList ...
+func BranchList() ([]models.BranchDetail, error) {
 	var (
 		result      []models.BranchDetail
 		nameCompany string
 	)
+	// Find
+	docs, err := dao.BranchList()
 
-	Branches := dao.ListBranch()
-	for _, item := range Branches {
+	// Convert to BranchDetail
+	for _, item := range docs {
 		branch := ConvertToBranchDetail(item)
-		nameCompany = dao.GetNameCompanyById(item.CompanyId)
-		branch.CompanyId.ID = item.CompanyId
-		branch.CompanyId.Name = nameCompany
 		result = append(result, branch)
 	}
-	return result
+
+	return result, err
 }
 
 //ConvertToBranchDetail ...
-func ConvertToBranchDetail(x models.BranchBSON) models.BranchDetail {
-	result := models.BranchDetail{
-		ID:       x.ID,
-		Name:     x.Name,
-		Address:  x.Address,
-		Active:   x.Active,
-		CreateAt: x.CreateAt,
-		UpdateAt: x.UpdateAt,
-	}
-	return result
-}
-
-//CreateBranch ...
-func CreateBranch(body models.PostBranch) *mongo.InsertOneResult {
+func ConvertToBranchDetail(branch models.BranchBSON) models.BranchDetail {
 	var (
-		branch    models.BranchBSON
-		companyId primitive.ObjectID
+		companyBrief models.CompanyBrief
+		nameCompany  = dao.CompanyFindByID(branch.CompanyID).Name
 	)
 
-	companyId = dao.GetIdCompanyByName(body.NameCompany)
-	branch = ConvertBodyToBranchBSON(body)
-	branch.CompanyId = companyId
-	branch.ID = primitive.NewObjectID()
-	branch.CreateAt = time.Now()
-	result := dao.CreateBranch(branch)
-	return result
-}
+	// Add information for companyBrief
+	companyBrief.ID = branch.CompanyID
+	companyBrief.Name = nameCompany
 
-
-// ConvertBodyToBranchBSON...
-func ConvertBodyToBranchBSON(body models.PostBranch) models.BranchBSON {
-	result := models.BranchBSON{
-		Name:    body.Name,
-		Address: body.Address,
-		Active:  body.Active,
+	// branchDetail
+	result := models.BranchDetail{
+		ID:        branch.ID,
+		Company:   companyBrief,
+		Name:      branch.Name,
+		Address:   branch.Address,
+		Active:    branch.Active,
+		CreatedAt: branch.CreatedAt,
+		UpdatedAt: branch.UpdatedAt,
 	}
+
 	return result
 }
 
-// PatchBranch ...
-func PatchBranch(idBranch interface{}) *mongo.UpdateResult {
-	result := dao.PatchBranch(idBranch)
+// BranchCreate ...
+func BranchCreate(body models.BranchCreatePayload) (models.BranchBSON, error) {
+	var (
+		branch = BranchCreatePayloadToBSON(body)
+	)
+
+	// Create Branch
+	doc, err := dao.BranchCreate(branch)
+
+	return doc, err
+}
+
+// BranchCreatePayloadToBSON ...
+func BranchCreatePayloadToBSON(branchCreatePayload models.BranchCreatePayload) models.BranchBSON {
+	result := models.BranchBSON{
+		CompanyID: branchCreatePayload.CompanyID,
+		Name:      branchCreatePayload.Name,
+		Address:   branchCreatePayload.Address,
+		Active:    branchCreatePayload.Active,
+	}
+
 	return result
 }
 
-// PutBranch ...
-func PutBranch(idBranch interface{}, body models.PutBranch) *mongo.UpdateResult {
-	result := dao.PutBranch(idBranch, body)
+// BranchUpdate ...
+func BranchUpdate(BranchID primitive.ObjectID, body models.BranchUpdateBPayload) (models.BranchBSON, error) {
+	var (
+		branch = BranchUpdatePayloadToBSON(body)
+	)
+
+	// Update Branch
+	doc, err := dao.BranchUpdate(BranchID, branch)
+
+	return doc, err
+}
+
+func BranchUpdatePayloadToBSON(branchUpdatePayload models.BranchUpdateBPayload) models.BranchBSON {
+	result := models.BranchBSON{
+		Name:    branchUpdatePayload.Name,
+		Address: branchUpdatePayload.Address,
+		Active:  branchUpdatePayload.Active,
+	}
+
 	return result
+}
+
+// BranchChangeActiveStatus ...
+func BranchChangeActiveStatus(branchID primitive.ObjectID) (models.BranchBSON, error) {
+	// Change Active Status
+	doc, err := dao.BranchChangeActiveStatus(branchID)
+
+	return doc, err
 }

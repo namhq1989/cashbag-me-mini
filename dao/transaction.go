@@ -12,16 +12,16 @@ import (
 //CreateTransaction ...
 func CreateTransaction(transaction models.TransactionBSON, balance float64) *mongo.InsertOneResult {
 	var (
-		collection     = database.ConnectCol("transaction")
-		ctx            = context.Background()
+		collection = database.TransactionCol()
+		ctx        = context.Background()
 	)
 	balanceCurrent := balance - transaction.Commission
 	result, err := collection.InsertOne(ctx, transaction)
 	if err != nil {
 		log.Fatal(err)
 	}
-	UpdateBalance(transaction.CompanyID,balanceCurrent)
-	HandleTranAnalytic(transaction)
+	UpdateBalance(transaction.CompanyID, balanceCurrent)
+	TransactionAnalyticHandle(transaction)
 
 	return result
 }

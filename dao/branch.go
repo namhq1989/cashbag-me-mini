@@ -1,113 +1,133 @@
 package dao
 
 import (
-	"cashbag-me-mini/models"
-	"cashbag-me-mini/modules/database"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+
 	"context"
-	"fmt"
-	"log"
 	"time"
 
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	"cashbag-me-mini/models"
+	"cashbag-me-mini/modules/database"
 )
 
-//ListBranch ...
-func ListBranch() []models.BranchBSON {
+// BranchList ...
+func BranchList() ([]models.BranchBSON, error) {
 	var (
-		branchCollection = database.ConnectCol("branches")
-		ctx              = context.Background()
-		result           []models.BranchBSON
+		branchCol = database.BranchCol()
+		ctx       = context.Background()
+		result    = make([]models.BranchBSON, 0)
 	)
-	cursor, err := branchCollection.Find(ctx, bson.M{})
+
+	// Find
+	cursor, err := branchCol.Find(ctx, bson.M{})
+
+	// Close cursor
 	defer cursor.Close(ctx)
-	if err != nil {
-		log.Fatal(err)
-	}
+
+	// Set result
 	cursor.All(ctx, &result)
-	return result
+
+	return result, err
 }
 
-//CreateBranch ...
-func CreateBranch(branch interface{}) *mongo.InsertOneResult {
+// BranchCreate ....
+func BranchCreate(doc models.BranchBSON) (models.BranchBSON, error) {
 	var (
-		branchCollection = database.ConnectCol("branches")
-		ctx              = context.Background()
+		branchCol = database.BranchCol()
+		ctx       = context.Background()
 	)
-	result, err := branchCollection.InsertOne(ctx, branch)
-	if err != nil {
-		fmt.Println(err)
+
+	// Add update information
+	if doc.ID.IsZero() {
+		doc.ID = primitive.NewObjectID()
+	}
+	doc.CreatedAt = time.Now()
+
+	// Insert
+	_, err := branchCol.InsertOne(ctx, doc)
+
+	return doc, err
+}
+
+//BranchChangeActiveStatus func to ...
+func BranchChangeActiveStatus(branchID primitive.ObjectID) (models.BranchBSON, error) {
+	var (
+		active bool
+		filter = bson.M{"_id": branchID}
+	)
+
+	// Find Branch
+	doc := BranchDocByID(branchID)
+
+	// Change Active status
+	active = !(doc.Active)
+	update := bson.M{"$set": bson.M{"active": active}}
+	err := BranchUpdateByID(filter, update)
+
+	return doc, err
+}
+
+// BranchUpdate ...
+func BranchUpdate(branchID primitive.ObjectID, body models.BranchBSON) (models.BranchBSON, error) {
+	var (
+		filter     = bson.M{"_id": branchID}
+		updateData = bson.M{"$set": bson.M{
+			"name":     body.Name,
+			"address":  body.Address,
+			"active":   body.Active,
+			"updateAt": time.Now(),
+		}}
+	)
+
+	// Update
+	err := BranchUpdateByID(filter, updateData)
+
+	// Get doc
+	doc := BranchDocByID(branchID)
+
+	return doc, err
+}
+
+// BranchUpdateByID ...
+func BranchUpdateByID(filter bson.M, updateData bson.M) error {
+	var (
+		branchCol = database.BranchCol()
+		ctx       = context.Background()
+	)
+
+	_, err := branchCol.UpdateOne(ctx, filter, updateData)
+
+	return err
+}
+
+// BranchDocByID ...
+func BranchDocByID(branchID primitive.ObjectID) models.BranchBSON {
+	var (
+		branchCol = database.BranchCol()
+		ctx       = context.Background()
+		filter    = bson.M{"_id": branchID}
+		result    models.BranchBSON
+	)
+
+	err := branchCol.FindOne(ctx, filter).Decode(&result)
+	if err!=nil{
+		return result
 	}
 	return result
 }
 
-//PatchBranch ...
-func PatchBranch(idBranch interface{}) *mongo.UpdateResult {
+// BranchValidateID ...
+func BranchValidateID(branchID primitive.ObjectID) bool {
 	var (
-		branchCollection = database.ConnectCol("branches")
-		ctx              = context.Background()
+		branchCol = database.BranchCol()
+		ctx       = context.Background()
+		filter    = bson.M{"_id": branchID}
 	)
-	filter := bson.M{"_id": idBranch}
-	update := bson.M{"$set": bson.M{"active": true}}
-	result, err := branchCollection.UpdateOne(ctx, filter, update)
-	if err != nil {
-		fmt.Println(err)
-	}
-	return result
-}
 
-//PutBranch ...
-func PutBranch(idBranch interface{}, body models.PutBranch) *mongo.UpdateResult {
-	var (
-		branchCollection = database.ConnectCol("branches")
-		ctx              = context.Background()
-	)
-	filter := bson.M{"_id": idBranch}
-	update := bson.M{"$set": bson.M{
-		"name":     body.Name,
-		"address":  body.Address,
-		"active":   body.Active,
-		"updateAt": time.Now(),
-	}}
-	result, err := branchCollection.UpdateOne(ctx, filter, update)
-	if err != nil {
-		fmt.Println(err)
+	err := branchCol.FindOne(ctx, filter)
+	if err != nil{
+		return false
 	}
-	return result
-}
-
-//GetNameBranchById ....
-func GetNameBranchById(id interface{}) string {
-	var (
-		branchCollection = database.ConnectCol("branches")
-		ctx              = context.Background()
-		result           = struct {
-			Name string `bson:"name"`
-		}{}
-		filter = bson.M{"_id": id}
-	)
-	err := branchCollection.FindOne(ctx, filter).Decode(&result)
-	if err != nil {
-		log.Fatal(err)
-	}
-	return result.Name
-}
-
-//GetIdBranchByName .....
-func GetIdBranchByName(NameBranch interface{}) primitive.ObjectID {
-
-	var (
-		branchCollection = database.ConnectCol("branches")
-		ctx              = context.Background()
-		result           = struct {
-			ID primitive.ObjectID `bson:"_id"`
-		}{}
-		filter = bson.M{"name": NameBranch}
-	)
-	err := branchCollection.FindOne(ctx, filter).Decode(&result)
-	if err != nil {
-		log.Fatal(err)
-	}
-	return result.ID
+	return true
 }

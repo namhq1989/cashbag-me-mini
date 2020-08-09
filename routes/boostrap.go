@@ -5,9 +5,8 @@ import(
 )
 // Boostrap ...
 func Boostrap(e *echo.Echo)  {
-
 	Branch(e.Group("/branches"))
 	Company(e.Group("/companies"))
 	Transaction(e.Group("/transactions"))
-	TranAnalytic(e.Group("/tranAnalytic"))
+	TranAnalytic(e.Group("/transaction_analytic"))
 }

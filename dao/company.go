@@ -7,7 +7,6 @@ import (
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
 
 	"cashbag-me-mini/models"
 	"cashbag-me-mini/modules/database"
@@ -20,49 +19,60 @@ func CompanyCreate(doc models.CompanyBSON) (models.CompanyBSON, error) {
 		ctx        = context.Background()
 	)
 
-	//Add update information
+	// Add update information
 	if doc.ID.IsZero() {
 		doc.ID = primitive.NewObjectID()
 	}
-	doc.UpdatedAt = time.Now()
+	doc.CreatedAt = time.Now()
 
+	// Insert
 	_, err := companyCol.InsertOne(ctx, doc)
+
 	return doc, err
 }
 
 // CompanyList  ...
-func CompanyList() ([]models.CompanyBSON ,error) {
+func CompanyList() ([]models.CompanyBSON, error) {
 	var (
 		companyCol = database.CompanyCol()
 		ctx        = context.Background()
-		result     = make([]models.CompanyBSON,0)
+		result     = make([]models.CompanyBSON, 0)
 	)
 
+	// Find
 	cursor, err := companyCol.Find(ctx, bson.M{})
+
+	// Close cursor
 	defer cursor.Close(ctx)
+
+	// Set result
 	cursor.All(ctx, &result)
+
 	return result, err
 }
 
 //CompanyChangeActiveStatus func to ...
-func CompanyChangeActiveStatus(id primitive.ObjectID,status models.CompanyUpdate) (models.CompanyUpdate,error) {
+func CompanyChangeActiveStatus(id primitive.ObjectID) (models.CompanyBSON, error) {
 	var (
 		companyCol = database.CompanyCol()
 		ctx        = context.Background()
-		filter = bson.M{"_id": id}
-		update = bson.M{"$set": bson.M{"active": !(status.Active)}}
+		filter     = bson.M{"_id": id}
+		update     = bson.M{"$set": bson.M{"active": true}}
 	)
-	
+
+	doc := CompanyFindByID(id)
+
 	_, err := companyCol.UpdateOne(ctx, filter, update)
-	log.Println("status 1",status)
-	return status,err
+	return doc, err
 }
 
-//PutCompany  func to ...
-func PutCompany(idCompany interface{}, body models.CompanyUpdate) *mongo.UpdateResult {
-	var companyCol = database.CompanyCol()
-	filter := bson.M{"_id": idCompany}
-	update := bson.M{"$set": bson.M{
+//CompanyUpdate ...
+func CompanyUpdate(CompanyID primitive.ObjectID, body models.CompanyUpdatePayload) (models.CompanyBSON, error) {
+	// Set filter
+	filter := bson.M{"_id": CompanyID}
+
+	// Add information for update
+	updateData := bson.M{"$set": bson.M{
 		"name":           body.Name,
 		"address":        body.Address,
 		"active":         body.Active,
@@ -70,45 +80,41 @@ func PutCompany(idCompany interface{}, body models.CompanyUpdate) *mongo.UpdateR
 		"loyaltyProgram": body.LoyaltyProgram,
 		"updateAt":       time.Now(),
 	}}
-	result, err := companyCol.UpdateOne(context.TODO(), filter, update)
-	if err != nil {
-		log.Fatal(err)
+
+	err := CompanyUpdateByID(filter, updateData)
+	doc := CompanyFindByID(CompanyID)
+
+	return doc, err
+}
+
+// CompanyUpdateByID ...
+func CompanyUpdateByID(filter bson.M, updateData bson.M) error {
+	var (
+		companyCol = database.CompanyCol()
+		ctx        = context.Background()
+	)
+
+	_, err := companyCol.UpdateOne(ctx, filter, updateData)
+
+	return err
+}
+
+//CompanyFindByID func ...
+func CompanyFindByID(id primitive.ObjectID) models.CompanyBSON {
+	var (
+		companyCol = database.CompanyCol()
+		ctx        = context.Background()
+		result     = models.CompanyBSON{}
+		filter     = bson.M{"_id": id}
+	)
+
+	//Find
+	err := companyCol.FindOne(ctx, filter).Decode(&result)
+	if err!=nil{
+		log.Println(err)
 	}
+
 	return result
-}
-
-//GetNameCompanyById ....
-func GetNameCompanyById(id interface{}) string {
-	var (
-		companyCol = database.CompanyCol()
-		ctx        = context.Background()
-		result     = struct {
-			Name string `bson:"name"`
-		}{}
-		filter = bson.M{"_id": id}
-	)
-	err := companyCol.FindOne(ctx, filter).Decode(&result)
-	if err != nil {
-		log.Fatal(err)
-	}
-	return result.Name
-}
-
-// GetIdCompanyByName ...
-func GetIdCompanyByName(nameCompany interface{}) primitive.ObjectID {
-	var (
-		companyCol = database.CompanyCol()
-		ctx        = context.Background()
-		result     = struct {
-			ID primitive.ObjectID `bson:"_id"`
-		}{}
-		filter = bson.M{"name": nameCompany}
-	)
-	err := companyCol.FindOne(ctx, filter).Decode(&result)
-	if err != nil {
-		log.Fatal(err)
-	}
-	return result.ID
 }
 
 //GetLoyaltyProgramByCompany func ...

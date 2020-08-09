@@ -6,13 +6,28 @@ import (
 
 //collection name
 const (
-	company = "companies"
+	company              = "companies"
+	branch               = "branches"
+	transaction          = "transactions"
+	transactionAnalytic = "transactionAnalyctic"
 )
-// ConnectCol ...
-func ConnectCol(nameCol string) *mongo.Collection {
-	return DB.Collection(nameCol)
-}
+
 // CompanyCol ...
-func CompanyCol() *mongo.Collection{
-	return DB.Collection(company)
+func CompanyCol() *mongo.Collection {
+	return db.Collection(company)
+}
+
+// BranchCol ...
+func BranchCol() *mongo.Collection {
+	return db.Collection(branch)
+}
+
+// TranscationCol ...
+func TransactionCol() *mongo.Collection {
+	return db.Collection(transaction)
+}
+
+// transactionAnalycticCol ...
+func TransactionAnalyticCol() *mongo.Collection {
+	return db.Collection(transactionAnalytic)
 }

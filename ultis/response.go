@@ -3,7 +3,7 @@ package ultis
 import (
 	"net/http"
 
-	"github.com/labstack/echo"
+	"github.com/labstack/echo/v4"
 )
 
 // Response ...
@@ -16,14 +16,14 @@ func generateResponse(data interface{}, message string) Response {
 	}
 }
 
-// Response200 .....
+// Response200 success.....
 func Response200(c echo.Context, data interface{}, message string) error {
 	if message == "" {
 		message = " Thanh Cong!"
 	}
 	return c.JSON(http.StatusOK, generateResponse(data, message))
 }
-// Response400 ...
+// Response400 bad request...
 func Response400(c echo.Context, data interface{}, message string) error {
 	if message == "" {
 		message = "Du lieu khong hop le "

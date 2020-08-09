@@ -13,11 +13,11 @@ import (
 )
 
 var (
-	DB *mongo.Database
+	db *mongo.Database
 )
 
 //Connect ...
-func Connect(dbName string) *mongo.Database {
+func Connect(dbName string) {
 	cfg := config.GetEnv()
 	//connect
 	client, err := mongo.NewClient(options.Client().ApplyURI(cfg.DatabaseURI))
@@ -33,7 +33,11 @@ func Connect(dbName string) *mongo.Database {
 		fmt.Println(err)
 	}
 
-	DB = client.Database(dbName)
+	db = client.Database(dbName)
 	fmt.Println("Connected to db:", dbName)
-	return DB
+}
+
+// GetDB ...
+func GetDB() *mongo.Database {
+	return db
 }

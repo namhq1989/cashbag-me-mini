@@ -1,40 +1,81 @@
 package controllers
 
 import (
+	"github.com/labstack/echo/v4"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+
 	"cashbag-me-mini/models"
 	"cashbag-me-mini/services"
-	"net/http"
-
-	"github.com/labstack/echo"
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	"cashbag-me-mini/ultis"
 )
 
-//ListBranch ...
-func ListBranch(c echo.Context) error {
-	Branches := services.ListBranch()
-	return c.JSON(http.StatusOK, Branches)
+// BranchList ...
+func BranchList(c echo.Context) error {
+	// Process data
+	rawData, err := services.BranchList()
+
+	// if err
+	if err != nil {
+		return ultis.Response400(c, nil, err.Error())
+	}
+
+	// Success
+	return ultis.Response200(c, rawData, "")
 }
 
-//CreateBranch ...
-func CreateBranch(c echo.Context) error {
-	body := c.Get("body").(*models.PostBranch)
-	result := services.CreateBranch(*body)
-	return c.JSON(http.StatusOK, result)
+// BranchCreate ...
+func BranchCreate(c echo.Context) error {
+	var (
+		body = c.Get("body").(*models.BranchCreatePayload)
+	)
+
+	// Process data
+	rawData, err := services.BranchCreate(*body)
+
+	// if err
+	if err != nil {
+		return ultis.Response400(c, nil, err.Error())
+	}
+
+	// Success
+	return ultis.Response200(c, rawData, "")
 }
 
-//PatchBranch ...
-func PatchBranch(c echo.Context) error {
-	id := c.Param("id")
-	idBranch, _ := primitive.ObjectIDFromHex(id)
-	result := services.PatchBranch(idBranch)
-	return c.JSON(http.StatusOK, result)
+// BranchChangeActiveStatus ...
+func BranchChangeActiveStatus(c echo.Context) error {
+	var (
+		id          = c.Param("id")
+		branchID, _ = primitive.ObjectIDFromHex(id)
+	)
+
+	// Process data
+	rawData, err := services.BranchChangeActiveStatus(branchID)
+
+	// if err
+	if err != nil {
+		return ultis.Response400(c, nil, err.Error())
+	}
+
+	// Success
+	return ultis.Response200(c, rawData, "")
 }
 
-//PutBranch ...
-func PutBranch(c echo.Context) error {
-	id := c.Param("id")
-	idBranch, _ := primitive.ObjectIDFromHex(id)
-	body := c.Get("body").(*models.PutBranch)
-	result := services.PutBranch(idBranch, *body)
-	return c.JSON(http.StatusOK, result)
+// BranchUpdate ...
+func BranchUpdate(c echo.Context) error {
+	var (
+		id          = c.Param("id")
+		body        = c.Get("body").(*models.BranchUpdateBPayload)
+		branchID, _ = primitive.ObjectIDFromHex(id)
+	)
+
+	// Process dataanchID
+	rawData, err := services.CompanyUpdate(branchID, *body)
+
+	// if err
+	if err != nil {
+		return ultis.Response400(c, nil, err.Error())
+	}
+
+	// Success
+	return ultis.Response200(c, rawData, "")
 }
