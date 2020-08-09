@@ -31,7 +31,7 @@ var idActive = primitive.NewObjectID()
 var idUpdate = primitive.NewObjectID()
 
 func (s BranchSuite) SetupSuite() {
-	database.Connectdb("CashBag-test")
+	database.Connect("CashBag-test")
 	addRecord(idActive) // for test Patch
 	addRecord(idUpdate) // for test Put
 	addCompany()        //for test Put
@@ -177,7 +177,7 @@ func addCompany() {
 			Balance:        10000000,
 			LoyaltyProgram: 10,
 			Active:         false,
-			CreateAt:       time.Now(),
+			CreatedAt:       time.Now(),
 		}
 	)
 	database.DB.Collection("companies").InsertOne(context.TODO(), company)
