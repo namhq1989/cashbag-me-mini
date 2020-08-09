@@ -1,11 +1,11 @@
 package dao
 
 import (
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
-
 	"context"
 	"time"
+
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 
 	"cashbag-me-mini/models"
 	"cashbag-me-mini/modules/database"
@@ -31,14 +31,14 @@ func BranchList() ([]models.BranchBSON, error) {
 	return result, err
 }
 
-// BranchCreate ....
+// BranchCreate ...
 func BranchCreate(doc models.BranchBSON) (models.BranchBSON, error) {
 	var (
 		branchCol = database.BranchCol()
 		ctx       = context.Background()
 	)
 
-	// Add update information
+	// Add information
 	if doc.ID.IsZero() {
 		doc.ID = primitive.NewObjectID()
 	}
@@ -50,15 +50,13 @@ func BranchCreate(doc models.BranchBSON) (models.BranchBSON, error) {
 	return doc, err
 }
 
-//BranchChangeActiveStatus func to ...
+//BranchChangeActiveStatus ...
 func BranchChangeActiveStatus(branchID primitive.ObjectID) (models.BranchBSON, error) {
 	var (
 		active bool
 		filter = bson.M{"_id": branchID}
+		doc, _ = BranchFindByID(branchID)
 	)
-
-	// Find Branch
-	doc := BranchDocByID(branchID)
 
 	// Change Active status
 	active = !(doc.Active)
@@ -84,7 +82,7 @@ func BranchUpdate(branchID primitive.ObjectID, body models.BranchBSON) (models.B
 	err := BranchUpdateByID(filter, updateData)
 
 	// Get doc
-	doc := BranchDocByID(branchID)
+	doc, _ := BranchFindByID(branchID)
 
 	return doc, err
 }
@@ -101,8 +99,8 @@ func BranchUpdateByID(filter bson.M, updateData bson.M) error {
 	return err
 }
 
-// BranchDocByID ...
-func BranchDocByID(branchID primitive.ObjectID) models.BranchBSON {
+// BranchFindByID ...
+func BranchFindByID(branchID primitive.ObjectID) (models.BranchBSON, error) {
 	var (
 		branchCol = database.BranchCol()
 		ctx       = context.Background()
@@ -110,24 +108,8 @@ func BranchDocByID(branchID primitive.ObjectID) models.BranchBSON {
 		result    models.BranchBSON
 	)
 
+	// Find
 	err := branchCol.FindOne(ctx, filter).Decode(&result)
-	if err!=nil{
-		return result
-	}
-	return result
-}
 
-// BranchValidateID ...
-func BranchValidateID(branchID primitive.ObjectID) bool {
-	var (
-		branchCol = database.BranchCol()
-		ctx       = context.Background()
-		filter    = bson.M{"_id": branchID}
-	)
-
-	err := branchCol.FindOne(ctx, filter)
-	if err != nil{
-		return false
-	}
-	return true
+	return result, err
 }

@@ -1,12 +1,12 @@
 package routes
 
 import (
-	"cashbag-me-mini/controllers"
+	"github.com/labstack/echo/v4"
 
-	"github.com/labstack/echo"
+	"cashbag-me-mini/controllers"
 )
 
 // TransactionAnalytic ...
 func TransactionAnalytic(g *echo.Group) {
-	g.GET("/", controllers.TransactionAnalytic)
+	g.GET("/", controllers.TransactionAnalyticList)
 }

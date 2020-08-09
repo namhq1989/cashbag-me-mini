@@ -1,12 +1,13 @@
 package routes
 
-import(
-	"github.com/labstack/echo"
+import (
+	"github.com/labstack/echo/v4"
 )
+
 // Boostrap ...
-func Boostrap(e *echo.Echo)  {
+func Boostrap(e *echo.Echo) {
 	Branch(e.Group("/branches"))
 	Company(e.Group("/companies"))
 	Transaction(e.Group("/transactions"))
-	TranAnalytic(e.Group("/transaction_analytic"))
+	TransactionAnalytic(e.Group("/transactionanalytics"))
 }

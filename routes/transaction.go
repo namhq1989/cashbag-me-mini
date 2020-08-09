@@ -1,13 +1,13 @@
 package routes
 
 import (
+	"github.com/labstack/echo/v4"
+
 	"cashbag-me-mini/controllers"
 	"cashbag-me-mini/validations"
-	
-	"github.com/labstack/echo"
 )
 
 //Transaction func ...
 func Transaction(g *echo.Group) {
-	g.POST("", controllers.CreateTransaction, validations.CreateTransaction)
+	g.POST("", controllers.TransactionCreate, validations.TransactionCreate)
 }

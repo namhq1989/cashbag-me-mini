@@ -1,27 +1,36 @@
 package dao
 
 import (
+	"context"
+	"time"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
+
 	"cashbag-me-mini/models"
 	"cashbag-me-mini/modules/database"
-	"context"
-	"log"
-
-	"go.mongodb.org/mongo-driver/mongo"
 )
 
-//CreateTransaction ...
-func CreateTransaction(transaction models.TransactionBSON, balance float64) *mongo.InsertOneResult {
+// TransactionCreate ....
+func TransactionCreate(doc models.TransactionBSON, balance float64) (models.TransactionBSON, error) {
 	var (
 		collection = database.TransactionCol()
 		ctx        = context.Background()
 	)
-	balanceCurrent := balance - transaction.Commission
-	result, err := collection.InsertOne(ctx, transaction)
-	if err != nil {
-		log.Fatal(err)
-	}
-	UpdateBalance(transaction.CompanyID, balanceCurrent)
-	TransactionAnalyticHandle(transaction)
 
-	return result
+	// Add update information
+	if doc.ID.IsZero() {
+		doc.ID = primitive.NewObjectID()
+	}
+	doc.CreatedAt = time.Now()
+
+	// Insert
+	_, err := collection.InsertOne(ctx, doc)
+
+	if err == nil {
+		balanceCurrent := balance - doc.Commission
+		CompanyUpdateBalance(doc.CompanyID, balanceCurrent)
+		TransactionAnalyticHandle(doc)
+	}
+
+	return doc, err
 }

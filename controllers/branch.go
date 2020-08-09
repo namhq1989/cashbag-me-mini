@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"github.com/labstack/echo/v4"
+
 	"go.mongodb.org/mongo-driver/bson/primitive"
 
 	"cashbag-me-mini/models"
@@ -68,8 +69,8 @@ func BranchUpdate(c echo.Context) error {
 		branchID, _ = primitive.ObjectIDFromHex(id)
 	)
 
-	// Process dataanchID
-	rawData, err := services.CompanyUpdate(branchID, *body)
+	// Process data
+	rawData, err := services.BranchUpdate(branchID, *body)
 
 	// if err
 	if err != nil {

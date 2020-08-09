@@ -1,6 +1,8 @@
 package services
 
 import (
+	"errors"
+
 	"go.mongodb.org/mongo-driver/bson/primitive"
 
 	"cashbag-me-mini/dao"
@@ -10,9 +12,9 @@ import (
 // BranchList ...
 func BranchList() ([]models.BranchDetail, error) {
 	var (
-		result      []models.BranchDetail
-		nameCompany string
+		result []models.BranchDetail
 	)
+
 	// Find
 	docs, err := dao.BranchList()
 
@@ -25,11 +27,12 @@ func BranchList() ([]models.BranchDetail, error) {
 	return result, err
 }
 
-//ConvertToBranchDetail ...
+// ConvertToBranchDetail ...
 func ConvertToBranchDetail(branch models.BranchBSON) models.BranchDetail {
 	var (
 		companyBrief models.CompanyBrief
-		nameCompany  = dao.CompanyFindByID(branch.CompanyID).Name
+		company, _   = dao.CompanyFindByID(branch.CompanyID)
+		nameCompany  = company.Name
 	)
 
 	// Add information for companyBrief
@@ -53,10 +56,18 @@ func ConvertToBranchDetail(branch models.BranchBSON) models.BranchDetail {
 // BranchCreate ...
 func BranchCreate(body models.BranchCreatePayload) (models.BranchBSON, error) {
 	var (
-		branch = BranchCreatePayloadToBSON(body)
+		branch       models.BranchBSON
+		companyID, _ = primitive.ObjectIDFromHex(body.CompanyID)
+		company, _   = dao.CompanyFindByID(companyID)
 	)
 
+	// Validate CompanyID
+	if company.ID.IsZero() {
+		return branch, errors.New("Khong tim thay Cong Ty ")
+	}
+
 	// Create Branch
+	branch = BranchCreatePayloadToBSON(body)
 	doc, err := dao.BranchCreate(branch)
 
 	return doc, err
@@ -64,8 +75,11 @@ func BranchCreate(body models.BranchCreatePayload) (models.BranchBSON, error) {
 
 // BranchCreatePayloadToBSON ...
 func BranchCreatePayloadToBSON(branchCreatePayload models.BranchCreatePayload) models.BranchBSON {
+	var (
+		companyID, _ = primitive.ObjectIDFromHex(branchCreatePayload.CompanyID)
+	)
 	result := models.BranchBSON{
-		CompanyID: branchCreatePayload.CompanyID,
+		CompanyID: companyID,
 		Name:      branchCreatePayload.Name,
 		Address:   branchCreatePayload.Address,
 		Active:    branchCreatePayload.Active,
@@ -86,6 +100,7 @@ func BranchUpdate(BranchID primitive.ObjectID, body models.BranchUpdateBPayload)
 	return doc, err
 }
 
+// BranchUpdatePayloadToBSON ...
 func BranchUpdatePayloadToBSON(branchUpdatePayload models.BranchUpdateBPayload) models.BranchBSON {
 	result := models.BranchBSON{
 		Name:    branchUpdatePayload.Name,

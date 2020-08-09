@@ -6,10 +6,10 @@ import (
 	"log"
 	"time"
 
-	"cashbag-me-mini/config"
-
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+
+	"cashbag-me-mini/config"
 )
 
 var (

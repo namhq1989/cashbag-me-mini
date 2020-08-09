@@ -10,8 +10,8 @@ type (
 	// TransactionAnalyticBSON ...
 	TransactionAnalyticBSON struct {
 		ID               primitive.ObjectID `bson:"_id"`
-		CompanyID        primitive.ObjectID `bson:"companyId"`
-		BranchID         primitive.ObjectID `bson:"branchId"`
+		CompanyID        primitive.ObjectID `bson:"companyID"`
+		BranchID         primitive.ObjectID `bson:"branchID"`
 		Date             time.Time          `bson:"date"`
 		TotalTransaction int                `bson:"totalTransaction"`
 		TotalRevenue     float64            `bson:"totalRevenue" `
@@ -22,8 +22,8 @@ type (
 	// TransactionAnalyticDetail ...
 	TransactionAnalyticDetail struct {
 		ID               primitive.ObjectID `json:"_id"`
-		Company          CompanyBrief       `json:"companyId"`
-		Branch           BranchBrief        `json:"branchId"`
+		Company          CompanyBrief       `json:"companyID"`
+		Branch           BranchBrief        `json:"branchID"`
 		Date             time.Time          `json:"date"`
 		TotalTransaction int                `json:"totalTransaction"`
 		TotalRevenue     float64            `json:"totalRevenue" `

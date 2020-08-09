@@ -1,20 +1,20 @@
 package main
 
 import (
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
+
 	"cashbag-me-mini/config"
 	"cashbag-me-mini/modules/database"
 	"cashbag-me-mini/modules/redis"
 	"cashbag-me-mini/modules/zookeeper"
 	"cashbag-me-mini/routes"
-
-	"github.com/labstack/echo/middleware"
-	"github.com/labstack/echo/v4"
 )
 
 func init() {
 	database.Connect("CashBag")
-	redis.ConnectRDB()
-	zookeeper.ConnectZookeeper()
+	redis.Connect()
+	zookeeper.Connect()
 }
 func main() {
 

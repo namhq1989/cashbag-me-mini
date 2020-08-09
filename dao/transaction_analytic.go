@@ -1,12 +1,12 @@
 package dao
 
 import (
+	"context"
 	"log"
+	"time"
+
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-
-	"context"
-	"time"
 
 	"cashbag-me-mini/models"
 	"cashbag-me-mini/modules/database"
@@ -50,11 +50,11 @@ func TransactionAnalyticFilter(transaction models.TransactionBSON) (models.Trans
 	var (
 		transactionAnalyticCol = database.TransactionAnalyticCol()
 		ctx                    = context.Background()
-		startOfDate            = BeginningOfDay(transaction.CreateAt)
+		startOfDate            = BeginningOfDay(transaction.CreatedAt)
 		tranAnalytic           models.TransactionAnalyticBSON
 		filter                 = bson.M{
-			"companyId": transaction.CompanyID,
-			"branchId":  transaction.BranchID,
+			"companyID": transaction.CompanyID,
+			"branchID":  transaction.BranchID,
 			"date":      startOfDate,
 		}
 	)
@@ -74,7 +74,7 @@ func TransactionAnalyticCreate(transaction models.TransactionBSON) {
 	var (
 		transactionAnalyticCol = database.TransactionAnalyticCol()
 		ctx                    = context.Background()
-		startOfDate            = BeginningOfDay(transaction.CreateAt)
+		startOfDate            = BeginningOfDay(transaction.CreatedAt)
 	)
 
 	// Set transactionAnalytic
@@ -89,8 +89,8 @@ func TransactionAnalyticCreate(transaction models.TransactionBSON) {
 		UpdateAt:         time.Now(),
 	}
 
-	_,err:= transactionAnalyticCol.InsertOne(ctx, transactionAnalytic)
-
+	// Create
+	_, err := transactionAnalyticCol.InsertOne(ctx, transactionAnalytic)
 	if err != nil {
 		log.Println(err)
 	}
@@ -98,6 +98,7 @@ func TransactionAnalyticCreate(transaction models.TransactionBSON) {
 
 // TransactionAnalyticUpdate ...
 func TransactionAnalyticUpdate(transactionAnalytic models.TransactionAnalyticBSON, transaction models.TransactionBSON) {
+
 	// Set for update Transaction Analytic
 	transactionAnalytic.TotalTransaction++
 	transactionAnalytic.TotalRevenue += transaction.Amount
@@ -112,11 +113,10 @@ func TransactionAnalyticUpdate(transactionAnalytic models.TransactionAnalyticBSO
 		"updateAt":         time.Now(),
 	}}
 
+	// Update
 	err := TransactionAnalyticUpdateByID(filter, update)
-
 	if err != nil {
 		log.Println(err)
-	//	return ultis.Response400(c, nil, "Khong The Tao Update duoc TransactionAnalytic")
 	}
 }
 
@@ -132,7 +132,7 @@ func TransactionAnalyticUpdateByID(filter bson.M, updateData bson.M) error {
 	return err
 }
 
-//BeginningOfDay ...
+// BeginningOfDay ...
 func BeginningOfDay(t time.Time) time.Time {
 	return time.Date(t.Year(), t.Month(), t.Day(), 0, 0, 0, 0, time.UTC)
 }

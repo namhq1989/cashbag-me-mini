@@ -1,10 +1,14 @@
 package validations
 
 import (
-	"cashbag-me-mini/dao"
 	"github.com/asaskevich/govalidator"
 	"github.com/labstack/echo/v4"
 
+	"log"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
+
+	"cashbag-me-mini/dao"
 	"cashbag-me-mini/models"
 	"cashbag-me-mini/ultis"
 )
@@ -12,9 +16,16 @@ import (
 // BranchCreate ...
 func BranchCreate(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		doc := new(models.BranchCreatePayload)
+		var (
+			doc = new(models.BranchCreatePayload)
+		)
+
+		// ValidateStruct
 		c.Bind(doc)
+		log.Println(doc)
+
 		_, err := govalidator.ValidateStruct(doc)
+		log.Println(err)
 
 		//if err
 		if err != nil {
@@ -23,7 +34,6 @@ func BranchCreate(next echo.HandlerFunc) echo.HandlerFunc {
 
 		//Success
 		c.Set("body", doc)
-
 		return next(c)
 	}
 }
@@ -31,7 +41,11 @@ func BranchCreate(next echo.HandlerFunc) echo.HandlerFunc {
 // BranchUpdate ...
 func BranchUpdate(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		doc := new(models.BranchUpdateBPayload)
+		var (
+			doc = new(models.BranchUpdateBPayload)
+		)
+
+		// ValidateStruct
 		c.Bind(doc)
 		_, err := govalidator.ValidateStruct(doc)
 
@@ -42,26 +56,23 @@ func BranchUpdate(next echo.HandlerFunc) echo.HandlerFunc {
 
 		//Success
 		c.Set("body", doc)
-		
 		return next(c)
 	}
 }
 
-// BranchCheckID ...
-func BranchCheckID(next echo.HandlerFunc) echo.HandlerFunc {
+// BranchValidateID ...
+func BranchValidateID(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		var(
-			branchID          = c.Param("id")
+		var (
+			id          = c.Param("id")
+			branchID, _ = primitive.ObjectIDFromHex(id)
+			branch, _   = dao.BranchFindByID(branchID)
 		)
-
-		check := dao.BranchValidateID(branchID)
-
-		//if err
-		if check == false {
+		// Validate ID
+		if branch.ID.IsZero() {
 			return ultis.Response400(c, nil, "ID khong hop le")
 		}
 
 		return next(c)
 	}
 }
-
