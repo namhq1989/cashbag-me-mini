@@ -7,8 +7,8 @@ import (
 	"cashbag-me-mini/models"
 )
 
-//TranAnalytic ...
-func TranAnalytic(date string) []models.TransactionAnalyticDetail {
+// TransactionAnalyticList ...
+func TransactionAnalyticList(date string) ([]models.TransactionAnalyticDetail, error) {
 	var (
 		result   []models.TransactionAnalyticDetail
 		dateType = now.MustParse(date)
@@ -16,44 +16,46 @@ func TranAnalytic(date string) []models.TransactionAnalyticDetail {
 	)
 
 	// Find
-	docs, err := dao.TransactionAnalytic(beginDay)
+	transactionAnalyticList, err := dao.TransactionAnalytic(beginDay)
 
 	// Convert to TransactionAnalyticDetail
-	for _, item := range tranAnalytics {
-		tranAnalytic := ConvertToTranAnalyticDetail(item)
-		result = append(result, tranAnalytic)
+	for _, item := range transactionAnalyticList {
+		transactionAnalytic := ConvertToTranAnalyticDetail(item)
+		result = append(result, transactionAnalytic)
 	}
 
 	return result, err
 }
 
-//ConvertToTranAnalyticDetail ...
-func ConvertToTranAnalyticDetail(x models.TransactionAnalyticBSON) models.TransactionAnalyticDetail {
-	var(
-		nameCompany = dao.GetNameCompanyById(x.CompanyId).Name
-		companyBrief  models.CompanyBrief
-		nameBranch = dao.BranchDocById(x.BranchId).Name
-		brannchBrief  models.BranchBrief
+// ConvertToTranAnalyticDetail ...
+func ConvertToTranAnalyticDetail(doc models.TransactionAnalyticBSON) models.TransactionAnalyticDetail {
+	var (
+		company, _   = dao.CompanyFindByID(doc.CompanyID)
+		nameCompany  = company.Name
+		companyBrief models.CompanyBrief
+		branch, _    = dao.BranchFindByID(doc.BranchID)
+		nameBranch   = branch.Name
+		brannchBrief models.BranchBrief
 	)
 
 	// Add information companyBrief
-	companyBrief.ID = x.CompanyID
+	companyBrief.ID = doc.CompanyID
 	companyBrief.Name = nameCompany
 
 	// Add information branchBrief
-	brannchBrief.ID = x.BranchID
-	tbrannchBrief.Name = nameBranch
+	brannchBrief.ID = doc.BranchID
+	brannchBrief.Name = nameBranch
 
 	// Transaction Analytic Detail
-	result := models.TranAnalyticDetail{
-		ID:               x.ID,
-		Company:		companyBrief,
-		Branch:			brannchBrief,
-		Date:             x.Date,
-		TotalTransaction: x.TotalTransaction,
-		TotalRevenue:     x.TotalRevenue,
-		TotalCommission:  x.TotalCommission,
-		UpdateAt:         x.UpdateAt,
+	result := models.TransactionAnalyticDetail{
+		ID:               doc.ID,
+		Company:          companyBrief,
+		Branch:           brannchBrief,
+		Date:             doc.Date,
+		TotalTransaction: doc.TotalTransaction,
+		TotalRevenue:     doc.TotalRevenue,
+		TotalCommission:  doc.TotalCommission,
+		UpdateAt:         doc.UpdateAt,
 	}
 	return result
 }

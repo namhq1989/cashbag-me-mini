@@ -1,9 +1,9 @@
 package ultis
 
 import (
-	"net/http"
-
 	"github.com/labstack/echo/v4"
+
+	"net/http"
 )
 
 // Response ...
@@ -23,11 +23,11 @@ func Response200(c echo.Context, data interface{}, message string) error {
 	}
 	return c.JSON(http.StatusOK, generateResponse(data, message))
 }
-// Response400 bad request...
+
+// Response400 badrequest ...
 func Response400(c echo.Context, data interface{}, message string) error {
 	if message == "" {
 		message = "Du lieu khong hop le "
 	}
 	return c.JSON(http.StatusBadRequest, generateResponse(data, message))
-
 }

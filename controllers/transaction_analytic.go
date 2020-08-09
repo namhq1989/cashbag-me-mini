@@ -1,20 +1,20 @@
 package controllers
 
 import (
-	"cashbag-me-mini/services"
-	"net/http"
+	"github.com/labstack/echo/v4"
 
-	"github.com/labstack/echo"
+	"cashbag-me-mini/services"
+	"cashbag-me-mini/ultis"
 )
 
-//TranAnalytic ...
-func TransactionAnalytic(c echo.Context) error {
-	var(
+// TransactionAnalyticList ...
+func TransactionAnalyticList(c echo.Context) error {
+	var (
 		date = c.QueryParam("date")
 	)
-	
+
 	// Process data
-	rawData, err := services.TransactionAnalytic(date)
+	rawData, err := services.TransactionAnalyticList(date)
 
 	// if err
 	if err != nil {

@@ -47,6 +47,18 @@ type (
 		Active         bool    `json:"active"`
 	}
 
+	// CompanyBrief ...
+	CompanyBrief struct {
+		ID   primitive.ObjectID `json:"_id"`
+		Name string             `json:"name"`
+	}
+
+	// CompanyStatus ...
+	CompanyStatus struct {
+		Active bool `json:"active"`
+	}
+
+	// IFCompany ...
 	IFCompany struct {
 		ID             primitive.ObjectID `bson:"_id"`
 		Balance        float64            `bson:"balance"`

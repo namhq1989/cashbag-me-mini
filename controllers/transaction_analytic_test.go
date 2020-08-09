@@ -18,7 +18,7 @@ import (
 // TranAnalyticSuite ...
 type TranAnalyticSuite struct {
 	suite.Suite
-	tranAnalytics []models.TranAnalyticBSON
+	tranAnalTraytics []models.TransactionAnalyticBSON
 }
 
 // SetupSuite ...

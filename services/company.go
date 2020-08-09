@@ -13,7 +13,7 @@ func CompanyCreate(body models.CompanyCreatePayload) (models.CompanyBSON, error)
 		company = CompanyCreatePayloadToBSON(body)
 	)
 
-	// Create Company
+	// Create company
 	doc, err := dao.CompanyCreate(company)
 
 	return doc, err
@@ -24,75 +24,72 @@ func CompanyList() ([]models.CompanyDetail, error) {
 	var (
 		result []models.CompanyDetail
 	)
+
 	// Find
 	doc, err := dao.CompanyList()
 
 	// Convert to CompanyDetail
 	for _, item := range doc {
-		company := convertToCompanyDetail(item)
+		company := ConvertToCompanyDetail(item)
 		result = append(result, company)
 	}
 
 	return result, err
 }
 
-// CompanyChangeActiveStatus ...
-func CompanyChangeActiveStatus(CompanyID primitive.ObjectID) (models.CompanyBSON, error) {
-	// Change Active Status
-	doc, err := dao.CompanyChangeActiveStatus(CompanyID)
+// CompanyChangeActiveStatus . ...
+func CompanyChangeActiveStatus(id primitive.ObjectID) (models.CompanyBSON, error) {
+	// Change active
+	doc, err := dao.CompanyChangeActiveStatus(id)
 
 	return doc, err
 }
 
 // CompanyUpdate ....
-func CompanyUpdate(CompanyID primitive.ObjectID, body models.CompanyUpdatePayload) (models.CompanyBSON, error) {
+func CompanyUpdate(id primitive.ObjectID, body models.CompanyUpdatePayload) (models.CompanyBSON, error) {
 	var (
-		company = CompanyCreatePayloadToBSON(body)
+		company = CompanyUpdatePayloadToBSON(body)
 	)
 
-	// Update Company
-	doc, err := dao.CompanyUpdate(CompanyID, body)
+	// Update company
+	doc, err := dao.CompanyUpdate(id, company)
 
 	return doc, err
 }
 
-// ConvertToCompanyDetail ...
-func ConvertToCompanyDetail(x models.CompanyBSON) models.CompanyDetail {
+// ConvertToCompanyDetail ....
+func ConvertToCompanyDetail(doc models.CompanyBSON) models.CompanyDetail {
 	result := models.CompanyDetail{
-		ID:             x.ID,
-		Name:           x.Name,
-		Address:        x.Address,
-		Balance:        x.Balance,
-		LoyaltyProgram: x.LoyaltyProgram,
-		Active:         x.Active,
-		CreatedAt:      x.CreatedAt,
-		UpdatedAt:      x.UpdatedAt,
+		ID:             doc.ID,
+		Name:           doc.Name,
+		Address:        doc.Address,
+		Balance:        doc.Balance,
+		LoyaltyProgram: doc.LoyaltyProgram,
+		Active:         doc.Active,
+		CreatedAt:      doc.CreatedAt,
+		UpdatedAt:      doc.UpdatedAt,
 	}
-
 	return result
 }
 
-// CompanyCreatePayloadToBSON ...
-func CompanyCreatePayloadToBSON(payloadOfCreateCompany models.Co) models.CompanyBSON {
-
+// CompanyCreatePayloadToBSON ....
+func CompanyCreatePayloadToBSON(body models.CompanyCreatePayload) models.CompanyBSON {
 	result := models.CompanyBSON{
-		Name:    payloadOfCreateCompany.Name,
-		Address: payloadOfCreateCompany.Address,
-		Active:  payloadOfCreateCompany.Active,
+		Name:    body.Name,
+		Address: body.Address,
+		Active:  body.Active,
 	}
-
 	return result
 }
 
-// CompanyUpdatePayloadToBSON ...
-func CompanyUpdatePayloadToBSON(payloadOfUpdateCompany models.PayloadOfUpdateCompany) models.CompanyBSON {
+// CompanyUpdatePayloadToBSON ....
+func CompanyUpdatePayloadToBSON(body models.CompanyUpdatePayload) models.CompanyBSON {
 	result := models.CompanyBSON{
-		Name:           payloadOfUpdateCompany.Name,
-		Address:        payloadOfUpdateCompany.Address,
-		Balance:        payloadOfUpdateCompany.Balance,
-		LoyaltyProgram: payloadOfUpdateCompany.LoyaltyProgram,
-		Active:         payloadOfUpdateCompany.Active,
+		Name:           body.Name,
+		Address:        body.Address,
+		Balance:        body.Balance,
+		LoyaltyProgram: body.LoyaltyProgram,
+		Active:         body.Active,
 	}
-
 	return result
 }

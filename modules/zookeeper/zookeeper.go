@@ -1,26 +1,29 @@
 package zookeeper
 
 import (
+	"github.com/samuel/go-zookeeper/zk"
+
 	"fmt"
 	"time"
 
-	"github.com/samuel/go-zookeeper/zk"
+	"cashbag-me-mini/config"
 )
 
-var ZDB *zk.Conn
+var db *zk.Conn
 
-//ConnectZookeeper ...
-func ConnectZookeeper() {
-	c, _, err := zk.Connect([]string{"127.0.0.1:2181"}, time.Second)
+//Connect ...
+func Connect() {
+	envVars := config.GetEnv()
+	c, _, err := zk.Connect([]string{envVars.ZookeeperURI}, time.Second*30)
 	if err != nil {
 		panic(err)
 	}
-	ZDB = c
+	db = c
 	fmt.Println("Connect Zookeeper")
 }
 
 //GetValueFromZoo ...
 func GetValueFromZoo(path string) string {
-	res, _, _ := ZDB.Get(path)
+	res, _, _ := db.Get(path)
 	return string(res)
 }

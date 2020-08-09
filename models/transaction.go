@@ -7,33 +7,35 @@ import (
 )
 
 type (
-
+	// TransactionBSON ....
 	TransactionBSON struct {
 		ID             primitive.ObjectID `bson:"_id"`
-		CompanyID      primitive.ObjectID `bson:"companyId"`
-		BranchID       primitive.ObjectID `bson:"branchId"`
+		CompanyID      primitive.ObjectID `bson:"companyID"`
+		BranchID       primitive.ObjectID `bson:"branchID"`
 		User           string             `bson:"user"`
 		Amount         float64            `bson:"amount"`
 		Commission     float64            `bson:"commission"`
 		LoyaltyProgram float64            `bson:"loyaltyprogram"`
-		CreateAt       time.Time          `bson:"createAt"`
+		CreatedAt      time.Time          `bson:"createdAt"`
 	}
+
 	//TransactionDetail ...
 	TransactionDetail struct {
 		ID             primitive.ObjectID `json:"_id"`
-		CompanyID      primitive.ObjectID `json:"companyId"`
-		BranchID       primitive.ObjectID `json:"branchId"`
+		CompanyID      primitive.ObjectID `json:"companyID"`
+		BranchID       primitive.ObjectID `json:"branchID"`
 		User           string             `json:"user"`
 		Amount         float64            `json:"amount"`
 		Commission     float64            `json:"commission"`
 		LoyaltyProgram float64            `json:"loyaltyprogram"`
-		CreateAt       time.Time          `json:"createAt"`
+		CreatedAt      time.Time          `json:"createdAt"`
 	}
-	//PostTransaction is a  struct of body request
-	PostTransaction struct {
-		NameCompany    string  `json:"nameCompany" valid:"stringlength(3|30),type(string)"`
-		NameBranch     string  `json:"nameBranch" valid:"stringlength(3|30),type(string)"`
-		User           string  `json:"user" valid:"stringlength(3|30),type(string)"`
-		Amount         float64 `json:"amount"`
+
+	// TransactionCreatePayload is a  struct of body request
+	TransactionCreatePayload struct {
+		CompanyID string  `json:"companyID"`
+		BranchID  string  `json:"branchID"`
+		User      string  `json:"user" valid:"stringlength(3|100),type(string)"`
+		Amount    float64 `json:"amount"`
 	}
 )

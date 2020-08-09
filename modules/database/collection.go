@@ -6,9 +6,9 @@ import (
 
 //collection name
 const (
-	company              = "companies"
-	branch               = "branches"
-	transaction          = "transactions"
+	company             = "companies"
+	branch              = "branches"
+	transaction         = "transactions"
 	transactionAnalytic = "transactionAnalyctic"
 )
 

@@ -1,12 +1,13 @@
 package controllers
 
 import (
+	"github.com/labstack/echo/v4"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
+
 	"cashbag-me-mini/models"
 	"cashbag-me-mini/services"
 	"cashbag-me-mini/ultis"
-
-	"github.com/labstack/echo/v4"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 // CompanyCreate func to ...
@@ -23,7 +24,7 @@ func CompanyCreate(c echo.Context) error {
 		return ultis.Response400(c, nil, err.Error())
 	}
 
-	// Success
+	//Success
 	return ultis.Response200(c, rawData, "")
 }
 
@@ -37,7 +38,7 @@ func CompanyList(c echo.Context) error {
 		return ultis.Response400(c, nil, err.Error())
 	}
 
-	// Success
+	//success
 	return ultis.Response200(c, rawData, "")
 }
 
@@ -64,7 +65,7 @@ func CompanyChangeActiveStatus(c echo.Context) error {
 func CompanyUpdate(c echo.Context) error {
 	var (
 		id           = c.Param("id")
-		body         = c.Get("body").(*models.CompanyUpdate)
+		body         = c.Get("body").(*models.CompanyUpdatePayload)
 		companyID, _ = primitive.ObjectIDFromHex(id)
 	)
 
@@ -76,6 +77,6 @@ func CompanyUpdate(c echo.Context) error {
 		return ultis.Response400(c, nil, err.Error())
 	}
 
-	// Success
+	//success
 	return ultis.Response200(c, rawData, "")
 }
