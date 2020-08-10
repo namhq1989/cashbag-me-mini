@@ -42,7 +42,6 @@ func CompanyList() ([]models.CompanyBSON, error) {
 	// Find
 	cursor, err := companyCol.Find(ctx, bson.M{})
 
-<<<<<<< HEAD
 	// Close cursor
 	defer cursor.Close(ctx)
 
@@ -77,130 +76,6 @@ func CompanyUpdate(id primitive.ObjectID, company models.CompanyBSON) (models.Co
 
 // CompanyChangeActiveStatus ...
 func CompanyChangeActiveStatus(id primitive.ObjectID) (models.CompanyBSON, error) {
-=======
-	//Close cursor
-	defer cursor.Close(ctx)
-
-	//Set result
-	cursor.All(ctx, &doc)
-
-	return doc, err
-}
-
-
-// CompanyUpdate  to ...
-func CompanyUpdate(id primitive.ObjectID, company models.CompanyBSON) (models.CompanyBSON, error) {
-	var (
-		filter = bson.M{"_id": id}
-		update = bson.M{"$set": bson.M{
-			"name":          company.Name,
-			"address":        company.Address,
-			"active":         company.Active,
-			"balance":        company.Balance,
-			"loyaltyProgram": company.LoyaltyProgram,
-			"updatedAt":       time.Now(),
-		}}
-	)
-
-	// Update
-	err := CompanyUpdateByID(filter, update)
-
-	// Get doc
-	doc , _ := CompanyFindbyID(id)
-	
-
-	return doc, err
-}
-
-// CompanyChangeActiveStatus .... ...
-func CompanyChangeActiveStatus(id primitive.ObjectID) (models.CompanyBSON, error) {
-	var (
-		filter     = bson.M{"_id": id}
-		doc,_ 	= 	CompanyFindbyID(id)	
-		update     = bson.M{"$set": bson.M{"active": !doc.Active}}
-	)
-
-	err := CompanyUpdateByID(filter, update)
-
-	return doc, err
-}
-// CompanyFindbyID ...
-func CompanyFindbyID(id primitive.ObjectID) (models.CompanyBSON,error){
-	var (
-		companyCol = database.CompanyCol()
-		ctx        = context.Background()
-		result   models.CompanyBSON
-		filter = bson.M{"_id": id}
-	)
-
-	err := companyCol.FindOne(ctx, filter).Decode(&result)
-
-	return result,err
-}
-
-//  GetIFCompanyByName..
-func GetIFCompanyByName(NameCompany interface{}) models.IFCompany {
-	var (
-		companyCol = database.CompanyCol()
-		ctx        = context.Background()
-		result     = models.IFCompany{}
-		filter     = bson.M{"name": NameCompany}
-	)
-	err := companyCol.FindOne(ctx, filter).Decode(&result)
-	if err != nil {
-		log.Fatal(err)
-	}
-	return result
-}
-
-//UpdateBalance ...
-func UpdateBalance(id primitive.ObjectID, balance float64) {
-	var (
-		companyCol = database.CompanyCol()
-		ctx        = context.Background()
-	)
-	filter := bson.M{"_id": id}
-	update := bson.M{"$set": bson.M{
-		"balance": balance,
-	}}
-	log.Println(balance)
-	_, err := companyCol.UpdateOne(ctx, filter, update)
-	if err != nil {
-		log.Fatal(err)
-	}
-}
-
-// CompanyUpdateByID ...
-func CompanyUpdateByID(filter bson.M, updateData bson.M) error {
-	var (
-		CompanyCol = database.CompanyCol()
-		ctx       = context.Background()
-	)
-
-	_, err := CompanyCol.UpdateOne(ctx, filter, updateData)
-
-	return err
-}
-
-// CompanyValidateID ...
-func CompanyValidateID(companyID primitive.ObjectID) bool {
-	var (
-		companyCol = database.CompanyCol()
-		ctx       = context.Background()
-		filter    = bson.M{"_id": companyID}
-	)
-
-	err := companyCol.FindOne(ctx, filter)
-	if err != nil{
-		return false
-	}
-	return true
-}
-
-
-//GetNameCompanyById ....
-func GetNameCompanyById(id interface{}) string {
->>>>>>> 35bc62c3407eecf25d9e630ee81dc51e89f7e4bb
 	var (
 		filter = bson.M{"_id": id}
 		doc, _ = CompanyFindByID(id)
@@ -224,7 +99,6 @@ func CompanyFindByID(id primitive.ObjectID) (models.CompanyBSON, error) {
 
 	// Find
 	err := companyCol.FindOne(ctx, filter).Decode(&result)
-<<<<<<< HEAD
 
 	return result, err
 }
@@ -258,10 +132,3 @@ func CompanyUpdateByID(filter bson.M, updateData bson.M) error {
 
 	return err
 }
-=======
-	if err != nil {
-		log.Fatal(err)
-	}
-	return result.ID
-}
->>>>>>> 35bc62c3407eecf25d9e630ee81dc51e89f7e4bb
