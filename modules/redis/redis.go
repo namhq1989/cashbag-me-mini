@@ -21,22 +21,24 @@ func Connect() {
 		Password: envVars.RedisPass, // no password set
 		DB:       0,                 // use default DB
 	})
+
+	// Ping Redis
 	pong, err := rdb.Ping().Result()
 	fmt.Println(pong, err)
 	db = rdb
 }
 
-//GetValueRedis ...
-func GetValueRedis(key string) string {
-	value := db.Get(key).Val()
+// GetUser ...
+func GetUser() string {
+	value := db.Get("user").Val()
 	return value
 }
 
-const setTime = 30000000000
+// SetUser ...
+func SetUser(value string) {
+	const setTime = 30000000000
 
-//SetValueRedis ...
-func SetValueRedis(key string, value string) {
-	err := db.Set(key, value, setTime).Err()
+	err := db.Set("user", value, setTime).Err()
 	if err != nil {
 		log.Println(err)
 	}

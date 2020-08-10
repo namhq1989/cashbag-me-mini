@@ -2,7 +2,7 @@ version: '3'
 services:
     web:
         depends_on: 
-            - zoo
+            - zookeeper
             - redis
         build: .
         ports:
@@ -15,18 +15,18 @@ services:
         ports: ["6379"]
         networks:
             - web-go
-    zoo:
+    zookeeper:
         image: zookeeper
         container_name: zookeeper
         restart: always
         hostname: zoo1
         volumes:
-            - zoodata:/data/db
+            - zookeeperdata:/data/db
         ports:
             - 2181:2181
         networks: 
             - web-go   
 volumes: 
-    zoodata:
+    zookeeperdata:
 networks: 
     web-go:

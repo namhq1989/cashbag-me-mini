@@ -1,6 +1,7 @@
 package services
 
 import (
+	"log"
 	"errors"
 	"strings"
 
@@ -25,11 +26,12 @@ func TransactionCreate(body models.TransactionCreatePayload) (models.Transaction
 	}
 
 	// Validate request
-	userReq := redis.GetValueRedis("user")
-	if userReq == body.User {
+	userReq := redis.GetUser()
+	log.Println(userReq)
+	if userReq == user {
 		return transaction, errors.New("User Dang Thuc hien giao dich")
 	}
-	redis.SetValueRedis("user", body.User)
+	redis.SetUser(body.User)
 
 	// Validate branch id & company id
 	companyID, _ := primitive.ObjectIDFromHex(body.CompanyID)
@@ -69,6 +71,7 @@ func TransactionCreatePayloadToBSON(body models.TransactionCreatePayload) models
 		companyID, _ = primitive.ObjectIDFromHex(body.CompanyID)
 		branchID, _  = primitive.ObjectIDFromHex(body.BranchID)
 	)
+
 	result := models.TransactionBSON{
 		CompanyID: companyID,
 		BranchID:  branchID,
@@ -82,7 +85,7 @@ func TransactionCreatePayloadToBSON(body models.TransactionCreatePayload) models
 // TransactionValidateUser ...
 func TransactionValidateUser(user string) bool {
 	var (
-		userAllowed = zookeeper.GetValueFromZoo("/users")
+		userAllowed = zookeeper.GetUser()
 		users       = strings.Split(userAllowed, ",")
 	)
 
@@ -98,7 +101,10 @@ func TransactionValidateUser(user string) bool {
 
 // CalculateTransactionCommison ....
 func CalculateTransactionCommison(loyatyProgram float64, amount float64) float64 {
-	var commission float64
+	var(
+		commission float64
+	)
 	commission = (loyatyProgram / 100) * amount
+	
 	return commission
 }

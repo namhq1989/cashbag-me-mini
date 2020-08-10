@@ -20,15 +20,15 @@ func TransactionAnalyticList(date string) ([]models.TransactionAnalyticDetail, e
 
 	// Convert to TransactionAnalyticDetail
 	for _, item := range transactionAnalyticList {
-		transactionAnalytic := ConvertToTranAnalyticDetail(item)
+		transactionAnalytic := ConvertToTransactionAnalyticDetail(item)
 		result = append(result, transactionAnalytic)
 	}
 
 	return result, err
 }
 
-// ConvertToTranAnalyticDetail ...
-func ConvertToTranAnalyticDetail(doc models.TransactionAnalyticBSON) models.TransactionAnalyticDetail {
+// ConvertToTransactionAnalyticDetail ...
+func ConvertToTransactionAnalyticDetail(doc models.TransactionAnalyticBSON) models.TransactionAnalyticDetail {
 	var (
 		company, _   = dao.CompanyFindByID(doc.CompanyID)
 		nameCompany  = company.Name
