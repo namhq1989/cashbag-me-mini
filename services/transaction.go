@@ -108,34 +108,3 @@ func CalculateTransactionCommison(loyatyProgram float64, amount float64) float64
 	
 	return commission
 }
-//CheckValueRedis ...
-func CheckValueRedis(string) bool {
-	var body models.TransactionCreatePayload
-	userReq := redis.GetValueRedis("user")
-	if userReq == doc.User {
-		return true
-	} else {
-		return false
-	}
-}
-//TransactionValidUser ...
-func TransactionValidUser(string) bool{
-	var body models.TransactionCreatePayload
-	userZoo := zookeeper.GetValueFromZoo("/Users")
-	users := strings.Split(userZoo, ",")
-	check := 0 
-	for _, user := range users {
-	if user == body.User {
-		return true
-	}
-	}
-	if check == 0 {
-		return false
-	}
-}
-// calculateTransactionCommison ....
-func calculateTransactionCommison(loyatyProgram float64,amount float64) float64{
-	var commission float64
-	commission = (loyatyProgram/100) *amount
-	return commission
-}
