@@ -11,6 +11,6 @@ import (
 func Branch(g *echo.Group) {
 	g.GET("", controllers.BranchList)
 	g.POST("", controllers.BranchCreate, validations.BranchCreate)
-	g.PATCH("/:id", controllers.BranchChangeActiveStatus, validations.BranchValidateID)
+	g.PATCH("/:id/active", controllers.BranchChangeActiveStatus, validations.BranchValidateID)
 	g.PUT("/:id", controllers.BranchUpdate, validations.BranchValidateID, validations.BranchUpdate)
 }

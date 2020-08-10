@@ -16,7 +16,7 @@ var (
 	db *mongo.Database
 )
 
-//Connect ...
+// Connect ...
 func Connect(dbName string) {
 	cfg := config.GetEnv()
 	//connect

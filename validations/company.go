@@ -8,9 +8,7 @@ import (
 
 	"cashbag-me-mini/dao"
 	"cashbag-me-mini/models"
-	"cashbag-me-mini/dao"
 	"cashbag-me-mini/ultis"
-
 )
 
 // CompanyCreate ...
@@ -35,7 +33,7 @@ func CompanyCreate(next echo.HandlerFunc) echo.HandlerFunc {
 	}
 }
 
-// CompanyUpdate func ...
+// CompanyUpdate ...
 func CompanyUpdate(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		var (

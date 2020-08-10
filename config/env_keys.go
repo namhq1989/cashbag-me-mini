@@ -8,6 +8,7 @@ import (
 type ENV struct {
 	IsDev            bool
 	ZookeeperURI     string
+	ZookeeperTestURI string
 	DatabaseURI      string
 	DatabaseName     string
 	DatabaseTestName string
@@ -23,6 +24,7 @@ func initENV() {
 	os.Setenv("DATABASE_NAME", "CashBag")
 	os.Setenv("DATABASE_TEST_NAME", "CashBag-test")
 	os.Setenv("ZOOKEEPER_URI", "zookeeper:2181")
+	os.Setenv("ZOOKEEPER_TEST_URI", "127.0.0.1:2181")
 	os.Setenv("REDIS_URI", "redis:6379")
 	os.Setenv("REDIS_PASS", "")
 	os.Setenv("PORT", ":8080")
@@ -33,6 +35,7 @@ func initENV() {
 		DatabaseName:     os.Getenv("DATABASE_NAME"),
 		DatabaseTestName: os.Getenv("DATABASE_TEST_NAME"),
 		ZookeeperURI:     os.Getenv("ZOOKEEPER_URI"),
+		ZookeeperTestURI: os.Getenv("ZOOKEEPER_TEST_URI"),
 		RedisURI:         os.Getenv("REDIS_URI"),
 		RedisPass:        os.Getenv("REDIS_PASS"),
 		Port:             os.Getenv("PORT"),

@@ -10,7 +10,7 @@ import (
 	"cashbag-me-mini/modules/database"
 )
 
-// TransactionCreate ....
+// TransactionCreate ...
 func TransactionCreate(doc models.TransactionBSON, balance float64) (models.TransactionBSON, error) {
 	var (
 		collection = database.TransactionCol()

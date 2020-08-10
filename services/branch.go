@@ -63,7 +63,7 @@ func BranchCreate(body models.BranchCreatePayload) (models.BranchBSON, error) {
 
 	// Validate CompanyID
 	if company.ID.IsZero() {
-		return branch, errors.New("Khong tim thay Cong Ty ")
+		return branch, errors.New("Khong tim thay Cong Ty")
 	}
 
 	// Create Branch

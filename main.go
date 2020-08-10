@@ -16,7 +16,7 @@ var cfg = config.GetEnv()
 func init() {
 	database.Connect(cfg.DatabaseName)
 	redis.Connect()
-	zookeeper.Connect()
+	zookeeper.Connect(cfg.ZookeeperURI)
 }
 func main() {
 	server := echo.New()
@@ -37,5 +37,6 @@ func main() {
 	server.Use(middleware.Recover())
 
 	routes.Boostrap(server)
+
 	server.Logger.Fatal(server.Start(cfg.Port))
 }

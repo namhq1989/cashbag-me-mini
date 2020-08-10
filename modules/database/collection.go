@@ -4,12 +4,12 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-//collection name
+// Collection name
 const (
-	company             = "companies"
-	branch              = "branches"
-	transaction         = "transactions"
-	transactionAnalytic = "transactionAnalyctic"
+	company              = "companies"
+	branch               = "branches"
+	transaction          = "transactions"
+	transactionAnalytics = "transactionAnalytics"
 )
 
 // CompanyCol ...
@@ -29,5 +29,5 @@ func TransactionCol() *mongo.Collection {
 
 // TransactionAnalyticCol ...
 func TransactionAnalyticCol() *mongo.Collection {
-	return db.Collection(transactionAnalytic)
+	return db.Collection(transactionAnalytics)
 }

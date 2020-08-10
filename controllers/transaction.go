@@ -2,20 +2,20 @@ package controllers
 
 import (
 	"github.com/labstack/echo/v4"
-	
+
 	"cashbag-me-mini/models"
 	"cashbag-me-mini/services"
 	"cashbag-me-mini/ultis"
 )
 
-// TransactionCreate  ...
+// TransactionCreate ...
 func TransactionCreate(c echo.Context) error {
-	var(
+	var (
 		body = c.Get("body").(*models.TransactionCreatePayload)
 	)
 
 	// Process data
-	rawData,err := services.TransactionCreate(*body)
+	rawData, err := services.TransactionCreate(*body)
 
 	//if err
 	if err != nil {
@@ -26,4 +26,3 @@ func TransactionCreate(c echo.Context) error {
 	return ultis.Response200(c, rawData, "")
 
 }
-

@@ -9,5 +9,5 @@ func Boostrap(e *echo.Echo) {
 	Branch(e.Group("/branches"))
 	Company(e.Group("/companies"))
 	Transaction(e.Group("/transactions"))
-	TransactionAnalytic(e.Group("/transactionanalytics"))
+	TransactionAnalytic(e.Group("/transaction-analytics"))
 }

@@ -1,186 +1,190 @@
 package controllers
 
 import (
-	"bytes"
-	"cashbag-me-mini/models"
-	"cashbag-me-mini/modules/database"
-	"cashbag-me-mini/services"
+	"github.com/labstack/echo/v4"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/suite"
+
 	"context"
 	"encoding/json"
-	"io"
-	"time"
-
-	"go.mongodb.org/mongo-driver/bson/primitive"
-
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
-	"github.com/labstack/echo"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/suite"
 	"go.mongodb.org/mongo-driver/bson"
+
+	"cashbag-me-mini/config"
+	"cashbag-me-mini/models"
+	"cashbag-me-mini/modules/database"
+	"cashbag-me-mini/ultis"
 )
 
 type BranchSuite struct {
 	suite.Suite
-	Branches []models.BranchBSON
 }
 
-var idActive = primitive.NewObjectID()
-var idUpdate = primitive.NewObjectID()
-
 func (s BranchSuite) SetupSuite() {
-	database.Connectdb("CashBag-test")
-	addRecord(idActive) // for test Patch
-	addRecord(idUpdate) // for test Put
-	addCompany()        //for test Put
+	var cfg = config.GetEnv()
+	database.Connect(cfg.DatabaseTestName)
+	ultis.HelperBranchCreateFake()
+	ultis.HelperCompanyCreateFake()
 }
 
 func (s BranchSuite) TearDownSuite() {
-	//removeOldData()
+	removeOldData()
 }
 
 func removeOldData() {
-	database.DB.Collection("branches").DeleteMany(context.Background(), bson.M{})
+	database.BranchCol().DeleteMany(context.Background(), bson.M{})
+	database.CompanyCol().DeleteMany(context.Background(), bson.M{})
 }
 
-//TestListBranch ...
-func (s *BranchSuite) TestListBranch() {
+// TestBranchList ...
+func (s *BranchSuite) TestBranchList() {
 	var (
-		branches []models.BranchDetail
-		res      []models.BranchDetail
+		response ultis.Response
 	)
+
+	// Create Context
 	e := echo.New()
 	req := httptest.NewRequest(http.MethodGet, "/branches", nil)
-	rec := httptest.NewRecorder()
-	c := e.NewContext(req, rec)
-	ListBranch(c)
-	assert.Equal(s.T(), http.StatusOK, rec.Code)
-	branches = services.ListBranch()
-	json.Unmarshal(rec.Body.Bytes(), &res)
-	assert.Equal(s.T(), branches, res)
+	responseRecorder := httptest.NewRecorder()
+	c := e.NewContext(req, responseRecorder)
+
+	// Call BranchList
+	BranchList(c)
+
+	// Parse
+	json.Unmarshal(responseRecorder.Body.Bytes(), &response)
+
+	// Test
+	assert.Equal(s.T(), http.StatusOK, responseRecorder.Code)
+	assert.Equal(s.T(), "Thanh Cong!", response["message"])
 }
 
-//TestCreateBranch ...
-func (s *BranchSuite) TestCreateBranch() {
+// TestBranchCreateSuccess ...
+func (s *BranchSuite) TestBranchCreateSuccess() {
 	var (
-		branch = models.PostBranch{
-			NameCompany: "Hightland",
-			Name:        "Hight SonLa",
-			Address:     "120 SonLa",
-			Active:      false,
+		branch = models.BranchCreatePayload{
+			CompanyID: ultis.CompanyID,
+			Name:      "Hight SonLa",
+			Address:   "120 SonLa",
+			Active:    false,
 		}
-		res = struct {
-			InsertedID string `json:"InsertedID"`
-		}{}
+		response ultis.Response
 	)
+
+	// Create Context
 	e := echo.New()
-	req := httptest.NewRequest(http.MethodPost, "/branches", ToIOReader(branch))
+	req := httptest.NewRequest(http.MethodGet, "/branches", nil)
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
-	rec := httptest.NewRecorder()
-	c := e.NewContext(req, rec)
+	responseRecorder := httptest.NewRecorder()
+	c := e.NewContext(req, responseRecorder)
 	c.Set("body", &branch)
-	CreateBranch(c)
-	assert.Equal(s.T(), http.StatusOK, rec.Code)
-	json.Unmarshal(rec.Body.Bytes(), &res)
-	assert.NotEqual(s.T(), res, nil)
+
+	// Call BranchCreate
+	BranchCreate(c)
+
+	// Parse
+	json.Unmarshal(responseRecorder.Body.Bytes(), &response)
+
+	// Test
+	assert.Equal(s.T(), http.StatusOK, responseRecorder.Code)
+	assert.NotEqual(s.T(), nil, response["data"])
+	assert.Equal(s.T(), "Thanh Cong!", response["message"])
 }
 
-//ToIOReader ...
-func ToIOReader(i interface{}) io.Reader {
-	b, _ := json.Marshal(i)
-	return bytes.NewReader(b)
-}
-
-//TestPatchBranch ...
-func (s *BranchSuite) TestPatchBranch() {
+// TestBranchCreateFail, CompanyID not exactly
+func (s *BranchSuite) TestBranchCreateFailBecauseCompanyID() {
 	var (
-		res = struct {
-			MatchedCount  int         `json:"MatchedCount"`
-			ModifiedCount int         `json:"ModifiedCount"`
-			UpsertedCount int         `json:"UpsertedCount"`
-			UpsertedID    interface{} `json:"UpsertedID"`
-		}{}
+		branch = models.BranchCreatePayload{
+			CompanyID: "5f24d45125ea51bc57a828",
+			Name:      "Hight SonLa",
+			Address:   "120 SonLa",
+			Active:    false,
+		}
+		response ultis.Response
 	)
+
+	// Create Context
 	e := echo.New()
-	req := httptest.NewRequest(http.MethodPatch, "/branches/:id", nil)
-	rec := httptest.NewRecorder()
-	c := e.NewContext(req, rec)
-	c.SetParamNames("id")
-	c.SetParamValues(idActive.Hex())
-	PatchBranch(c)
-	assert.Equal(s.T(), http.StatusOK, rec.Code)
-	json.Unmarshal(rec.Body.Bytes(), &res)
-	assert.Equal(s.T(), 1, res.MatchedCount)
-	assert.Equal(s.T(), 1, res.ModifiedCount)
-	assert.Equal(s.T(), 0, res.UpsertedCount)
-	assert.Equal(s.T(), nil, res.UpsertedID)
+	req := httptest.NewRequest(http.MethodGet, "/branches", nil)
+	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+	responseRecorder := httptest.NewRecorder()
+	c := e.NewContext(req, responseRecorder)
+	c.Set("body", &branch)
+
+	// Call BranchCreate
+	BranchCreate(c)
+
+	// Parse
+	json.Unmarshal(responseRecorder.Body.Bytes(), &response)
+
+	// Test
+	assert.Equal(s.T(), http.StatusBadRequest, responseRecorder.Code)
+	assert.Equal(s.T(), nil, response["data"])
+	assert.Equal(s.T(), "Khong tim thay Cong Ty", response["message"])
 }
 
-//TestPutBranch ...
-func (s *BranchSuite) TestPutBranch() {
+// TestBranchChangeActiveStatus ...
+func (s *BranchSuite) TestBranchChangeActiveStatus() {
 	var (
-		body = models.PutBranch{
+		response ultis.Response
+		branchID = ultis.BranchID
+	)
+
+	// Create Context
+	e := echo.New()
+	req := httptest.NewRequest(http.MethodGet, "/branches/:id/active", nil)
+	responseRecorder := httptest.NewRecorder()
+	c := e.NewContext(req, responseRecorder)
+	c.SetParamNames("id")
+	c.SetParamValues(branchID)
+
+	// Call BranchChangeActiveStatus
+	BranchChangeActiveStatus(c)
+
+	// Parse
+	json.Unmarshal(responseRecorder.Body.Bytes(), &response)
+
+	// Test
+	assert.Equal(s.T(), http.StatusOK, responseRecorder.Code)
+	assert.NotEqual(s.T(), nil, response["data"])
+	assert.Equal(s.T(), "Thanh Cong!", response["message"])
+}
+
+// TestBranchUpdate ...
+func (s *BranchSuite) TestBranchUpdate() {
+	var (
+		response             ultis.Response
+		branchID             = ultis.BranchID
+		branchUpdateBPayload = models.BranchUpdateBPayload{
 			Name:    "Hight BinhDinh",
 			Address: "111 BinhDinh",
 			Active:  false,
 		}
-		res = struct {
-			MatchedCount  int         `json:"MatchedCount"`
-			ModifiedCount int         `json:"ModifiedCount"`
-			UpsertedCount int         `json:"UpsertedCount"`
-			UpsertedID    interface{} `json:"UpsertedID"`
-		}{}
 	)
+
+	// Create Context
 	e := echo.New()
-	req := httptest.NewRequest(http.MethodPut, "/branches/:id", ToIOReader(body))
+	req := httptest.NewRequest(http.MethodGet, "/branches", nil)
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
-	rec := httptest.NewRecorder()
-	c := e.NewContext(req, rec)
+	responseRecorder := httptest.NewRecorder()
+	c := e.NewContext(req, responseRecorder)
 	c.SetParamNames("id")
-	c.SetParamValues(idUpdate.Hex())
-	c.Set("body", &body)
-	PutBranch(c)
-	assert.Equal(s.T(), http.StatusOK, rec.Code)
-	json.Unmarshal([]byte(rec.Body.String()), &res)
-	assert.Equal(s.T(), 1, res.MatchedCount)
-	assert.Equal(s.T(), 1, res.ModifiedCount)
-	assert.Equal(s.T(), 0, res.UpsertedCount)
-	assert.Equal(s.T(), nil, res.UpsertedID)
-}
+	c.SetParamValues(branchID)
+	c.Set("body", &branchUpdateBPayload)
 
-//addRecord ...
-func addRecord(id primitive.ObjectID) {
-	var (
-		companyID, _ = primitive.ObjectIDFromHex("5f24d45125ea51bc57a8285b")
-		branch       = models.BranchBSON{
-			ID:        id,
-			CompanyId: companyID,
-			Name:      "Hight QuangTri",
-			Address:   "120 QuangTri",
-			Active:    false,
-			CreateAt:  time.Now(),
-		}
-	)
-	database.DB.Collection("branches").InsertOne(context.TODO(), branch)
-}
+	// Call BranchUpdate
+	BranchUpdate(c)
 
-//addCompany
-func addCompany() {
-	var (
-		companyID, _ = primitive.ObjectIDFromHex("5f24d45125ea51bc57a8285b")
-		company      = models.CompanyBSON{
-			ID:             companyID,
-			Name:           "Hightland",
-			Address:        "HaiPhong",
-			Balance:        10000000,
-			LoyaltyProgram: 10,
-			Active:         false,
-			CreateAt:       time.Now(),
-		}
-	)
-	database.DB.Collection("companies").InsertOne(context.TODO(), company)
+	// Parse
+	json.Unmarshal(responseRecorder.Body.Bytes(), &response)
+
+	// Test
+	assert.Equal(s.T(), http.StatusOK, responseRecorder.Code)
+	assert.NotEqual(s.T(), nil, response["data"])
+	assert.Equal(s.T(), "Thanh Cong!", response["message"])
 }
 
 func TestBranchSuite(t *testing.T) {
