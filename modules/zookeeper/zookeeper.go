@@ -22,8 +22,8 @@ func Connect() {
 	fmt.Println("Connect Zookeeper")
 }
 
-//GetValueFromZoo ...
-func GetValueFromZoo(path string) string {
-	res, _, _ := db.Get(path)
+//GetUser ...
+func GetUser() string {
+	res, _, _ := db.Get("/users")
 	return string(res)
 }

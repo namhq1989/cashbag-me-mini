@@ -11,14 +11,14 @@ import (
 	"cashbag-me-mini/routes"
 )
 
+var cfg = config.GetEnv()
+
 func init() {
-	database.Connect("CashBag")
+	database.Connect(cfg.DatabaseName)
 	redis.Connect()
 	zookeeper.Connect()
 }
 func main() {
-
-	cfg := config.GetEnv()
 	server := echo.New()
 
 	//CORS
