@@ -37,7 +37,7 @@ func CompanyList() ([]models.CompanyDetail, error) {
 	return result, err
 }
 
-// CompanyChangeActiveStatus . ...
+// CompanyChangeActiveStatus ...
 func CompanyChangeActiveStatus(id primitive.ObjectID) (models.CompanyBSON, error) {
 	// Change active
 	doc, err := dao.CompanyChangeActiveStatus(id)
@@ -45,7 +45,7 @@ func CompanyChangeActiveStatus(id primitive.ObjectID) (models.CompanyBSON, error
 	return doc, err
 }
 
-// CompanyUpdate ....
+// CompanyUpdate ...
 func CompanyUpdate(id primitive.ObjectID, body models.CompanyUpdatePayload) (models.CompanyBSON, error) {
 	var (
 		company = CompanyUpdatePayloadToBSON(body)
@@ -57,7 +57,7 @@ func CompanyUpdate(id primitive.ObjectID, body models.CompanyUpdatePayload) (mod
 	return doc, err
 }
 
-// ConvertToCompanyDetail ....
+// ConvertToCompanyDetail ...
 func ConvertToCompanyDetail(doc models.CompanyBSON) models.CompanyDetail {
 	result := models.CompanyDetail{
 		ID:             doc.ID,
@@ -72,7 +72,7 @@ func ConvertToCompanyDetail(doc models.CompanyBSON) models.CompanyDetail {
 	return result
 }
 
-// CompanyCreatePayloadToBSON ....
+// CompanyCreatePayloadToBSON ...
 func CompanyCreatePayloadToBSON(body models.CompanyCreatePayload) models.CompanyBSON {
 	result := models.CompanyBSON{
 		Name:    body.Name,
@@ -82,7 +82,7 @@ func CompanyCreatePayloadToBSON(body models.CompanyCreatePayload) models.Company
 	return result
 }
 
-// CompanyUpdatePayloadToBSON ....
+// CompanyUpdatePayloadToBSON ...
 func CompanyUpdatePayloadToBSON(body models.CompanyUpdatePayload) models.CompanyBSON {
 	result := models.CompanyBSON{
 		Name:           body.Name,

@@ -1,55 +1,59 @@
 package controllers
 
 import (
-	"cashbag-me-mini/models"
-	"cashbag-me-mini/modules/database"
-	"cashbag-me-mini/services"
-	"encoding/json"
+	"github.com/labstack/echo/v4"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/suite"
 
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
-	"github.com/labstack/echo"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/suite"
+	"cashbag-me-mini/config"
+	"cashbag-me-mini/modules/database"
+	"cashbag-me-mini/ultis"
+	"encoding/json"
 )
 
-// TranAnalyticSuite ...
-type TranAnalyticSuite struct {
+// TransactionAnalyticSuite ...
+type TransactionAnalyticSuite struct {
 	suite.Suite
-	tranAnalTraytics []models.TransactionAnalyticBSON
 }
 
 // SetupSuite ...
-func (s TranAnalyticSuite) SetupSuite() {
-	database.Connectdb("CashBag-test")
+func (s TransactionAnalyticSuite) SetupSuite() {
+	var cfg = config.GetEnv()
+	database.Connect(cfg.DatabaseTestName)
 }
 
-//TearDownSuite ...
-func (s TranAnalyticSuite) TearDownSuite() {
+// TearDownSuite ...
+func (s TransactionAnalyticSuite) TearDownSuite() {
 }
 
-//TestTranAnalytic ...
-func (s *TranAnalyticSuite) TestTranAnalytic() {
+// TestTransactionAnalytic ...
+func (s *TransactionAnalyticSuite) TestTransactionAnalyticList() {
 	var (
-		TranAnalytics []models.TranAnalyticDetail
-		res           []models.TranAnalyticDetail
-		date = "2020-08-04"
+		response ultis.Response
+		date     = "2020-08-04"
 	)
+
+	// Create Context
 	e := echo.New()
 	req := httptest.NewRequest(http.MethodGet, "/tranAnalytic/?date="+date, nil)
-	rec := httptest.NewRecorder()
-	c := e.NewContext(req, rec)
-	TranAnalytic(c)
-	assert.Equal(s.T(), http.StatusOK, rec.Code)
-	TranAnalytics = services.TranAnalytic(date)
-	json.Unmarshal(rec.Body.Bytes(), &res)
-	assert.Equal(s.T(), TranAnalytics, res)
+	responseRecorder := httptest.NewRecorder()
+	c := e.NewContext(req, responseRecorder)
+
+	// Call TransactionAnalyticList
+	TransactionAnalyticList(c)
+
+	// Parse
+	json.Unmarshal(responseRecorder.Body.Bytes(), &response)
+
+	// Test
+	assert.Equal(s.T(), http.StatusOK, responseRecorder.Code)
+	assert.Equal(s.T(), "Thanh Cong!", response["message"])
 }
 
-//TestTranAnalyticSuite ...
-
-func TestTranAnalyticSuite(t *testing.T) {
-	suite.Run(t, new(TranAnalyticSuite))
+func TestTransactionAnalyticSuite(t *testing.T) {
+	suite.Run(t, new(TransactionAnalyticSuite))
 }

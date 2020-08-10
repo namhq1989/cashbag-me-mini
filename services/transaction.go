@@ -1,8 +1,8 @@
 package services
 
 import (
-	"log"
 	"errors"
+	"log"
 	"strings"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -13,7 +13,7 @@ import (
 	"cashbag-me-mini/modules/zookeeper"
 )
 
-// TransactionCreate .....
+// TransactionCreate ...
 func TransactionCreate(body models.TransactionCreatePayload) (models.TransactionBSON, error) {
 	var (
 		user        = body.User
@@ -101,10 +101,10 @@ func TransactionValidateUser(user string) bool {
 
 // CalculateTransactionCommison ....
 func CalculateTransactionCommison(loyatyProgram float64, amount float64) float64 {
-	var(
+	var (
 		commission float64
 	)
 	commission = (loyatyProgram / 100) * amount
-	
+
 	return commission
 }

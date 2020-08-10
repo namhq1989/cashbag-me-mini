@@ -13,7 +13,7 @@ var (
 	db *redis.Client
 )
 
-//Connect ...
+// Connect ...
 func Connect() {
 	envVars := config.GetEnv()
 	rdb := redis.NewClient(&redis.Options{

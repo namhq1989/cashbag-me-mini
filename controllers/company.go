@@ -10,7 +10,7 @@ import (
 	"cashbag-me-mini/ultis"
 )
 
-// CompanyCreate func to ...
+// CompanyCreate ...
 func CompanyCreate(c echo.Context) error {
 	var (
 		body = c.Get("body").(*models.CompanyCreatePayload)
@@ -28,7 +28,7 @@ func CompanyCreate(c echo.Context) error {
 	return ultis.Response200(c, rawData, "")
 }
 
-// CompanyList to
+// CompanyList ...
 func CompanyList(c echo.Context) error {
 	// Process data
 	rawData, err := services.CompanyList()

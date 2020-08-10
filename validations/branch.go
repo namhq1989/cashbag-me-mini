@@ -68,6 +68,7 @@ func BranchValidateID(next echo.HandlerFunc) echo.HandlerFunc {
 			branchID, _ = primitive.ObjectIDFromHex(id)
 			branch, _   = dao.BranchFindByID(branchID)
 		)
+
 		// Validate ID
 		if branch.ID.IsZero() {
 			return ultis.Response400(c, nil, "ID khong hop le")
