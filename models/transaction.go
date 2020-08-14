@@ -16,6 +16,8 @@ type (
 		Amount         float64            `bson:"amount"`
 		Commission     float64            `bson:"commission"`
 		LoyaltyProgram float64            `bson:"loyaltyprogram"`
+		UserProgram    float64            `bson:"userProgram"`
+		Postpaid       bool               `bson:"postpaid"`
 		CreatedAt      time.Time          `bson:"createdAt"`
 	}
 
@@ -28,6 +30,8 @@ type (
 		Amount         float64            `json:"amount"`
 		Commission     float64            `json:"commission"`
 		LoyaltyProgram float64            `json:"loyaltyprogram"`
+		UserProgram    float64            `json:"userProgram"`
+		Postpaid       bool               `json:"postpaid"`
 		CreatedAt      time.Time          `json:"createdAt"`
 	}
 
