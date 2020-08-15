@@ -4,30 +4,28 @@ import "go.mongodb.org/mongo-driver/bson/primitive"
 
 type (
 
-	// SilverButton ...
-	SilverButton struct {
-		spending        float64
-		commissionLevel float64
+	// Button .....
+	Button struct {
+		spending        float64 `bson:"spending"`
+		commissionLevel float64 `bson:"commissionLevel"`
 	}
 
-	// GoldenButton ....
-	GoldenButton struct {
-		spending        float64
-		commissionLevel float64
-	}
-
-	// DiamondButton .....
-	DiamondButton struct {
-		spending        float64
-		commissionLevel float64
-	}
-
-	// UserProgram ...
-	UserProgram struct {
+	// UserProgramBSON ...
+	UserProgramBSON struct {
 		ID        primitive.ObjectID `bson:"_id"`
 		CompanyID primitive.ObjectID `bson:"companyID"`
-		Silver    SilverButton       `bson:"silver"`
-		Golden    GoldenButton       `bson:"golden"`
-		Diamond   DiamondButton      `bson:"diamond"`
+		Silver    Button             `bson:"silver"`
+		Golden    Button             `bson:"golden"`
+		Diamond   Button             `bson:"diamond"`
+	}
+	// UserProgramCreatePayload ...
+	UserProgramCreatePayload struct {
+		CompanyID         primitive.ObjectID `json:"companyID"`
+		SilverSpending    float64            `json:"silverSpending"`
+		SilverCommission  float64            `json:"silverCommission"`
+		GoldenSpending    float64            `json:"goldenSpending"`
+		GoldenCommission  float64            `json:"goldenCommission"`
+		DiamondSpending   float64            `json:"diamondSpending"`
+		DiamondCommission float64            `json:"diamondCommission"`
 	}
 )
