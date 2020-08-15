@@ -94,38 +94,6 @@ func (s *BranchSuite) TestBranchCreateSuccess() {
 	assert.Equal(s.T(), "Thanh Cong!", response["message"])
 }
 
-// TestBranchCreateFail, CompanyID not exactly
-func (s *BranchSuite) TestBranchCreateFailBecauseCompanyID() {
-	var (
-		branch = models.BranchCreatePayload{
-			CompanyID: "5f24d45125ea51bc57a828",
-			Name:      "Hight SonLa",
-			Address:   "120 SonLa",
-			Active:    false,
-		}
-		response util.Response
-	)
-
-	// Create Context
-	e := echo.New()
-	req := httptest.NewRequest(http.MethodGet, "/branches", nil)
-	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
-	responseRecorder := httptest.NewRecorder()
-	c := e.NewContext(req, responseRecorder)
-	c.Set("body", &branch)
-
-	// Call BranchCreate
-	BranchCreate(c)
-
-	// Parse
-	json.Unmarshal(responseRecorder.Body.Bytes(), &response)
-
-	// Test
-	assert.Equal(s.T(), http.StatusBadRequest, responseRecorder.Code)
-	assert.Equal(s.T(), nil, response["data"])
-	assert.Equal(s.T(), "Khong tim thay Cong Ty", response["message"])
-}
-
 // TestBranchChangeActiveStatus ...
 func (s *BranchSuite) TestBranchChangeActiveStatus() {
 	var (

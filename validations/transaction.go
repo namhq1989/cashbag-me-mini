@@ -40,21 +40,23 @@ func TransactionCreate(next echo.HandlerFunc) echo.HandlerFunc {
 
 		// Validate company existed in db
 		company, err := dao.CompanyFindByID(companyID)
-		if err != nil {
-			return util.Response400(c, nil, err.Error())
-		}
 		if company.ID.IsZero() {
 			return util.Response400(c, nil, "Khong tim thay Cong Ty ")
 		}
-
-		// Validate branch existed in db
-		branch, err := dao.BranchFindByID(branchID)
 		if err != nil {
 			return util.Response400(c, nil, err.Error())
 		}
+	
+
+		// Validate branch existed in db
+		branch, err := dao.BranchFindByID(branchID)
 		if branch.ID.IsZero() {
 			return util.Response400(c, nil, "Khong tim thay Chi Nhanh")
 		}
+		if err != nil {
+			return util.Response400(c, nil, err.Error())
+		}
+		
 
 		// Success
 		c.Set("body", doc)

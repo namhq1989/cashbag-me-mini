@@ -16,7 +16,7 @@ var (
 // Connect ...
 func Connect() {
 	envVars := config.GetEnv()
-	client := redis.NewClient(&redis.Options{
+	client = redis.NewClient(&redis.Options{
 		Addr:     envVars.Redis.URI,  // use default Addr
 		Password: envVars.Redis.Pass, // no password set
 		DB:       0,                  // use default DB
