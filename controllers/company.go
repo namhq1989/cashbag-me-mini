@@ -7,7 +7,7 @@ import (
 
 	"cashbag-me-mini/models"
 	"cashbag-me-mini/services"
-	"cashbag-me-mini/ultis"
+	"cashbag-me-mini/util"
 )
 
 // CompanyCreate ...
@@ -21,11 +21,11 @@ func CompanyCreate(c echo.Context) error {
 
 	// if err
 	if err != nil {
-		return ultis.Response400(c, nil, err.Error())
+		return util.Response400(c, nil, err.Error())
 	}
 
 	//Success
-	return ultis.Response200(c, rawData, "")
+	return util.Response200(c, rawData, "")
 }
 
 // CompanyList ...
@@ -35,11 +35,11 @@ func CompanyList(c echo.Context) error {
 
 	// if err
 	if err != nil {
-		return ultis.Response400(c, nil, err.Error())
+		return util.Response400(c, nil, err.Error())
 	}
 
 	//success
-	return ultis.Response200(c, rawData, "")
+	return util.Response200(c, rawData, "")
 }
 
 // CompanyChangeActiveStatus ...
@@ -54,11 +54,11 @@ func CompanyChangeActiveStatus(c echo.Context) error {
 
 	// if err
 	if err != nil {
-		return ultis.Response400(c, nil, err.Error())
+		return util.Response400(c, nil, err.Error())
 	}
 
 	// Success
-	return ultis.Response200(c, rawData, "")
+	return util.Response200(c, rawData, "")
 }
 
 // CompanyUpdate ...
@@ -74,9 +74,9 @@ func CompanyUpdate(c echo.Context) error {
 
 	// if err
 	if err != nil {
-		return ultis.Response400(c, nil, err.Error())
+		return util.Response400(c, nil, err.Error())
 	}
 
 	//success
-	return ultis.Response200(c, rawData, "")
+	return util.Response200(c, rawData, "")
 }

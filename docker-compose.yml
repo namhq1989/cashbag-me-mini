@@ -21,12 +21,10 @@ services:
         restart: always
         hostname: zoo1
         volumes:
-            - zookeeperdata:/data/db
+            - ./zoo/data:/var/lib/zookeeper/data
         ports:
             - 2181:2181
         networks: 
             - web-go   
-volumes: 
-    zookeeperdata:
 networks: 
     web-go:

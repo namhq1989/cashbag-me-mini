@@ -8,7 +8,7 @@ import (
 
 	"cashbag-me-mini/dao"
 	"cashbag-me-mini/models"
-	"cashbag-me-mini/ultis"
+	"cashbag-me-mini/util"
 )
 
 // CompanyCreate ...
@@ -24,7 +24,7 @@ func CompanyCreate(next echo.HandlerFunc) echo.HandlerFunc {
 
 		//if err
 		if err != nil {
-			return ultis.Response400(c, nil, err.Error())
+			return util.Response400(c, nil, err.Error())
 		}
 
 		//Success
@@ -46,7 +46,7 @@ func CompanyUpdate(next echo.HandlerFunc) echo.HandlerFunc {
 
 		//if err
 		if err != nil {
-			return ultis.Response400(c, nil, err.Error())
+			return util.Response400(c, nil, err.Error())
 		}
 
 		//Success
@@ -66,7 +66,7 @@ func CompanyValidateID(next echo.HandlerFunc) echo.HandlerFunc {
 
 		// Validate ID
 		if company.ID.IsZero() {
-			return ultis.Response400(c, nil, "ID khong hop le")
+			return util.Response400(c, nil, "ID khong hop le")
 		}
 
 		return next(c)

@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"cashbag-me-mini/config"
 	"cashbag-me-mini/modules/redis"
 	"cashbag-me-mini/modules/zookeeper"
 	"context"
@@ -17,7 +16,7 @@ import (
 
 	"cashbag-me-mini/models"
 	"cashbag-me-mini/modules/database"
-	"cashbag-me-mini/ultis"
+	"cashbag-me-mini/util"
 )
 
 type TransactionSuite struct {
@@ -25,12 +24,11 @@ type TransactionSuite struct {
 }
 
 func (s TransactionSuite) SetupSuite() {
-	var cfg = config.GetEnv()
-	database.Connect(cfg.DatabaseTestName)
+	zookeeper.Connect()
+	util.HelperConnect()
 	redis.Connect()
-	zookeeper.Connect(cfg.ZookeeperTestURI)
-	ultis.HelperCompanyCreateFake()
-	ultis.HelperBranchCreateFake()
+	util.HelperCompanyCreateFake()
+	util.HelperBranchCreateFake()
 }
 
 func (s TransactionSuite) TearDownSuite() {
@@ -45,15 +43,15 @@ func removeOldDataTransaction() {
 
 func (s *TransactionSuite) TestTransactionCreateSuccess() {
 	var (
-		companyID   = ultis.CompanyID
-		branchID    = ultis.BranchID
+		companyID   = util.CompanyID
+		branchID    = util.BranchID
 		transaction = models.TransactionCreatePayload{
 			CompanyID: companyID,
 			BranchID:  branchID,
 			User:      "hoang",
 			Amount:    10000,
 		}
-		response ultis.Response
+		response util.Response
 	)
 
 	// Create context
@@ -71,7 +69,7 @@ func (s *TransactionSuite) TestTransactionCreateSuccess() {
 	json.Unmarshal([]byte(responseRecorder.Body.String()), &response)
 
 	// Get totalTransaction
-	transactionAnalytic := ultis.HelperTransactionAnalyticFindByID()
+	transactionAnalytic := util.HelperTransactionAnalyticFindByID()
 	totalTransaction := transactionAnalytic.TotalTransaction
 
 	//Test
@@ -84,14 +82,14 @@ func (s *TransactionSuite) TestTransactionCreateSuccess() {
 func (s *TransactionSuite) TestTransactionCreateFailBecauseCompanyID() {
 	var (
 		companyID   = "5f24d45125ea51bc57a8285"
-		branchID    = ultis.BranchID
+		branchID    = util.BranchID
 		transaction = models.TransactionCreatePayload{
 			CompanyID: companyID,
 			BranchID:  branchID,
 			User:      "hoang",
 			Amount:    10000,
 		}
-		response ultis.Response
+		response util.Response
 	)
 
 	// Create context
@@ -116,7 +114,7 @@ func (s *TransactionSuite) TestTransactionCreateFailBecauseCompanyID() {
 
 func (s *TransactionSuite) TestTransactionCreateFailBecauseBranchID() {
 	var (
-		companyID   = ultis.CompanyID
+		companyID   = util.CompanyID
 		branchID    = "5f24d45125ea51bc57a8285"
 		transaction = models.TransactionCreatePayload{
 			CompanyID: companyID,
@@ -124,7 +122,7 @@ func (s *TransactionSuite) TestTransactionCreateFailBecauseBranchID() {
 			User:      "hoang",
 			Amount:    10000,
 		}
-		response ultis.Response
+		response util.Response
 	)
 
 	// Create context
@@ -149,15 +147,15 @@ func (s *TransactionSuite) TestTransactionCreateFailBecauseBranchID() {
 
 func (s *TransactionSuite) TestTransactionCreateFailBecauseUser() {
 	var (
-		companyID   = ultis.CompanyID
-		branchID    = ultis.BranchID
+		companyID   = util.CompanyID
+		branchID    = util.BranchID
 		transaction = models.TransactionCreatePayload{
 			CompanyID: companyID,
 			BranchID:  branchID,
 			User:      "",
 			Amount:    10000,
 		}
-		response ultis.Response
+		response util.Response
 	)
 
 	// Create context

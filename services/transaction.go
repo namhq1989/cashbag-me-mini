@@ -1,110 +1,64 @@
 package services
 
 import (
+	"cashbag-me-mini/util"
 	"errors"
-	"log"
-	"strings"
 
-	"go.mongodb.org/mongo-driver/bson/primitive"
-
+	"cashbag-me-mini/config"
 	"cashbag-me-mini/dao"
 	"cashbag-me-mini/models"
 	"cashbag-me-mini/modules/redis"
-	"cashbag-me-mini/modules/zookeeper"
 )
 
 // TransactionCreate ...
-func TransactionCreate(body models.TransactionCreatePayload) (models.TransactionBSON, error) {
+func TransactionCreate(body models.TransactionCreatePayload) (transaction models.TransactionBSON, err error) {
 	var (
-		user        = body.User
-		transaction models.TransactionBSON
+		user         = body.User
+		companyID, _ = util.ValidationObjectID(body.CompanyID)
+		company, _   = dao.CompanyFindByID(companyID)
 	)
+
+	// Find company & branch
+
 	// Validate User
-	isUserValid := TransactionValidateUser(user)
+	isUserValid := transactionValidateUser(user)
 	if !isUserValid {
-		return transaction, errors.New("User khong nam trong danh sach hoan tien")
+		err = errors.New("User khong nam trong danh sach hoan tien")
+		return
 	}
 
 	// Validate request
-	userReq := redis.GetUser()
-	log.Println(userReq)
+	userReq := redis.Get(config.RedisKeyUser)
 	if userReq == user {
-		return transaction, errors.New("User Dang Thuc hien giao dich")
+		err = errors.New("User Dang Thuc hien giao dich")
+		return
 	}
-	redis.SetUser(body.User)
-
-	// Validate branch id & company id
-	companyID, _ := primitive.ObjectIDFromHex(body.CompanyID)
-	branchID, _ := primitive.ObjectIDFromHex(body.BranchID)
-	company, _ := dao.CompanyFindByID(companyID)
-	branch, _ := dao.BranchFindByID(branchID)
-	if company.ID.IsZero() {
-		return transaction, errors.New("Khong tim thay Cong Ty ")
-	}
-	if branch.ID.IsZero() {
-		return transaction, errors.New("Khong tim thay Chi Nhanh")
-	}
+	redis.Set(config.RedisKeyUser, body.User)
 
 	// Calculation commsion
-	commssion := CalculateTransactionCommison(company.LoyaltyProgram, body.Amount)
+	commssion := calculateTransactionCommison(company.LoyaltyProgram, body.Amount)
 	balance := company.Balance
 
 	// Check balance
 	if balance < commssion {
-		return transaction, errors.New("So tien hoan tra cua cong ty da het")
+		err = errors.New("So tien hoan tra cua cong ty da het")
+		return
 	}
 
 	// Convert & add information Transaction
-	transaction = TransactionCreatePayloadToBSON(body)
+	transaction = transactionCreatePayloadToBSON(body)
 	transaction.Commission = commssion
 	transaction.LoyaltyProgram = company.LoyaltyProgram
 
 	// Create Transaction
-	doc, err := dao.TransactionCreate(transaction, balance)
+	doc, err := dao.TransactionCreate(transaction)
+
+	// Update balance & transactionAnalytic
+	if err == nil {
+		balanceCurrent := balance - doc.Commission
+		dao.CompanyUpdateBalance(doc.CompanyID, balanceCurrent)
+		dao.TransactionAnalyticHandle(doc)
+	}
 
 	return doc, err
-}
-
-// TransactionCreatePayloadToBSON ...
-func TransactionCreatePayloadToBSON(body models.TransactionCreatePayload) models.TransactionBSON {
-	var (
-		companyID, _ = primitive.ObjectIDFromHex(body.CompanyID)
-		branchID, _  = primitive.ObjectIDFromHex(body.BranchID)
-	)
-
-	result := models.TransactionBSON{
-		CompanyID: companyID,
-		BranchID:  branchID,
-		User:      body.User,
-		Amount:    body.Amount,
-	}
-
-	return result
-}
-
-// TransactionValidateUser ...
-func TransactionValidateUser(user string) bool {
-	var (
-		userAllowed = zookeeper.GetUser()
-		users       = strings.Split(userAllowed, ",")
-	)
-
-	// Validate User
-	for _, item := range users {
-		if item == user {
-			return true
-		}
-	}
-
-	return false
-}
-
-// CalculateTransactionCommison ....
-func CalculateTransactionCommison(loyatyProgram float64, amount float64) float64 {
-	var (
-		commission float64
-	)
-	commission = (loyatyProgram / 100) * amount
-
-	return commission
 }

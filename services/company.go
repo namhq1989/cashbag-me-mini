@@ -10,7 +10,7 @@ import (
 // CompanyCreate ...
 func CompanyCreate(body models.CompanyCreatePayload) (models.CompanyBSON, error) {
 	var (
-		company = CompanyCreatePayloadToBSON(body)
+		company = companyCreatePayloadToBSON(body)
 	)
 
 	// Create company
@@ -30,7 +30,7 @@ func CompanyList() ([]models.CompanyDetail, error) {
 
 	// Convert to CompanyDetail
 	for _, item := range doc {
-		company := ConvertToCompanyDetail(item)
+		company := convertToCompanyDetail(item)
 		result = append(result, company)
 	}
 
@@ -48,48 +48,11 @@ func CompanyChangeActiveStatus(id primitive.ObjectID) (models.CompanyBSON, error
 // CompanyUpdate ...
 func CompanyUpdate(id primitive.ObjectID, body models.CompanyUpdatePayload) (models.CompanyBSON, error) {
 	var (
-		company = CompanyUpdatePayloadToBSON(body)
+		company = companyUpdatePayloadToBSON(body)
 	)
 
 	// Update company
 	doc, err := dao.CompanyUpdate(id, company)
 
 	return doc, err
-}
-
-// ConvertToCompanyDetail ...
-func ConvertToCompanyDetail(doc models.CompanyBSON) models.CompanyDetail {
-	result := models.CompanyDetail{
-		ID:             doc.ID,
-		Name:           doc.Name,
-		Address:        doc.Address,
-		Balance:        doc.Balance,
-		LoyaltyProgram: doc.LoyaltyProgram,
-		Active:         doc.Active,
-		CreatedAt:      doc.CreatedAt,
-		UpdatedAt:      doc.UpdatedAt,
-	}
-	return result
-}
-
-// CompanyCreatePayloadToBSON ...
-func CompanyCreatePayloadToBSON(body models.CompanyCreatePayload) models.CompanyBSON {
-	result := models.CompanyBSON{
-		Name:    body.Name,
-		Address: body.Address,
-		Active:  body.Active,
-	}
-	return result
-}
-
-// CompanyUpdatePayloadToBSON ...
-func CompanyUpdatePayloadToBSON(body models.CompanyUpdatePayload) models.CompanyBSON {
-	result := models.CompanyBSON{
-		Name:           body.Name,
-		Address:        body.Address,
-		Balance:        body.Balance,
-		LoyaltyProgram: body.LoyaltyProgram,
-		Active:         body.Active,
-	}
-	return result
 }

@@ -13,28 +13,40 @@ import (
 )
 
 var (
-	db *mongo.Database
+	db     *mongo.Database
+	client *mongo.Client
 )
 
 // Connect ...
-func Connect(dbName string) {
-	cfg := config.GetEnv()
-	//connect
-	client, err := mongo.NewClient(options.Client().ApplyURI(cfg.DatabaseURI))
+func Connect() {
+	envVars := config.GetEnv()
+
+	// Connect
+	cl, err := mongo.NewClient(options.Client().ApplyURI(envVars.Database.URI))
 	if err != nil {
 		log.Println(err)
-		log.Fatal("Cannot connect to database ", cfg.DatabaseURI)
+		log.Fatal("Cannot connect to database:", envVars.Database.URI)
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	err = client.Connect(ctx)
+	err = cl.Connect(ctx)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 	}
+	client=cl
+	db = cl.Database(envVars.Database.Name)
+	fmt.Println("Database Connected to", envVars.Database.Name)
+}
 
-	db = client.Database(dbName)
-	fmt.Println("Connected to db:", dbName)
+// GetClient ...
+func GetClient() *mongo.Client {
+	return client
+}
+
+// SetDB ...
+func SetDB(dbValue *mongo.Database) {
+	db = dbValue
 }
 
 // GetDB ...

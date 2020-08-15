@@ -4,13 +4,11 @@ import (
 	"github.com/asaskevich/govalidator"
 	"github.com/labstack/echo/v4"
 
-	"log"
-
 	"go.mongodb.org/mongo-driver/bson/primitive"
 
 	"cashbag-me-mini/dao"
 	"cashbag-me-mini/models"
-	"cashbag-me-mini/ultis"
+	"cashbag-me-mini/util"
 )
 
 // BranchCreate ...
@@ -22,17 +20,30 @@ func BranchCreate(next echo.HandlerFunc) echo.HandlerFunc {
 
 		// ValidateStruct
 		c.Bind(doc)
-		log.Println(doc)
 
 		_, err := govalidator.ValidateStruct(doc)
-		log.Println(err)
 
-		//if err
+		// if err
 		if err != nil {
-			return ultis.Response400(c, nil, err.Error())
+			return util.Response400(c, nil, err.Error())
 		}
 
-		//Success
+		// Validate object id
+		companyID, err := util.ValidationObjectID(doc.CompanyID)
+		if err != nil {
+			return util.Response400(c, nil, err.Error())
+		}
+
+		// Validate existed in db
+		company, err := dao.CompanyFindByID(companyID)
+		if err != nil {
+			return util.Response400(c, nil, err.Error())
+		}
+		if company.ID.IsZero() {
+			return util.Response400(c, nil, "Khong tim thay Cong Ty")
+		}
+
+		// Success
 		c.Set("body", doc)
 		return next(c)
 	}
@@ -51,7 +62,23 @@ func BranchUpdate(next echo.HandlerFunc) echo.HandlerFunc {
 
 		//if err
 		if err != nil {
-			return ultis.Response400(c, nil, err.Error())
+			return util.Response400(c, nil, err.Error())
+		}
+
+		// Validate object id
+		id := c.Param("id")
+		branchID, err := util.ValidationObjectID(id)
+		if err != nil {
+			return util.Response400(c, nil, err.Error())
+		}
+
+		// Validate existed in db
+		branch, err := dao.BranchFindByID(branchID)
+		if err != nil {
+			return util.Response400(c, nil, err.Error())
+		}
+		if branch.ID.IsZero() {
+			return util.Response400(c, nil, "Khong tim thay Branch")
 		}
 
 		//Success
@@ -71,7 +98,7 @@ func BranchValidateID(next echo.HandlerFunc) echo.HandlerFunc {
 
 		// Validate ID
 		if branch.ID.IsZero() {
-			return ultis.Response400(c, nil, "ID khong hop le")
+			return util.Response400(c, nil, "ID khong hop le")
 		}
 
 		return next(c)

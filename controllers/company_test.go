@@ -1,11 +1,11 @@
 package controllers
 
 import (
+	"cashbag-me-mini/modules/zookeeper"
 	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 
-	"cashbag-me-mini/config"
 	"context"
 	"encoding/json"
 	"net/http"
@@ -16,7 +16,7 @@ import (
 
 	"cashbag-me-mini/models"
 	"cashbag-me-mini/modules/database"
-	"cashbag-me-mini/ultis"
+	"cashbag-me-mini/util"
 )
 
 type CompanySuite struct {
@@ -24,9 +24,9 @@ type CompanySuite struct {
 }
 
 func (s CompanySuite) SetupSuite() {
-	var cfg = config.GetEnv()
-	database.Connect(cfg.DatabaseTestName)
-	ultis.HelperCompanyCreateFake()
+	zookeeper.Connect()
+	util.HelperConnect()
+	util.HelperCompanyCreateFake()
 }
 
 func (s CompanySuite) TearDownSuite() {
@@ -38,7 +38,7 @@ func removeOldDataCompany() {
 
 func (s *CompanySuite) TestCompanyList() {
 	var (
-		response ultis.Response
+		response util.Response
 	)
 
 	//Create Context
@@ -65,7 +65,7 @@ func (s *CompanySuite) TestCompanyCreateSuccess() {
 			Address: "48 Nguyen Chanh",
 			Active:  true,
 		}
-		response ultis.Response
+		response util.Response
 	)
 
 	//Create Context
@@ -90,8 +90,8 @@ func (s *CompanySuite) TestCompanyCreateSuccess() {
 
 func (s *CompanySuite) TestCompanyChangeActiveStatus() {
 	var (
-		response  ultis.Response
-		companyID = ultis.CompanyID
+		response  util.Response
+		companyID = util.CompanyID
 	)
 
 	//Create context
@@ -115,8 +115,8 @@ func (s *CompanySuite) TestCompanyChangeActiveStatus() {
 }
 func (s *CompanySuite) TestCompanyUpdate() {
 	var (
-		response             ultis.Response
-		companyID            = ultis.CompanyID
+		response             util.Response
+		companyID            = util.CompanyID
 		companyUpdatePayload = models.CompanyUpdatePayload{
 			Name:           "the coffee house",
 			Address:        "67 Nguyen Huy Tuong",

@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"cashbag-me-mini/modules/zookeeper"
 	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
@@ -9,9 +10,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"cashbag-me-mini/config"
-	"cashbag-me-mini/modules/database"
-	"cashbag-me-mini/ultis"
+	"cashbag-me-mini/util"
 	"encoding/json"
 )
 
@@ -22,8 +21,8 @@ type TransactionAnalyticSuite struct {
 
 // SetupSuite ...
 func (s TransactionAnalyticSuite) SetupSuite() {
-	var cfg = config.GetEnv()
-	database.Connect(cfg.DatabaseTestName)
+	zookeeper.Connect()
+	util.HelperConnect()
 }
 
 // TearDownSuite ...
@@ -33,7 +32,7 @@ func (s TransactionAnalyticSuite) TearDownSuite() {
 // TestTransactionAnalytic ...
 func (s *TransactionAnalyticSuite) TestTransactionAnalyticList() {
 	var (
-		response ultis.Response
+		response util.Response
 		date     = "2020-08-04"
 	)
 
