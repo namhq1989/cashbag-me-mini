@@ -1,11 +1,13 @@
 package validations
 
 import (
+	"cashbag-me-mini/dao"
+
 	"github.com/asaskevich/govalidator"
 	"github.com/labstack/echo/v4"
 
 	"cashbag-me-mini/models"
-	"cashbag-me-mini/ultis"
+	"cashbag-me-mini/util"
 )
 
 // TransactionCreate ...
@@ -21,7 +23,37 @@ func TransactionCreate(next echo.HandlerFunc) echo.HandlerFunc {
 
 		// if err
 		if err != nil {
-			return ultis.Response400(c, nil, err.Error())
+			return util.Response400(c, nil, err.Error())
+		}
+
+		// Validate branch object id
+		companyID, err := util.ValidationObjectID(doc.CompanyID)
+		if err != nil {
+			return util.Response400(c, nil, err.Error())
+		}
+
+		// Validate company object id
+		branchID, err := util.ValidationObjectID(doc.BranchID)
+		if err != nil {
+			return util.Response400(c, nil, err.Error())
+		}
+
+		// Validate company existed in db
+		company, err := dao.CompanyFindByID(companyID)
+		if err != nil {
+			return util.Response400(c, nil, err.Error())
+		}
+		if company.ID.IsZero() {
+			return util.Response400(c, nil, "Khong tim thay Cong Ty ")
+		}
+
+		// Validate branch existed in db
+		branch, err := dao.BranchFindByID(branchID)
+		if err != nil {
+			return util.Response400(c, nil, err.Error())
+		}
+		if branch.ID.IsZero() {
+			return util.Response400(c, nil, "Khong tim thay Chi Nhanh")
 		}
 
 		// Success

@@ -11,7 +11,7 @@ import (
 )
 
 // TransactionCreate ...
-func TransactionCreate(doc models.TransactionBSON, balance float64) (models.TransactionBSON, error) {
+func TransactionCreate(doc models.TransactionBSON) (models.TransactionBSON, error) {
 	var (
 		collection = database.TransactionCol()
 		ctx        = context.Background()
@@ -25,12 +25,6 @@ func TransactionCreate(doc models.TransactionBSON, balance float64) (models.Tran
 
 	// Insert
 	_, err := collection.InsertOne(ctx, doc)
-
-	if err == nil {
-		balanceCurrent := balance - doc.Commission
-		CompanyUpdateBalance(doc.CompanyID, balanceCurrent)
-		TransactionAnalyticHandle(doc)
-	}
 
 	return doc, err
 }

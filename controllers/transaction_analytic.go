@@ -4,7 +4,7 @@ import (
 	"github.com/labstack/echo/v4"
 
 	"cashbag-me-mini/services"
-	"cashbag-me-mini/ultis"
+	"cashbag-me-mini/util"
 )
 
 // TransactionAnalyticList ...
@@ -18,9 +18,9 @@ func TransactionAnalyticList(c echo.Context) error {
 
 	// if err
 	if err != nil {
-		return ultis.Response400(c, nil, err.Error())
+		return util.Response400(c, nil, err.Error())
 	}
 
 	// Success
-	return ultis.Response200(c, rawData, "")
+	return util.Response200(c, rawData, "")
 }
