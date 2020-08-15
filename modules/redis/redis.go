@@ -10,35 +10,38 @@ import (
 )
 
 var (
-	db *redis.Client
+	client *redis.Client
 )
 
 // Connect ...
 func Connect() {
 	envVars := config.GetEnv()
-	rdb := redis.NewClient(&redis.Options{
-		Addr:     envVars.RedisURI,  // use default Addr
-		Password: envVars.RedisPass, // no password set
-		DB:       0,                 // use default DB
+	client = redis.NewClient(&redis.Options{
+		Addr:     envVars.Redis.URI,  // use default Addr
+		Password: envVars.Redis.Pass, // no password set
+		DB:       0,                  // use default DB
 	})
 
 	// Ping Redis
-	pong, err := rdb.Ping().Result()
+	pong, err := client.Ping().Result()
+	if err != nil {
+		fmt.Println("RedisURI:", envVars.Redis.URI)
+	}
 	fmt.Println(pong, err)
-	db = rdb
+	fmt.Println("Redis connected to", envVars.Redis.URI)
 }
 
-// GetUser ...
-func GetUser() string {
-	value := db.Get("user").Val()
+// Get ...
+func Get(key string) string {
+	value := client.Get(key).Val()
 	return value
 }
 
-// SetUser ...
-func SetUser(value string) {
+// Set ...
+func Set(key string, value string) {
 	const setTime = 30000000000
 
-	err := db.Set("user", value, setTime).Err()
+	err := client.Set(key, value, setTime).Err()
 	if err != nil {
 		log.Println(err)
 	}

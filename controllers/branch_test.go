@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"cashbag-me-mini/modules/zookeeper"
 	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
@@ -13,10 +14,9 @@ import (
 
 	"go.mongodb.org/mongo-driver/bson"
 
-	"cashbag-me-mini/config"
 	"cashbag-me-mini/models"
 	"cashbag-me-mini/modules/database"
-	"cashbag-me-mini/ultis"
+	"cashbag-me-mini/util"
 )
 
 type BranchSuite struct {
@@ -24,10 +24,10 @@ type BranchSuite struct {
 }
 
 func (s BranchSuite) SetupSuite() {
-	var cfg = config.GetEnv()
-	database.Connect(cfg.DatabaseTestName)
-	ultis.HelperBranchCreateFake()
-	ultis.HelperCompanyCreateFake()
+	zookeeper.Connect()
+	util.HelperConnect()
+	util.HelperBranchCreateFake()
+	util.HelperCompanyCreateFake()
 }
 
 func (s BranchSuite) TearDownSuite() {
@@ -42,7 +42,7 @@ func removeOldData() {
 // TestBranchList ...
 func (s *BranchSuite) TestBranchList() {
 	var (
-		response ultis.Response
+		response util.Response
 	)
 
 	// Create Context
@@ -66,12 +66,12 @@ func (s *BranchSuite) TestBranchList() {
 func (s *BranchSuite) TestBranchCreateSuccess() {
 	var (
 		branch = models.BranchCreatePayload{
-			CompanyID: ultis.CompanyID,
+			CompanyID: util.CompanyID,
 			Name:      "Hight SonLa",
 			Address:   "120 SonLa",
 			Active:    false,
 		}
-		response ultis.Response
+		response util.Response
 	)
 
 	// Create Context
@@ -94,43 +94,11 @@ func (s *BranchSuite) TestBranchCreateSuccess() {
 	assert.Equal(s.T(), "Thanh Cong!", response["message"])
 }
 
-// TestBranchCreateFail, CompanyID not exactly
-func (s *BranchSuite) TestBranchCreateFailBecauseCompanyID() {
-	var (
-		branch = models.BranchCreatePayload{
-			CompanyID: "5f24d45125ea51bc57a828",
-			Name:      "Hight SonLa",
-			Address:   "120 SonLa",
-			Active:    false,
-		}
-		response ultis.Response
-	)
-
-	// Create Context
-	e := echo.New()
-	req := httptest.NewRequest(http.MethodGet, "/branches", nil)
-	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
-	responseRecorder := httptest.NewRecorder()
-	c := e.NewContext(req, responseRecorder)
-	c.Set("body", &branch)
-
-	// Call BranchCreate
-	BranchCreate(c)
-
-	// Parse
-	json.Unmarshal(responseRecorder.Body.Bytes(), &response)
-
-	// Test
-	assert.Equal(s.T(), http.StatusBadRequest, responseRecorder.Code)
-	assert.Equal(s.T(), nil, response["data"])
-	assert.Equal(s.T(), "Khong tim thay Cong Ty", response["message"])
-}
-
 // TestBranchChangeActiveStatus ...
 func (s *BranchSuite) TestBranchChangeActiveStatus() {
 	var (
-		response ultis.Response
-		branchID = ultis.BranchID
+		response util.Response
+		branchID = util.BranchID
 	)
 
 	// Create Context
@@ -156,8 +124,8 @@ func (s *BranchSuite) TestBranchChangeActiveStatus() {
 // TestBranchUpdate ...
 func (s *BranchSuite) TestBranchUpdate() {
 	var (
-		response             ultis.Response
-		branchID             = ultis.BranchID
+		response             util.Response
+		branchID             = util.BranchID
 		branchUpdateBPayload = models.BranchUpdateBPayload{
 			Name:    "Hight BinhDinh",
 			Address: "111 BinhDinh",

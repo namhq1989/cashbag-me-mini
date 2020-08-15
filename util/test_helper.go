@@ -1,15 +1,19 @@
-package ultis
+package util
 
 import (
 	"bytes"
+	"cashbag-me-mini/config"
 	"context"
 	"encoding/json"
+	"fmt"
 	"io"
+	"log"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
-
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 
 	"cashbag-me-mini/models"
 	"cashbag-me-mini/modules/database"
@@ -21,6 +25,30 @@ var (
 	// BranchID for test
 	BranchID = "5f24d45125ea51bc57a8285b"
 )
+
+// HelperConnect ...
+func HelperConnect() {
+	envVars := config.GetEnv()
+
+	// Connect
+	client, err := mongo.NewClient(options.Client().ApplyURI(envVars.Database.URI))
+	if err != nil {
+		log.Println(err)
+		log.Fatal("Cannot connect to database:", envVars.Database.URI)
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	err = client.Connect(ctx)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	db := client.Database(envVars.Database.Name)
+	fmt.Println("Database Connected to", envVars.Database.TestName)
+	database.SetDB(db)
+
+}
 
 // HelperToIOReader ...
 func HelperToIOReader(i interface{}) io.Reader {

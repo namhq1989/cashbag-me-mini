@@ -1,6 +1,7 @@
 package main
 
 import (
+	"net/http"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 
@@ -11,21 +12,21 @@ import (
 	"cashbag-me-mini/routes"
 )
 
-var cfg = config.GetEnv()
-
 func init() {
-	database.Connect(cfg.DatabaseName)
+	config.InitENV()
+	zookeeper.Connect()
+	database.Connect()
 	redis.Connect()
-	zookeeper.Connect(cfg.ZookeeperURI)
 }
 func main() {
+	envVars := config.GetEnv()
 	server := echo.New()
 
 	//CORS
 	server.Use(middleware.CORSWithConfig(middleware.CORSConfig{
 		AllowOrigins:     []string{"*"},
-		AllowHeaders:     []string{"Origin", "Content-Length", "Content-Type", "Authorization"},
-		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTION"},
+		AllowHeaders:     []string{echo.HeaderOrigin,echo.HeaderContentLength,echo.HeaderContentType, echo.HeaderAuthorization},
+		AllowMethods:     []string{http.MethodGet, http.MethodPost, http.MethodPut, http.MethodPatch,http.MethodDelete,http.MethodOptions},
 		MaxAge:           600,
 		AllowCredentials: false,
 	}))
@@ -38,5 +39,5 @@ func main() {
 
 	routes.Boostrap(server)
 
-	server.Logger.Fatal(server.Start(cfg.Port))
+	server.Logger.Fatal(server.Start(envVars.AppPort))
 }
