@@ -1,10 +1,42 @@
 package services
 
 import (
+	"errors"
+
 	"cashbag-me-mini/dao"
 	"cashbag-me-mini/models"
-	"errors"
 )
+
+// transactionAnalyticHandleForTransaction ...
+func transactionAnalyticHandleForTransaction(transaction models.TransactionBSON) (err error) {
+	var (
+		companyID = transaction.CompanyID
+	)
+
+	// Find CompanyAnalytic
+	companyAnalytic, err := dao.CompanyAnalyticFindByCompanyID(companyID)
+	if err != nil {
+		err = errors.New("Khong Tim Thay CompanyAnalytic")
+		return
+	}
+
+	// Set data Update CompanyAnalytic
+	companyAnalytic.TotalTransaction++
+	companyAnalytic.TotalRevenue += transaction.Amount
+	companyAnalytic.TotalCommission += transaction.Commission
+	if transaction.Postpaid == true {
+		companyAnalytic.TotalDebt += transaction.Commission
+		companyAnalytic.CountPostpaid++
+	}
+
+	// Update CompanyAnalytic
+	err = dao.CompanyAnalyticUpdateTransactionProperties(companyAnalytic)
+	if err != nil {
+		err = errors.New("Update CompanyAnalytic That Bai")
+		return
+	}
+	return
+}
 
 // companyAnalyticHandleForBranchCreate ...
 func companyAnalyticHandleForBranchCreate(branch models.BranchBSON) (err error) {
@@ -19,12 +51,14 @@ func companyAnalyticHandleForBranchCreate(branch models.BranchBSON) (err error) 
 		return
 	}
 
+	// Set data Update CompanyAnalytic
 	if branch.Active == true {
 		companyAnalytic.ActiveBranch++
 	} else {
 		companyAnalytic.InactiveBranch++
 	}
 
+	// Update CompanyAnalytic
 	err = dao.CompanyAnalyticUpdateBranchProperties(companyAnalytic)
 	if err != nil {
 		err = errors.New("Update CompanyAnalytic That Bai")
@@ -46,6 +80,7 @@ func companyAnalyticHandleForBranchChangeActive(branch models.BranchBSON) (err e
 		return
 	}
 
+	// Set data Update CompanyAnalytic
 	if branch.Active == true {
 		companyAnalytic.ActiveBranch++
 		companyAnalytic.InactiveBranch--
@@ -54,6 +89,7 @@ func companyAnalyticHandleForBranchChangeActive(branch models.BranchBSON) (err e
 		companyAnalytic.ActiveBranch--
 	}
 
+	// Update CompanyAnalytic
 	err = dao.CompanyAnalyticUpdateBranchProperties(companyAnalytic)
 	if err != nil {
 		err = errors.New("Update CompanyAnalytic That Bai")

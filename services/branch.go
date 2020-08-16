@@ -38,7 +38,9 @@ func BranchCreate(body models.BranchCreatePayload) (models.BranchBSON, error) {
 	// Update CompanyAnalytic
 	if err == nil {
 		errCompanyAnalyticHandle := companyAnalyticHandleForBranchCreate(doc)
-		return doc, errCompanyAnalyticHandle
+		if errCompanyAnalyticHandle != nil {
+			return doc, errCompanyAnalyticHandle
+		}
 	}
 	return doc, err
 }
@@ -63,7 +65,9 @@ func BranchChangeActiveStatus(branchID primitive.ObjectID) (models.BranchBSON, e
 	// Update CompanyAnalytic
 	if err == nil {
 		errCompanyAnalyticHandle := companyAnalyticHandleForBranchChangeActive(doc)
-		return doc, errCompanyAnalyticHandle
+		if errCompanyAnalyticHandle != nil {
+			return doc, errCompanyAnalyticHandle
+		}
 	}
 	return doc, err
 }

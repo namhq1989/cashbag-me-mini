@@ -15,7 +15,9 @@ type (
 		User           string             `bson:"user"`
 		Amount         float64            `bson:"amount"`
 		Commission     float64            `bson:"commission"`
-		LoyaltyProgram float64            `bson:"loyaltyprogram"`
+		LoyaltyProgram float64            `bson:"loyaltyProgram"`
+		UserProgram    float64            `bson:"userProgram"`
+		Postpaid       bool               `bson:"postpaid"`
 		CreatedAt      time.Time          `bson:"createdAt"`
 	}
 
@@ -27,7 +29,9 @@ type (
 		User           string             `json:"user"`
 		Amount         float64            `json:"amount"`
 		Commission     float64            `json:"commission"`
-		LoyaltyProgram float64            `json:"loyaltyprogram"`
+		LoyaltyProgram float64            `bson:"loyaltyProgram"`
+		UserProgram    float64            `bson:"userProgram"`
+		Postpaid       bool               `bson:"postpaid"`
 		CreatedAt      time.Time          `json:"createdAt"`
 	}
 

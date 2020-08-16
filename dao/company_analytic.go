@@ -34,28 +34,24 @@ func CompanyAnalyticCreate(companyID primitive.ObjectID) error {
 	return err
 }
 
-// CompanyAnalyticUpdate ...
-func CompanyAnalyticUpdate(CompanyAnalytic models.CompanyAnalyticBSON, transaction models.TransactionBSON) {
-
-	// Set for update Transaction Analytic
-	CompanyAnalytic.TotalTransaction++
-	CompanyAnalytic.TotalRevenue += transaction.Amount
-	CompanyAnalytic.TotalCommission += transaction.Commission
-
-	// Update Transaction Analytic
-	filter := bson.M{"_id": CompanyAnalytic.ID}
-	update := bson.M{"$set": bson.M{
-		"totalTransaction": CompanyAnalytic.TotalTransaction,
-		"totalRevenue":     CompanyAnalytic.TotalRevenue,
-		"totalCommission":  CompanyAnalytic.TotalCommission,
-		"updateAt":         time.Now(),
-	}}
+// CompanyAnalyticUpdateTransactionProperties ...
+func CompanyAnalyticUpdateTransactionProperties(companyAnalytic models.CompanyAnalyticBSON) error {
+	var (
+		filter = bson.M{"_id": companyAnalytic.ID}
+		update = bson.M{"$set": bson.M{
+			"totalTransaction": companyAnalytic.TotalTransaction,
+			"totalRevenue":     companyAnalytic.TotalRevenue,
+			"totalCommission":  companyAnalytic.TotalCommission,
+			"totalDebt":        companyAnalytic.TotalDebt,
+			"countPostpaid":    companyAnalytic.CountPostpaid,
+			"updatedAt":        time.Now(),
+		}}
+	)
 
 	// Update
 	err := CompanyAnalyticUpdateByID(filter, update)
-	if err != nil {
-		log.Println(err)
-	}
+
+	return err
 }
 
 // CompanyAnalyticUpdateBranchProperties ...
@@ -65,7 +61,7 @@ func CompanyAnalyticUpdateBranchProperties(companyAnalytic models.CompanyAnalyti
 		update = bson.M{"$set": bson.M{
 			"activeBranch":   companyAnalytic.ActiveBranch,
 			"inactiveBranch": companyAnalytic.InactiveBranch,
-			"updateAt":       time.Now(),
+			"updatedAt":      time.Now(),
 		}}
 	)
 
