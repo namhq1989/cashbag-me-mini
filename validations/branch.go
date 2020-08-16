@@ -15,11 +15,11 @@ import (
 func BranchCreate(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		var (
-			doc = new(models.BranchCreatePayload)
+			doc models.BranchCreatePayload
 		)
 
 		// ValidateStruct
-		c.Bind(doc)
+		c.Bind(&doc)
 
 		_, err := govalidator.ValidateStruct(doc)
 
@@ -53,11 +53,11 @@ func BranchCreate(next echo.HandlerFunc) echo.HandlerFunc {
 func BranchUpdate(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		var (
-			doc = new(models.BranchUpdateBPayload)
+			doc models.BranchUpdateBPayload
 		)
 
 		// ValidateStruct
-		c.Bind(doc)
+		c.Bind(&doc)
 		_, err := govalidator.ValidateStruct(doc)
 
 		//if err
