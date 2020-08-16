@@ -13,11 +13,11 @@ import (
 // CompanyCreate ...
 func CompanyCreate(c echo.Context) error {
 	var (
-		body = c.Get("body").(*models.CompanyCreatePayload)
+		body = c.Get("body").(models.CompanyCreatePayload)
 	)
 
 	// Process data
-	rawData, err := services.CompanyCreate(*body)
+	rawData, err := services.CompanyCreate(body)
 
 	// if err
 	if err != nil {
@@ -65,12 +65,12 @@ func CompanyChangeActiveStatus(c echo.Context) error {
 func CompanyUpdate(c echo.Context) error {
 	var (
 		id           = c.Param("id")
-		body         = c.Get("body").(*models.CompanyUpdatePayload)
+		body         = c.Get("body").(models.CompanyUpdatePayload)
 		companyID, _ = primitive.ObjectIDFromHex(id)
 	)
 
 	// Process data
-	rawData, err := services.CompanyUpdate(companyID, *body)
+	rawData, err := services.CompanyUpdate(companyID, body)
 
 	// if err
 	if err != nil {

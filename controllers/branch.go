@@ -27,11 +27,11 @@ func BranchList(c echo.Context) error {
 // BranchCreate ...
 func BranchCreate(c echo.Context) error {
 	var (
-		body = c.Get("body").(*models.BranchCreatePayload)
+		body = c.Get("body").(models.BranchCreatePayload)
 	)
 
 	// Process data
-	rawData, err := services.BranchCreate(*body)
+	rawData, err := services.BranchCreate(body)
 
 	// if err
 	if err != nil {
@@ -65,12 +65,12 @@ func BranchChangeActiveStatus(c echo.Context) error {
 func BranchUpdate(c echo.Context) error {
 	var (
 		id          = c.Param("id")
-		body        = c.Get("body").(*models.BranchUpdateBPayload)
+		body        = c.Get("body").(models.BranchUpdateBPayload)
 		branchID, _ = util.ValidationObjectID(id)
 	)
 
 	// Process data
-	rawData, err := services.BranchUpdate(branchID, *body)
+	rawData, err := services.BranchUpdate(branchID, body)
 
 	// if err
 	if err != nil {

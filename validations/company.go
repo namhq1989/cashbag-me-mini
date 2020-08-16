@@ -15,11 +15,11 @@ import (
 func CompanyCreate(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		var (
-			doc = new(models.CompanyCreatePayload)
+			doc models.CompanyCreatePayload
 		)
 
 		// ValidateStruct
-		c.Bind(doc)
+		c.Bind(&doc)
 		_, err := govalidator.ValidateStruct(doc)
 
 		//if err
@@ -37,11 +37,11 @@ func CompanyCreate(next echo.HandlerFunc) echo.HandlerFunc {
 func CompanyUpdate(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		var (
-			doc = new(models.CompanyUpdatePayload)
+			doc models.CompanyUpdatePayload
 		)
 
 		// ValidateStruct
-		c.Bind(doc)
+		c.Bind(&doc)
 		_, err := govalidator.ValidateStruct(doc)
 
 		//if err
