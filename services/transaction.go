@@ -57,7 +57,7 @@ func TransactionCreate(body models.TransactionCreatePayload) (transaction models
 	if err == nil {
 		balanceCurrent := balance - doc.Commission
 		dao.CompanyUpdateBalance(doc.CompanyID, balanceCurrent)
-		dao.TransactionAnalyticHandle(doc)
+		TransactionAnalyticHandle(doc)
 	}
 
 	return doc, err

@@ -60,6 +60,7 @@ func BranchChangeActiveStatus(branchID primitive.ObjectID) (models.BranchBSON, e
 
 	// Change Active status
 	active = !(doc.Active)
+	doc.Active = active
 	update := bson.M{"$set": bson.M{"active": active}}
 	err := BranchUpdateByID(filter, update)
 
@@ -73,7 +74,6 @@ func BranchUpdate(branchID primitive.ObjectID, body models.BranchBSON) (models.B
 		updateData = bson.M{"$set": bson.M{
 			"name":     body.Name,
 			"address":  body.Address,
-			"active":   body.Active,
 			"updateAt": time.Now(),
 		}}
 	)

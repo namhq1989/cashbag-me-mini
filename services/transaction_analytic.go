@@ -5,6 +5,7 @@ import (
 
 	"cashbag-me-mini/dao"
 	"cashbag-me-mini/models"
+	"cashbag-me-mini/util"
 )
 
 // TransactionAnalyticList ...
@@ -12,7 +13,7 @@ func TransactionAnalyticList(date string) ([]models.TransactionAnalyticDetail, e
 	var (
 		result   []models.TransactionAnalyticDetail
 		dateType = now.MustParse(date)
-		beginDay = dao.BeginningOfDay(dateType)
+		beginDay = util.BeginningOfDay(dateType)
 	)
 
 	// Find
@@ -25,6 +26,16 @@ func TransactionAnalyticList(date string) ([]models.TransactionAnalyticDetail, e
 	}
 
 	return result, err
+}
+
+// TransactionAnalyticHandle ...
+func TransactionAnalyticHandle(transaction models.TransactionBSON) {
+	tranAnalytic, check := dao.TransactionAnalyticFilter(transaction)
+	if check == false {
+		dao.TransactionAnalyticCreate(transaction)
+	} else {
+		dao.TransactionAnalyticUpdate(tranAnalytic, transaction)
+	}
 }
 
 // convertToTransactionAnalyticDetail ...
