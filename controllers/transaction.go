@@ -11,11 +11,11 @@ import (
 // TransactionCreate ...
 func TransactionCreate(c echo.Context) error {
 	var (
-		body = c.Get("body").(*models.TransactionCreatePayload)
+		body = c.Get("body").(models.TransactionCreatePayload)
 	)
 
 	// Process data
-	rawData, err := services.TransactionCreate(*body)
+	rawData, err := services.TransactionCreate(body)
 
 	//if err
 	if err != nil {

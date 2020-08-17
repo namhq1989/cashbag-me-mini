@@ -14,11 +14,11 @@ import (
 func TransactionCreate(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		var (
-			doc = new(models.TransactionCreatePayload)
+			doc models.TransactionCreatePayload
 		)
 
 		// ValidateStruct
-		c.Bind(doc)
+		c.Bind(&doc)
 		_, err := govalidator.ValidateStruct(doc)
 
 		// if err
@@ -46,7 +46,6 @@ func TransactionCreate(next echo.HandlerFunc) echo.HandlerFunc {
 		if err != nil {
 			return util.Response400(c, nil, err.Error())
 		}
-	
 
 		// Validate branch existed in db
 		branch, err := dao.BranchFindByID(branchID)
@@ -56,7 +55,6 @@ func TransactionCreate(next echo.HandlerFunc) echo.HandlerFunc {
 		if err != nil {
 			return util.Response400(c, nil, err.Error())
 		}
-		
 
 		// Success
 		c.Set("body", doc)
