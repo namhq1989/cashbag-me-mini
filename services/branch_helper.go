@@ -53,7 +53,6 @@ func branchUpdatePayloadToBSON(branchUpdatePayload models.BranchUpdateBPayload) 
 	result := models.BranchBSON{
 		Name:    branchUpdatePayload.Name,
 		Address: branchUpdatePayload.Address,
-		Active:  branchUpdatePayload.Active,
 	}
 
 	return result
