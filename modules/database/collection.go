@@ -10,7 +10,7 @@ const (
 	branch               = "branches"
 	transaction          = "transactions"
 	transactionAnalytics = "transactionAnalytics"
-	user                 = "user"
+	user                 = "users"
 	userProgram          = "userProgram"
 )
 

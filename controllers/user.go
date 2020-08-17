@@ -2,11 +2,10 @@ package controllers
 
 import (
 	"github.com/labstack/echo/v4"
-	"go.mongodb.org/mongo-driver/bson/primitive"
-
+	
 	"cashbag-me-mini/models"
 	"cashbag-me-mini/services"
-	"cashbag-me-mini/ultis"
+	"cashbag-me-mini/util"
 )
 
 // UserCreate ...
@@ -18,11 +17,11 @@ func UserCreate(c echo.Context) error {
 	//Process data
 	rawData, err := services.UserCreate(*body)
 	if err != nil {
-		return ultis.Response400(c, nil, err.Error())
+		return util.Response400(c, nil, err.Error())
 	}
 
 	//Success
-	return ultis.Response200(c, rawData, "")
+	return util.Response200(c, rawData, "")
 
 }
 
@@ -31,7 +30,8 @@ func UserUpdate(c echo.Context) error{
 	var (
 		id           = c.Param("id")
 		body         = c.Get("body").(*models.UserUpdatePayload)
-		userID, _ = primitive.ObjectIDFromHex(id)
+		userID, _ =  util.ValidationObjectID(id)
+
 	)
 
 	// Process data
@@ -39,10 +39,10 @@ func UserUpdate(c echo.Context) error{
 
 	// if err
 	if err != nil {
-		return ultis.Response400(c, nil, err.Error())
+		return util.Response400(c, nil, err.Error())
 	}
 
 	//success
-	return ultis.Response200(c, rawData, "")
+	return util.Response200(c, rawData, "")
 }
 

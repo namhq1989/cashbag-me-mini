@@ -10,5 +10,5 @@ import (
 // User ...
 func User(g *echo.Group) {
 	g.POST("", controllers.UserCreate,validations.UserCreate)
-	g.PUT("/:id",controllers.UserUpdate)
+	g.PUT("/:id",controllers.UserUpdate, validations.UserValidateID, validations.UserUpdate)
 }	

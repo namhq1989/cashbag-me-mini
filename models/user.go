@@ -22,18 +22,17 @@ type (
 
 	// UserCreatePayload ...
 	UserCreatePayload struct {
-		CompanyID primitive.ObjectID `json:"companyID"`
-		Name      string             `json:"name" valid:"stringlength(3|30),type(string)"`
-		Address   string             `json:"address" valid:"stringlength(3|30),type(string)"`
-		Spending  float64            `json:"spending"`
+		CompanyID string `json:"companyID"`
+		Name      string `json:"name" valid:"stringlength(3|30),type(string)"`
+		Address   string `json:"address" valid:"stringlength(3|30),type(string)"`
 	}
 
 	// UserUpdatePayload ...
 	UserUpdatePayload struct {
-		CompanyID primitive.ObjectID `json:"companyID"`
-		Name      string             `json:"name" valid:"stringlength(3|30),type(string)"`
-		Address   string             `json:"address" valid:"stringlength(3|30),type(string)"`
-		Level     string             `json:"level"`
-		Spending  float64            `json:"spending"`
+		CompanyID string  `json:"companyID"`
+		Name      string  `json:"name" valid:"stringlength(3|30),type(string)"`
+		Address   string  `json:"address" valid:"stringlength(3|30),type(string)"`
+		Level     string  `json:"level"`
+		Spending  float64 `json:"spending"`
 	}
 )
