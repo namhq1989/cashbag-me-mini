@@ -28,7 +28,7 @@ type (
 		Balance        float64            `json:"balance"`
 		LoyaltyProgram float64            `json:"loyaltyProgram"`
 		Active         bool               `json:"active"`
-		Postpaid       bool               `bson:"postpaid"`
+		Postpaid       bool               `json:"postpaid"`
 		CreatedAt      time.Time          `json:"createdAt"`
 		UpdatedAt      time.Time          `json:"updatedAt"`
 	}
