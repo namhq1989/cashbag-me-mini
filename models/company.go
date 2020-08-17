@@ -46,8 +46,8 @@ type (
 		Address        string  `json:"address" valid:"stringlength(3|100),type(string)"`
 		Balance        float64 `json:"balance" valid:"required"`
 		LoyaltyProgram float64 `json:"loyaltyProgram" valid:"required"`
-		Postpaid       bool    `bson:"postpaid"`
 		Active         bool    `json:"active"`
+		Postpaid       bool    `json:"postpaid"`
 	}
 
 	// CompanyBrief ...
