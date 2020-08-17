@@ -15,10 +15,20 @@ func TransactionCreate(body models.TransactionCreatePayload) (transaction models
 	var (
 		user         = body.User
 		companyID, _ = util.ValidationObjectID(body.CompanyID)
+		branchID, _  = util.ValidationObjectID(body.CompanyID)
 		company, _   = dao.CompanyFindByID(companyID)
+		branch, _    = dao.BranchFindByID(branchID)
 	)
 
-	// Find company & branch
+	// Check active company & branch
+	if !company.Active {
+		err = errors.New("Company da dung hoat dong")
+		return
+	}
+	if !branch.Active {
+		err = errors.New("Branch da dung hoat dong")
+		return
+	}
 
 	// Validate User
 	isUserValid := transactionValidateUser(user)
@@ -39,10 +49,13 @@ func TransactionCreate(body models.TransactionCreatePayload) (transaction models
 	commssion := calculateTransactionCommison(company.LoyaltyProgram, body.Amount)
 	balance := company.Balance
 
-	// Check balance
+	// Check balance && Xử lý postpaid
 	if balance < commssion {
-		err = errors.New("So tien hoan tra cua cong ty da het")
-		return
+		if !company.Postpaid {
+			err = errors.New("So tien hoan tra cua cong ty da het")
+			return
+		}
+		transaction.Postpaid = true
 	}
 
 	// Convert & add information Transaction
