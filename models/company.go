@@ -15,7 +15,7 @@ type (
 		Balance        float64            `bson:"balance" `
 		LoyaltyProgram float64            `bson:"loyaltyProgram" `
 		Active         bool               `bson:"active" `
-		postpaid       bool               `bson:"postpaid"`
+		Postpaid       bool               `bson:"postpaid"`
 		CreatedAt      time.Time          `bson:"createdAt"`
 		UpdatedAt      time.Time          `bson:"updatedAt"`
 	}
@@ -28,7 +28,7 @@ type (
 		Balance        float64            `json:"balance"`
 		LoyaltyProgram float64            `json:"loyaltyProgram"`
 		Active         bool               `json:"active"`
-		postpaid       bool               `json:"postpaid"`
+		Postpaid       bool               `json:"postpaid"`
 		CreatedAt      time.Time          `json:"createdAt"`
 		UpdatedAt      time.Time          `json:"updatedAt"`
 	}

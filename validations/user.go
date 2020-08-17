@@ -16,11 +16,11 @@ import (
 func UserCreate(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		var (
-			doc = new(models.UserCreatePayload)
+			doc models.UserCreatePayload
 		)
 
 		// ValidateStruct
-		c.Bind(doc)
+		c.Bind(&doc)
 		_, err := govalidator.ValidateStruct(doc)
 
 		//if err
@@ -52,11 +52,11 @@ func UserCreate(next echo.HandlerFunc) echo.HandlerFunc {
 func UserUpdate(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		var (
-			doc = new(models.UserUpdatePayload)
+			doc models.UserUpdatePayload
 		)
 
 		// ValidateStruct
-		c.Bind(doc)
+		c.Bind(&doc)
 		_, err := govalidator.ValidateStruct(doc)
 
 		//if err

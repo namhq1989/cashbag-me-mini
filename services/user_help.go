@@ -23,8 +23,6 @@ func userUpdatePayloadToBSON(body models.UserUpdatePayload) models.UserBSON {
 	result := models.UserBSON{
 		Name:     body.Name,
 		Address:  body.Address,
-		Level:    body.Level,
-		Spending: body.Spending,
 	}
 	return result
 }
