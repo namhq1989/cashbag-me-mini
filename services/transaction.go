@@ -13,10 +13,22 @@ import (
 // TransactionCreate ...
 func TransactionCreate(body models.TransactionCreatePayload) (transaction models.TransactionBSON, err error) {
 	var (
-		user         = body.UserID
+		user         = body.User
 		companyID, _ = util.ValidationObjectID(body.CompanyID)
+		branchID, _  = util.ValidationObjectID(body.BranchID)
 		company, _   = dao.CompanyFindByID(companyID)
+		branch, _    = dao.BranchFindByID(branchID)
 	)
+
+	// Check active company & branch
+	if !company.Active {
+		err = errors.New("Company da dung hoat dong")
+		return
+	}
+	if !branch.Active {
+		err = errors.New("Branch da dung hoat dong")
+		return
+	}
 
 	// Validate request
 	userReq := redis.Get(config.RedisKeyUser)
