@@ -8,8 +8,8 @@ import (
 
 type (
 
-	// companyAnalyticBSON ...
-	companyAnalyticBSON struct {
+	// CompanyAnalyticBSON ...
+	CompanyAnalyticBSON struct {
 		ID               primitive.ObjectID `bson:"_id"`
 		CompanyID        primitive.ObjectID `bson:"companyID"`
 		ActiveBranch     int                `bson:"activeBranch"`
@@ -26,8 +26,8 @@ type (
 		UpdatedAt        time.Time          `bson:"updatedAt"`
 	}
 
-	// companyAnalyticDetail ....
-	companyAnalyticDetail struct {
+	// CompanyAnalyticDetail ....
+	CompanyAnalyticDetail struct {
 		ID               primitive.ObjectID `json:"_id"`
 		CompanyID        primitive.ObjectID `json:"companyID"`
 		ActiveBranch     int                `json:"activeBranch"`
