@@ -74,7 +74,7 @@ func BranchUpdate(branchID primitive.ObjectID, body models.BranchBSON) (models.B
 		updateData = bson.M{"$set": bson.M{
 			"name":     body.Name,
 			"address":  body.Address,
-			"updateAt": time.Now(),
+			"updatedAt": time.Now(),
 		}}
 	)
 
