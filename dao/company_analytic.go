@@ -71,6 +71,22 @@ func CompanyAnalyticUpdateBranchProperties(companyAnalytic models.CompanyAnalyti
 	return err
 }
 
+// CompanyAnalyticUpdateUserProperties ...
+func CompanyAnalyticUpdateUserProperties(companyAnalytic models.CompanyAnalyticBSON) error {
+	var (
+		filter = bson.M{"_id": companyAnalytic.ID}
+		update = bson.M{"$set": bson.M{
+			"totalUser": companyAnalytic.TotalUser,
+			"updatedAt": time.Now(),
+		}}
+	)
+
+	// Update
+	err := CompanyAnalyticUpdateByID(filter, update)
+
+	return err
+}
+
 // CompanyAnalyticUpdateByID ...
 func CompanyAnalyticUpdateByID(filter bson.M, updateData bson.M) error {
 	var (
