@@ -22,8 +22,9 @@ func UserCreate(doc models.UserBSON) (models.UserBSON, error) {
 	if doc.ID.IsZero() {
 		doc.ID = primitive.NewObjectID()
 	}
+
 	doc.CreatedAt = time.Now()
-	
+
 	//insert one
 	_, err := collection.InsertOne(ctx, doc)
 	return doc, err
@@ -35,6 +36,8 @@ func UserUpdate(id primitive.ObjectID, user models.UserBSON) (models.UserBSON, e
 	var (
 		filter = bson.M{"_id": id}
 		update = bson.M{"$set": bson.M{
+			"name":      user.Name,
+			"address":   user.Address,
 			"updatedAt": time.Now(),
 		}}
 	)
