@@ -10,6 +10,7 @@ const (
 	branch               = "branches"
 	transaction          = "transactions"
 	transactionAnalytics = "transactionAnalytics"
+	companyAnalytics     = "companyAnalytics"
 )
 
 // CompanyCol ...
@@ -30,4 +31,9 @@ func TransactionCol() *mongo.Collection {
 // TransactionAnalyticCol ...
 func TransactionAnalyticCol() *mongo.Collection {
 	return db.Collection(transactionAnalytics)
+}
+
+// CompanyAnalyticCol ...
+func CompanyAnalyticCol() *mongo.Collection {
+	return db.Collection(companyAnalytics)
 }

@@ -1,6 +1,7 @@
 package dao
 
 import (
+	"cashbag-me-mini/util"
 	"context"
 	"log"
 	"time"
@@ -35,22 +36,12 @@ func TransactionAnalytic(date time.Time) ([]models.TransactionAnalyticBSON, erro
 	return result, err
 }
 
-// TransactionAnalyticHandle ...
-func TransactionAnalyticHandle(transaction models.TransactionBSON) {
-	tranAnalytic, check := TransactionAnalyticFilter(transaction)
-	if check == false {
-		TransactionAnalyticCreate(transaction)
-	} else {
-		TransactionAnalyticUpdate(tranAnalytic, transaction)
-	}
-}
-
 // TransactionAnalyticFilter ...
 func TransactionAnalyticFilter(transaction models.TransactionBSON) (models.TransactionAnalyticBSON, bool) {
 	var (
 		transactionAnalyticCol = database.TransactionAnalyticCol()
 		ctx                    = context.Background()
-		startOfDate            = BeginningOfDay(transaction.CreatedAt)
+		startOfDate            = util.BeginningOfDay(transaction.CreatedAt)
 		tranAnalytic           models.TransactionAnalyticBSON
 		filter                 = bson.M{
 			"companyID": transaction.CompanyID,
@@ -74,7 +65,7 @@ func TransactionAnalyticCreate(transaction models.TransactionBSON) {
 	var (
 		transactionAnalyticCol = database.TransactionAnalyticCol()
 		ctx                    = context.Background()
-		startOfDate            = BeginningOfDay(transaction.CreatedAt)
+		startOfDate            = util.BeginningOfDay(transaction.CreatedAt)
 	)
 
 	// Set transactionAnalytic
@@ -130,9 +121,4 @@ func TransactionAnalyticUpdateByID(filter bson.M, updateData bson.M) error {
 	_, err := transactionAnalyticCol.UpdateOne(ctx, filter, updateData)
 
 	return err
-}
-
-// BeginningOfDay ...
-func BeginningOfDay(t time.Time) time.Time {
-	return time.Date(t.Year(), t.Month(), t.Day(), 0, 0, 0, 0, time.UTC)
 }

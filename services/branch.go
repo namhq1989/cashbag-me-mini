@@ -35,6 +35,13 @@ func BranchCreate(body models.BranchCreatePayload) (models.BranchBSON, error) {
 	branch = branchCreatePayloadToBSON(body)
 	doc, err := dao.BranchCreate(branch)
 
+	// Update CompanyAnalytic
+	if err == nil {
+		errCompanyAnalyticHandle := companyAnalyticHandleForBranchCreate(doc)
+		if errCompanyAnalyticHandle != nil {
+			return doc, errCompanyAnalyticHandle
+		}
+	}
 	return doc, err
 }
 
@@ -55,5 +62,12 @@ func BranchChangeActiveStatus(branchID primitive.ObjectID) (models.BranchBSON, e
 	// Change Active Status
 	doc, err := dao.BranchChangeActiveStatus(branchID)
 
+	// Update CompanyAnalytic
+	if err == nil {
+		errCompanyAnalyticHandle := companyAnalyticHandleForBranchChangeActive(doc)
+		if errCompanyAnalyticHandle != nil {
+			return doc, errCompanyAnalyticHandle
+		}
+	}
 	return doc, err
 }
