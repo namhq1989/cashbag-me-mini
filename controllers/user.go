@@ -11,11 +11,11 @@ import (
 // UserCreate ...
 func UserCreate(c echo.Context) error {
 	var (
-		body = c.Get("body").(*models.UserCreatePayload)
+		body = c.Get("body").(models.UserCreatePayload)
 	)
 
 	//Process data
-	rawData, err := services.UserCreate(*body)
+	rawData, err := services.UserCreate(body)
 	if err != nil {
 		return util.Response400(c, nil, err.Error())
 	}
@@ -29,13 +29,13 @@ func UserCreate(c echo.Context) error {
 func UserUpdate(c echo.Context) error{
 	var (
 		id           = c.Param("id")
-		body         = c.Get("body").(*models.UserUpdatePayload)
+		body         = c.Get("body").(models.UserUpdatePayload)
 		userID, _ =  util.ValidationObjectID(id)
 
 	)
 
 	// Process data
-	rawData, err := services.UserUpdate(userID, *body)
+	rawData, err := services.UserUpdate(userID, body)
 
 	// if err
 	if err != nil {
