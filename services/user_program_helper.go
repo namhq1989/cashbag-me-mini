@@ -48,7 +48,6 @@ func diamondProgramToDiamondButton(body models.UserProgramCreatePayload) models.
 	return result
 }
 
-// silverValidate
 func silverValidate(silver models.SilverButton) bool {
 	if silver.Spending <= 1000 || silver.Commission <= 1 {
 		return false

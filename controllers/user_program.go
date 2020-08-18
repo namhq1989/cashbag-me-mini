@@ -8,7 +8,7 @@ import (
 	"cashbag-me-mini/util"
 )
 
-// UserProgramCreate ...
+// UserProgramCreate ....
 func UserProgramCreate(c echo.Context) error {
 	var (
 		body = c.Get("body").(models.UserProgramCreatePayload)
