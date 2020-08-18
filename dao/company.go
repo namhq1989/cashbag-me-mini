@@ -103,12 +103,29 @@ func CompanyFindByID(id primitive.ObjectID) (models.CompanyBSON, error) {
 	return result, err
 }
 
+
 // CompanyUpdateBalance ...
 func CompanyUpdateBalance(id primitive.ObjectID, balance float64) {
 	var (
 		filter = bson.M{"_id": id}
 		update = bson.M{"$set": bson.M{
 			"balance": balance,
+		}}
+	)
+
+	// Update
+	err := CompanyUpdateByID(filter, update)
+
+	if err != nil {
+		log.Println(err)
+	}
+}
+// CompanyUpdateActive ...
+func CompanyUpdateActive(id primitive.ObjectID, active bool) {
+	var (
+		filter = bson.M{"_id": id}
+		update = bson.M{"$set": bson.M{
+			"active":active,
 		}}
 	)
 
@@ -132,3 +149,5 @@ func CompanyUpdateByID(filter bson.M, updateData bson.M) error {
 
 	return err
 }
+
+
