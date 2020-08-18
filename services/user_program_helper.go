@@ -25,13 +25,13 @@ func userProgramCreatePayloadToBSON(body models.UserProgramCreatePayload) models
 }
 
 func silverProgramToSilverButton(body models.UserProgramCreatePayload) models.SilverButton {
-
 	result := models.SilverButton{
 		Spending:   body.SilverSpending,
 		Commission: body.SilverCommission,
 	}
 	return result
 }
+
 func goldenProgramToGoldenButton(body models.UserProgramCreatePayload) models.GoldenButton {
 	result := models.GoldenButton{
 		Spending:   body.GoldenSpending,
