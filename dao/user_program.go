@@ -26,6 +26,5 @@ func UserProgramCreate(doc models.UserProgramBSON) (models.UserProgramBSON, erro
 	_, err := userProgramCol.InsertOne(ctx, doc)
 
 	return doc, err
-
 }
 
