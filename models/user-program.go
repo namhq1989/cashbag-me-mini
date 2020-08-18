@@ -21,7 +21,7 @@ type (
 		Spending   float64 `bson:"spending"`
 		Commission float64 `bson:"commission"`
 	}
-	
+
 	// UserProgramBSON ...
 	UserProgramBSON struct {
 		ID        primitive.ObjectID `bson:"_id"`
@@ -31,6 +31,7 @@ type (
 		Diamond   DiamondButton      `bson:"diamond"`
 		Active    bool               `bson:"active"`
 	}
+	
 	// UserProgramCreatePayload ...
 	UserProgramCreatePayload struct {
 		CompanyID         string  `json:"companyID"`

@@ -39,6 +39,7 @@ func goldenProgramToGoldenButton(body models.UserProgramCreatePayload) models.Go
 	}
 	return result
 }
+
 func diamondProgramToDiamondButton(body models.UserProgramCreatePayload) models.DiamondButton {
 	result := models.DiamondButton{
 		Spending:   body.DiamondSpending,
