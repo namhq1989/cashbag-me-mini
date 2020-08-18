@@ -16,6 +16,14 @@ func UserCreate(body models.UserCreatePayload) (models.UserBSON,error){
 	//Create user
 	doc,err := dao.UserCreate(user)
 
+	// Update CompanyAnalytic
+	if err == nil {
+		errCompanyAnalyticHandle := companyAnalyticHandleForUserCreate(doc)
+		if errCompanyAnalyticHandle != nil {
+			return doc, errCompanyAnalyticHandle
+		}
+	}
+
 	return doc,err
 }
 

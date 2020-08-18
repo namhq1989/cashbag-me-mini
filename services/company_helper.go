@@ -37,6 +37,7 @@ func companyUpdatePayloadToBSON(body models.CompanyUpdatePayload) models.Company
 		Balance:        body.Balance,
 		LoyaltyProgram: body.LoyaltyProgram,
 		Active:         body.Active,
+		Postpaid:       body.Postpaid,
 	}
 	return result
 }

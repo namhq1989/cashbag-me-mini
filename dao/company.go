@@ -61,6 +61,7 @@ func CompanyUpdate(id primitive.ObjectID, company models.CompanyBSON) (models.Co
 			"active":         company.Active,
 			"balance":        company.Balance,
 			"loyaltyProgram": company.LoyaltyProgram,
+			"postpaid":       company.Postpaid,
 			"updatedAt":      time.Now(),
 		}}
 	)

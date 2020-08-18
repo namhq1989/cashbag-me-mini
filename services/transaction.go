@@ -42,14 +42,19 @@ func TransactionCreate(body models.TransactionCreatePayload) (transaction models
 	commssion := calculateTransactionCommison(company.LoyaltyProgram, body.Amount)
 	balance := company.Balance
 
-	// Check balance
+	// Convert Transaction
+	transaction = transactionCreatePayloadToBSON(body)
+
+	// Check balance && Xử lý postpaid
 	if balance < commssion {
-		err = errors.New("So tien hoan tra cua cong ty da het")
-		return
+		if !company.Postpaid {
+			err = errors.New("So tien hoan tra cua cong ty da het")
+			return
+		}
+		transaction.Postpaid = true
 	}
 
-	// Convert & add information Transaction
-	transaction = transactionCreatePayloadToBSON(body)
+	// Add information Transaction
 	transaction.Commission = commssion
 	transaction.LoyaltyProgram = company.LoyaltyProgram
 
@@ -58,8 +63,10 @@ func TransactionCreate(body models.TransactionCreatePayload) (transaction models
 
 	// Update balance & transactionAnalytic
 	if err == nil {
-		balanceCurrent := balance - doc.Commission
-		dao.CompanyUpdateBalance(doc.CompanyID, balanceCurrent)
+		if !transaction.Postpaid{
+			balanceCurrent := balance - doc.Commission
+			dao.CompanyUpdateBalance(doc.CompanyID, balanceCurrent)
+		}
 		TransactionAnalyticHandle(doc)
 		errTransactionAnalyticHandle := transactionAnalyticHandleForTransaction(doc)
 		if errTransactionAnalyticHandle != nil {

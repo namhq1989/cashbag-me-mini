@@ -119,3 +119,28 @@ func companyAnalyticHandleForBranchChangeActive(branch models.BranchBSON) (err e
 	}
 	return
 }
+
+// companyAnalyticHandleForUserCreate ...
+func companyAnalyticHandleForUserCreate(user models.UserBSON) (err error) {
+	var (
+		companyID = user.CompanyID
+	)
+
+	// Find CompanyAnalytic
+	companyAnalytic, err := dao.CompanyAnalyticFindByCompanyID(companyID)
+	if err != nil {
+		err = errors.New("Khong Tim Thay CompanyAnalytic")
+		return
+	}
+
+	// Set data Update CompanyAnalytic
+	companyAnalytic.TotalUser++
+
+	// Update CompanyAnalytic
+	err = dao.CompanyAnalyticUpdateUserProperties(companyAnalytic)
+	if err != nil {
+		err = errors.New("Update CompanyAnalytic That Bai")
+		return
+	}
+	return
+}
