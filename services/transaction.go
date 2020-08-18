@@ -13,7 +13,7 @@ import (
 // TransactionCreate ...
 func TransactionCreate(body models.TransactionCreatePayload) (transaction models.TransactionBSON, err error) {
 	var (
-		user         = body.User
+		user         = body.UserID
 		companyID, _ = util.ValidationObjectID(body.CompanyID)
 		branchID, _  = util.ValidationObjectID(body.BranchID)
 		company, _   = dao.CompanyFindByID(companyID)
@@ -30,20 +30,13 @@ func TransactionCreate(body models.TransactionCreatePayload) (transaction models
 		return
 	}
 
-	// Validate User
-	isUserValid := transactionValidateUser(user)
-	if !isUserValid {
-		err = errors.New("User khong nam trong danh sach hoan tien")
-		return
-	}
-
 	// Validate request
 	userReq := redis.Get(config.RedisKeyUser)
 	if userReq == user {
 		err = errors.New("User Dang Thuc hien giao dich")
 		return
 	}
-	redis.Set(config.RedisKeyUser, body.User)
+	redis.Set(config.RedisKeyUser, body.UserID)
 
 	// Calculation commsion
 	commssion := calculateTransactionCommison(company.LoyaltyProgram, body.Amount)
@@ -83,3 +76,5 @@ func TransactionCreate(body models.TransactionCreatePayload) (transaction models
 
 	return doc, err
 }
+
+

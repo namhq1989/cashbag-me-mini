@@ -26,14 +26,20 @@ func TransactionCreate(next echo.HandlerFunc) echo.HandlerFunc {
 			return util.Response400(c, nil, err.Error())
 		}
 
-		// Validate branch object id
+		// Validate company object id
 		companyID, err := util.ValidationObjectID(doc.CompanyID)
 		if err != nil {
 			return util.Response400(c, nil, err.Error())
 		}
 
-		// Validate company object id
+		// Validate branch object id
 		branchID, err := util.ValidationObjectID(doc.BranchID)
+		if err != nil {
+			return util.Response400(c, nil, err.Error())
+		}
+
+		// Validate user object id
+		userID,err :=util.ValidationObjectID(doc.UserID)
 		if err != nil {
 			return util.Response400(c, nil, err.Error())
 		}
@@ -55,6 +61,16 @@ func TransactionCreate(next echo.HandlerFunc) echo.HandlerFunc {
 		if err != nil {
 			return util.Response400(c, nil, err.Error())
 		}
+
+		// Validate user existed in db
+		user, err := dao.UserFindByID(userID)
+		if user.ID.IsZero() {
+			return util.Response400(c, nil, "Khong tim thay Nguoi Dung")
+		}
+		if err != nil {
+			return util.Response400(c, nil, err.Error())
+		}
+
 
 		// Success
 		c.Set("body", doc)

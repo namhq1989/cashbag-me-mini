@@ -11,7 +11,7 @@ const (
 	transaction          = "transactions"
 	transactionAnalytics = "transactionAnalytics"
 	user                 = "users"
-	userProgram          = "userProgram"
+	userProgram          = "userPrograms"
 	companyAnalytics     = "companyAnalytics"
 )
 
@@ -41,9 +41,10 @@ func UserCol() *mongo.Collection {
 }
 
 // UserProgramCol ...
-func UserProgramCol() *mongo.Collection{
+func UserProgramCol() *mongo.Collection {
 	return db.Collection(userProgram)
 }
+
 // CompanyAnalyticCol ...
 func CompanyAnalyticCol() *mongo.Collection {
 	return db.Collection(companyAnalytics)
