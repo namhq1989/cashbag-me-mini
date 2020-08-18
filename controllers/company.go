@@ -61,8 +61,6 @@ func CompanyChangeActiveStatus(c echo.Context) error {
 	return util.Response200(c, rawData, "")
 }
 
-
-
 // CompanyUpdate ...
 func CompanyUpdate(c echo.Context) error {
 	var (
