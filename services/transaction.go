@@ -13,7 +13,7 @@ import (
 // TransactionCreate ...
 func TransactionCreate(body models.TransactionCreatePayload) (transaction models.TransactionBSON, err error) {
 	var (
-		user         = body.UserID
+		user         = body.User
 		companyID, _ = util.ValidationObjectID(body.CompanyID)
 		branchID, _  = util.ValidationObjectID(body.BranchID)
 		company, _   = dao.CompanyFindByID(companyID)
