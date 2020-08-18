@@ -21,7 +21,7 @@ type (
 		Spending   float64 `bson:"spending"`
 		Commission float64 `bson:"commission"`
 	}
-
+	
 	// UserProgramBSON ...
 	UserProgramBSON struct {
 		ID        primitive.ObjectID `bson:"_id"`
