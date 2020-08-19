@@ -100,21 +100,3 @@ func UserUpdateSpendingAndLevel(id primitive.ObjectID,level string, spending flo
 	return err
 }
 
-// UserUpdateLevel ...
-func UserUpdateLevel(id primitive.ObjectID, level string) error {
-	var (
-		filter = bson.M{"_id": id}
-		update = bson.M{"$set": bson.M{
-			"level": level,
-		}}
-	)
-
-	// Update
-	err := UserUpdateByID(filter, update)
-
-	if err != nil {
-		log.Println(err)
-	}
-	return err
-
-}
