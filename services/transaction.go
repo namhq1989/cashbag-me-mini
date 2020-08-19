@@ -19,7 +19,8 @@ func TransactionCreate(body models.TransactionCreatePayload) (transaction models
 		userID, _    = util.ValidationObjectID(body.UserID)
 		company, _   = dao.CompanyFindByID(companyID)
 		branch, _    = dao.BranchFindByID(branchID)
-		userProgram  float64
+		balance        = company.Balance
+	
 	)
 
 	// Check active company & branch
@@ -40,49 +41,14 @@ func TransactionCreate(body models.TransactionCreatePayload) (transaction models
 	}
 	redis.Set(config.RedisKeyUser, body.UserID)
 
-	// Lay cac muc bac ,kimcuong, vang
-	button, err := dao.UserProgramFindByID(companyID)
-	if err != nil {
-		err = errors.New("Khong tim thay Chuong Trinh Tich Diem cua Cong Ty")
-		return
+	// Tinh spending hien tai
+	userProgram,currentUserSpending,level,err :=calculateCurrentUserProgram(companyID,userID,body.Amount)
+	if err !=nil{
+		err =errors.New("Khong the tinh duoc muc userProgram hien tai")
+		return 
 	}
-
-	// Lay spending
-	userFind, err := dao.UserFindByID(userID)
-	if err != nil {
-		err = errors.New("Khong tim thay user ")
-		return
-	}
-
-	var (
-		silver         = button.Silver
-		golden         = button.Golden
-		diamond        = button.Diamond
-		beforeSpending = userFind.Spending
-		calLevel       = beforeSpending + body.Amount
-		balance        = company.Balance
-	)
-
-	// userProgram level
-	if calLevel <= silver.Spending {
-		userProgram = 0
-	}
-
-	if calLevel >= silver.Spending && calLevel < golden.Spending {
-		userProgram = silver.Commission
-	}
-
-	if calLevel >= golden.Spending && calLevel < diamond.Spending {
-		userProgram = golden.Commission
-	}
-
-	if calLevel >= diamond.Spending {
-		userProgram = diamond.Commission
-	}
-
-	// Calculation commsion
 	commission := calculateTransactionCommison(company.LoyaltyProgram, userProgram, body.Amount)
-
+	
 	// Convert Transaction
 	transaction = transactionCreatePayloadToBSON(body)
 
@@ -110,16 +76,8 @@ func TransactionCreate(body models.TransactionCreatePayload) (transaction models
 			dao.CompanyUpdateBalance(doc.CompanyID, balanceCurrent)
 		}
 
-		// Update spending
-		afterSpending := doc.Amount + beforeSpending
-		err = dao.UserUpdateSpending(doc.UserID, afterSpending)
-		if err != nil {
-			return doc, err
-		}
-
-		// Update level
-		afterLevel := checkUserLevelByID(doc.CompanyID, doc.UserID)
-		err = dao.UserUpdateLevel(doc.UserID, afterLevel)
+		// Update spending && level
+		err = dao.UserUpdateSpendingAndLevel(doc.UserID,level,currentUserSpending)
 		if err != nil {
 			return doc, err
 		}

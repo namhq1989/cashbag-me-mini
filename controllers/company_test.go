@@ -63,7 +63,6 @@ func (s *CompanySuite) TestCompanyCreateSuccess() {
 		company = models.CompanyCreatePayload{
 			Name:    "Highland",
 			Address: "48 Nguyen Chanh",
-			Active:  true,
 		}
 		response util.Response
 	)

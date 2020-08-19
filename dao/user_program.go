@@ -28,8 +28,8 @@ func UserProgramCreate(doc models.UserProgramBSON) (models.UserProgramBSON, erro
 	return doc, err
 }
 
-// UserProgramFindByID ...
-func UserProgramFindByID(id primitive.ObjectID) (models.UserProgramBSON, error) {
+// UserProgramFindByCompanyID ...
+func UserProgramFindByCompanyID(id primitive.ObjectID) (models.UserProgramBSON, error) {
 	var (
 		userProgramCol = database.UserProgramCol()
 		ctx            = context.Background()

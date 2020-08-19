@@ -81,11 +81,12 @@ func UserUpdateByID(filter bson.M, updateData bson.M) error {
 	return err
 }
 
-// UserUpdateSpending ...
-func UserUpdateSpending(id primitive.ObjectID, spending float64) error {
+// UserUpdateSpendingAndLevel ...
+func UserUpdateSpendingAndLevel(id primitive.ObjectID,level string, spending float64) error {
 	var (
 		filter = bson.M{"_id": id}
 		update = bson.M{"$set": bson.M{
+			"level":level,
 			"spending": spending,
 		}}
 	)

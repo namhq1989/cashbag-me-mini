@@ -22,8 +22,25 @@ import (
 var (
 	// CompanyID for test
 	CompanyID = "5f24d45125ea51bc57a8285c"
+	// CompanyAddress for test
+	CompanyAddress = "HaiPhong"
+	// CompanyName for test 
+	CompanyName    = "Hightland"
+	// CompanyBalance for test 
+	CompanyBalance = 10000000
+	// CompanyLoyalty for test 
+	CompanyLoyalty = 10
 	// BranchID for test
 	BranchID = "5f24d45125ea51bc57a8285b"
+	// BranchName for test
+	BranchName="High Quang Tri"
+	// BranchAddress for test 
+	BranchAddress ="Dong Ha"
+	// UserName for test 
+	UserName ="Phuc"
+	// UserAddress for test 
+	UserAddress="48 Nguyen Chanh"
+
 	
 )
 
@@ -65,8 +82,8 @@ func HelperCompanyCreateFake() {
 		companyID, _ = primitive.ObjectIDFromHex(CompanyID)
 		company      = models.CompanyBSON{
 			ID:             companyID,
-			Name:           "Hightland",
-			Address:        "HaiPhong",
+			Name:           CompanyName,
+			Address:        CompanyAddress,
 			Balance:        10000000,
 			LoyaltyProgram: 10,
 			Active:         false,
@@ -75,7 +92,11 @@ func HelperCompanyCreateFake() {
 	)
 
 	// Insert
-	companyCol.InsertOne(ctx, company)
+	_,err := companyCol.InsertOne(ctx, company)
+	if err != nil {
+		log.Println(err)
+	}
+
 }
 
 // HelperBranchCreateFake ...
@@ -88,15 +109,39 @@ func HelperBranchCreateFake() {
 		branch       = models.BranchBSON{
 			ID:        branchID,
 			CompanyID: companyID,
-			Name:      "Hight QuangTri",
-			Address:   "120 QuangTri",
+			Name:      BranchName,
+			Address:   BranchAddress,
 			Active:    false,
 			CreatedAt: time.Now(),
 		}
 	)
 
 	// Insert
-	branchCol.InsertOne(ctx, branch)
+	_,err :=branchCol.InsertOne(ctx, branch)
+	if err != nil {
+		log.Println(err)
+	}
+}
+
+// HelperUserCreateFake ..
+func HelperUserCreateFake() {
+	var (
+		userCol      = database.UserCol()
+		ctx          = context.Background()
+		companyID, _ = primitive.ObjectIDFromHex(CompanyID)
+		user         = models.UserBSON{
+			ID:        primitive.NewObjectID(),
+			CompanyID: companyID,
+			Name:      UserName,
+			Address:   UserAddress,
+		}
+	)
+
+	//Insert
+	_,err :=userCol.InsertOne(ctx,user)
+	if err != nil {
+		log.Println(err)
+	}
 }
 
 // HelperTransactionAnalyticFindByID ...
