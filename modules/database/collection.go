@@ -13,6 +13,7 @@ const (
 	user                 = "users"
 	userProgram          = "userPrograms"
 	companyAnalytics     = "companyAnalytics"
+	testCharts           = "testCharts"
 )
 
 // CompanyCol ...
@@ -48,4 +49,9 @@ func UserProgramCol() *mongo.Collection {
 // CompanyAnalyticCol ...
 func CompanyAnalyticCol() *mongo.Collection {
 	return db.Collection(companyAnalytics)
+}
+
+// AnalyticChartCol ...
+func AnalyticChartCol() *mongo.Collection {
+	return db.Collection(testCharts)
 }

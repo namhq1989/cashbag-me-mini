@@ -37,57 +37,57 @@ func calculateTransactionCommison(loyatyProgram float64, userProgram float64, am
 	return commission
 }
 
-func calculateCurrentUserProgram(companyID primitive.ObjectID, userID primitive.ObjectID, amount float64) (userProgram float64, currentUserSpending float64, level string, err error) {
-	// Lay cac muc bac ,kimcuong, vang
-	button, err := dao.UserProgramFindByCompanyID(companyID)
+func getUserInformation(companyID primitive.ObjectID, userID primitive.ObjectID, amount float64) (userInformation models.UserInformation, err error) {
+	var(
+		silverLevel = "Silver"
+		goldenLevel ="Golden"
+		diamondLevel ="Diamond"
+	)
+
+	// Find UserProgram
+	userProgramDoc, err := dao.UserProgramFindByCompanyID(companyID)
 	if err != nil {
 		err = errors.New("Khong tim thay chuong trinh tich diem cua cong ty")
 		return
 	}
 
-	// Lay spending
-	userFind, err := dao.UserFindByID(userID)
+	// Find User
+	userDoc, err := dao.UserFindByID(userID)
 	if err != nil {
 		err = errors.New("Khong tim thay nguoi dung")
 		return
 	}
 
-	var (
-		silver              = button.Silver
-		golden              = button.Golden
-		diamond             = button.Diamond
-		beforeUserSpending  = userFind.Spending
-	)
-	currentUserSpending = beforeUserSpending + amount
+	// Get silver, golden, diamond
+	silver              := userProgramDoc.Silver
+	golden              := userProgramDoc.Golden
+	diamond             := userProgramDoc.Diamond
+	beforeUserSpending  := userDoc.Spending
+	currentUserSpending := beforeUserSpending + amount
+
+	// Set userInformation
+	userInformation.CurrentUserSpending = currentUserSpending
+	userInformation.BeforeUserLevel=userDoc.Level
 
 	// userProgram level
 	if currentUserSpending <= silver.Spending {
-		userProgram = 0
+		userInformation.UserProgram = 0
 	}
 
 	if currentUserSpending >= silver.Spending && currentUserSpending < golden.Spending {
-		userProgram = silver.Commission
+		userInformation.UserProgram = silver.Commission
+		userInformation.CurrentUserLevel= silverLevel
 	}
 
 	if currentUserSpending >= golden.Spending && currentUserSpending < diamond.Spending {
-		userProgram = golden.Commission
+		userInformation.UserProgram = golden.Commission
+		userInformation.CurrentUserLevel= goldenLevel
 	}
 
 	if currentUserSpending >= diamond.Spending {
-		userProgram = diamond.Commission
+		userInformation.UserProgram = diamond.Commission
+		userInformation.CurrentUserLevel= diamondLevel
 	}
-
-	// so sanh spending voi cac muc cua userProgram
-	if beforeUserSpending >= silver.Spending && beforeUserSpending < golden.Spending {
-		level = "Muc bac"
-	}
-
-	if beforeUserSpending >= golden.Spending && beforeUserSpending < diamond.Spending {
-		level = "Muc vang"
-	}
-
-	if beforeUserSpending >= diamond.Spending {
-		level = "Muc kim cuong"
-	}
+	
 	return
 }

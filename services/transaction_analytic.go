@@ -17,7 +17,7 @@ func TransactionAnalyticList(date string) ([]models.TransactionAnalyticDetail, e
 	)
 
 	// Find
-	transactionAnalyticList, err := dao.TransactionAnalytic(beginDay)
+	transactionAnalyticList, err := dao.TransactionAnalyticList(beginDay)
 
 	// Convert to TransactionAnalyticDetail
 	for _, item := range transactionAnalyticList {

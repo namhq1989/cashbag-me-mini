@@ -19,8 +19,7 @@ func TransactionCreate(body models.TransactionCreatePayload) (transaction models
 		userID, _    = util.ValidationObjectID(body.UserID)
 		company, _   = dao.CompanyFindByID(companyID)
 		branch, _    = dao.BranchFindByID(branchID)
-		balance        = company.Balance
-	
+		balance      = company.Balance
 	)
 
 	// Check active company & branch
@@ -41,14 +40,19 @@ func TransactionCreate(body models.TransactionCreatePayload) (transaction models
 	}
 	redis.Set(config.RedisKeyUser, body.UserID)
 
-	// Tinh spending hien tai
-	userProgram,currentUserSpending,level,err :=calculateCurrentUserProgram(companyID,userID,body.Amount)
-	if err !=nil{
-		err =errors.New("Khong the tinh duoc muc userProgram hien tai")
-		return 
+	// Get userInformation
+	userInformation, err := getUserInformation(companyID, userID, body.Amount)
+	if err != nil {
+		return
 	}
+	userProgram := userInformation.UserProgram
+	currentUserSpending := userInformation.CurrentUserSpending
+	currentUserLevel := userInformation.CurrentUserLevel
+	beforeUserLevel := userInformation.BeforeUserLevel
+
+	// Calculate commission
 	commission := calculateTransactionCommison(company.LoyaltyProgram, userProgram, body.Amount)
-	
+
 	// Convert Transaction
 	transaction = transactionCreatePayloadToBSON(body)
 
@@ -67,27 +71,30 @@ func TransactionCreate(body models.TransactionCreatePayload) (transaction models
 	transaction.UserProgram = userProgram
 
 	// Create Transaction
-	doc, err := dao.TransactionCreate(transaction)
+	transaction, err = dao.TransactionCreate(transaction)
 
 	// Update balance & transactionAnalytic
 	if err == nil {
 		if !transaction.Postpaid {
-			balanceCurrent := balance - doc.Commission
-			dao.CompanyUpdateBalance(doc.CompanyID, balanceCurrent)
+			balanceCurrent := balance - transaction.Commission
+			dao.CompanyUpdateBalance(transaction.CompanyID, balanceCurrent)
 		}
 
-		// Update spending && level
-		err = dao.UserUpdateSpendingAndLevel(doc.UserID,level,currentUserSpending)
+		// Handle TransactionAnalytic
+		TransactionAnalyticHandle(transaction)
+
+		// Update spending && level for User
+		err = dao.UserUpdateSpendingAndLevel(transaction.UserID, currentUserLevel, currentUserSpending)
 		if err != nil {
-			return doc, err
+			return
 		}
 
-		TransactionAnalyticHandle(doc)
-		errTransactionAnalyticHandle := transactionAnalyticHandleForTransaction(doc)
-		if errTransactionAnalyticHandle != nil {
-			return doc, errTransactionAnalyticHandle
+		// Update CompanyAnalytic
+		err = companyAnalyticHandleForTransaction(transaction, beforeUserLevel, currentUserLevel)
+		if err != nil {
+			return
 		}
 	}
 
-	return doc, err
+	return
 }

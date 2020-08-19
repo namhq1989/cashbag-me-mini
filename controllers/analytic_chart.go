@@ -7,10 +7,16 @@ import (
 	"cashbag-me-mini/util"
 )
 
-// CompanyAnalyticList ...
-func CompanyAnalyticList(c echo.Context) error {
+
+// AnalyticChart ...
+func AnalyticChart(c echo.Context) error {
+	var (
+		id          = c.Param("id")
+		companyID, _ = util.ValidationObjectID(id)
+	)
+
 	// Process data
-	rawData, err := services.CompanyAnalyticList()
+	rawData, err := services.AnalyticChart(companyID)
 
 	// if err
 	if err != nil {

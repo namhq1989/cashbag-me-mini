@@ -29,7 +29,15 @@ type (
 
 	// UserUpdatePayload ...
 	UserUpdatePayload struct {
-		Name      string  `json:"name" valid:"stringlength(3|30),type(string)"`
-		Address   string  `json:"address" valid:"stringlength(3|30),type(string)"`
+		Name    string `json:"name" valid:"stringlength(3|30),type(string)"`
+		Address string `json:"address" valid:"stringlength(3|30),type(string)"`
+	}
+
+	// UserInformation ...
+	UserInformation = struct {
+		UserProgram         float64
+		CurrentUserSpending float64
+		CurrentUserLevel        string
+		BeforeUserLevel         string
 	}
 )
