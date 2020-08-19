@@ -24,6 +24,7 @@ var (
 	CompanyID = "5f24d45125ea51bc57a8285c"
 	// BranchID for test
 	BranchID = "5f24d45125ea51bc57a8285b"
+	
 )
 
 // HelperConnect ...

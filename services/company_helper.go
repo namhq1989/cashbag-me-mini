@@ -24,7 +24,6 @@ func companyCreatePayloadToBSON(body models.CompanyCreatePayload) models.Company
 	result := models.CompanyBSON{
 		Name:    body.Name,
 		Address: body.Address,
-		Active:  body.Active,
 	}
 	return result
 }

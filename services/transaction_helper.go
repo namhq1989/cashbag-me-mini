@@ -24,11 +24,14 @@ func transactionCreatePayloadToBSON(body models.TransactionCreatePayload) models
 }
 
 // calculateTransactionCommison ....
-func calculateTransactionCommison(loyatyProgram float64, amount float64) float64 {
+func calculateTransactionCommison(loyatyProgram float64,userProgram float64, amount float64) float64 {
 	var (
 		commission float64
 	)
-	commission = (loyatyProgram / 100) * amount
+	commission = ((loyatyProgram +userProgram) / 100) * amount
 
 	return commission
 }
+
+
+
