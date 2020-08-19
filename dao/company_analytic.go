@@ -16,8 +16,8 @@ import (
 func CompanyAnalyticList() ([]models.CompanyAnalyticBSON, error) {
 	var (
 		companyAnalyticCol = database.CompanyAnalyticCol()
-		ctx       = context.Background()
-		result    = make([]models.CompanyAnalyticBSON, 0)
+		ctx                = context.Background()
+		result             = make([]models.CompanyAnalyticBSON, 0)
 	)
 
 	// Find
@@ -64,6 +64,9 @@ func CompanyAnalyticUpdateTransactionProperties(companyAnalytic models.CompanyAn
 			"totalCommission":  companyAnalytic.TotalCommission,
 			"totalDebt":        companyAnalytic.TotalDebt,
 			"countPostpaid":    companyAnalytic.CountPostpaid,
+			"userSilver":       companyAnalytic.UserSilver,
+			"userGolden":       companyAnalytic.UserGolden,
+			"userDiamond":      companyAnalytic.UserDiamond,
 			"updatedAt":        time.Now(),
 		}}
 	)

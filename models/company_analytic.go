@@ -21,7 +21,7 @@ type (
 		CountPostpaid    int                `bson:"countPostpaid"`
 		TotalUser        int                `bson:"totalUser"`
 		UserSilver       int                `bson:"userSilver"`
-		USerGolden       int                `bson:"userGolden"`
+		UserGolden       int                `bson:"userGolden"`
 		UserDiamond      int                `bson:"userDiamond"`
 		UpdatedAt        time.Time          `bson:"updatedAt"`
 	}

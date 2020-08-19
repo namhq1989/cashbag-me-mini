@@ -13,5 +13,5 @@ func Boostrap(e *echo.Echo) {
 	User(e.Group("/users"))
 	UserProgram(e.Group("/user-programs"))
 	CompanyAnalytic(e.Group("/company-analytics"))
-	AnalyticChart(e.Group("/analytic-charts")
+	AnalyticChart(e.Group("/analytic-charts"))
 }

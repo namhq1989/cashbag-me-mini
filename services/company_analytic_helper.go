@@ -33,15 +33,15 @@ func convertToCompanyAnalyticDetail(doc models.CompanyAnalyticBSON) models.Compa
 		CountPostpaid:   doc.CountPostpaid,
 		TotalUser:       doc.TotalUser,
 		UserSilver:      doc.UserSilver,
-		UserGolden:      doc.USerGolden,
+		UserGolden:      doc.UserGolden,
 		UserDiamond:     doc.UserDiamond,
 		UpdatedAt:       doc.UpdatedAt,
 	}
 	return result
 }
 
-// transactionAnalyticHandleForTransaction ...
-func transactionAnalyticHandleForTransaction(transaction models.TransactionBSON) (err error) {
+// companyAnalyticHandleForTransaction ...
+func companyAnalyticHandleForTransaction(transaction models.TransactionBSON, beforeUserLevel string, currentUserLevel string) (err error) {
 	var (
 		companyID = transaction.CompanyID
 	)
@@ -66,6 +66,27 @@ func transactionAnalyticHandleForTransaction(transaction models.TransactionBSON)
 			err = errors.New("postpaidLogHandle That Bai")
 			return
 		}
+	}
+	if beforeUserLevel == "" {
+		if currentUserLevel == "Silver" {
+			companyAnalytic.UserSilver++
+		} else if currentUserLevel == "Golden" {
+			companyAnalytic.UserGolden++
+		} else if currentUserLevel == "Diamond" {
+			companyAnalytic.UserDiamond++
+		}
+	}
+	if beforeUserLevel == "Silver" && currentUserLevel == "Golden" {
+		companyAnalytic.UserSilver--
+		companyAnalytic.UserGolden++
+	}
+	if beforeUserLevel == "Silver" && currentUserLevel == "Diamond" {
+		companyAnalytic.UserSilver--
+		companyAnalytic.UserDiamond++
+	}
+	if beforeUserLevel == "Golden" && currentUserLevel == "Diamond" {
+		companyAnalytic.UserGolden--
+		companyAnalytic.UserDiamond++
 	}
 
 	// Update CompanyAnalytic
