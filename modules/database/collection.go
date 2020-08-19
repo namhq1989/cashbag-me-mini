@@ -11,7 +11,7 @@ const (
 	transaction          = "transactions"
 	transactionAnalytics = "transactionAnalytics"
 	user                 = "users"
-	userProgram          = "userProgram"
+	userProgram          = "userPrograms"
 	companyAnalytics     = "companyAnalytics"
 	testCharts           = "testCharts"
 )

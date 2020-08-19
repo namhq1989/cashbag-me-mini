@@ -12,7 +12,7 @@ type (
 		ID             primitive.ObjectID `bson:"_id"`
 		CompanyID      primitive.ObjectID `bson:"companyID"`
 		BranchID       primitive.ObjectID `bson:"branchID"`
-		User           string             `bson:"user"`
+		UserID         primitive.ObjectID `bson:"userID"`
 		Amount         float64            `bson:"amount"`
 		Commission     float64            `bson:"commission"`
 		LoyaltyProgram float64            `bson:"loyaltyProgram"`
@@ -26,7 +26,7 @@ type (
 		ID             primitive.ObjectID `json:"_id"`
 		CompanyID      primitive.ObjectID `json:"companyID"`
 		BranchID       primitive.ObjectID `json:"branchID"`
-		User           string             `json:"user"`
+		UserID         primitive.ObjectID `json:"userID"`
 		Amount         float64            `json:"amount"`
 		Commission     float64            `json:"commission"`
 		LoyaltyProgram float64            `json:"loyaltyProgram"`
@@ -39,7 +39,7 @@ type (
 	TransactionCreatePayload struct {
 		CompanyID string  `json:"companyID"`
 		BranchID  string  `json:"branchID"`
-		User      string  `json:"user" valid:"stringlength(3|100),type(string)"`
+		UserID    string  `json:"userID" `
 		Amount    float64 `json:"amount"`
 	}
 )

@@ -11,7 +11,7 @@ func Boostrap(e *echo.Echo) {
 	Transaction(e.Group("/transactions"))
 	TransactionAnalytic(e.Group("/transaction-analytics"))
 	User(e.Group("/users"))
-	// UserProgram(e.Group("/user-program"))
+	UserProgram(e.Group("/user-programs"))
 	CompanyAnalytic(e.Group("/company-analytics"))
-	AnalyticChart(e.Group("/analytic-charts"))
+	AnalyticChart(e.Group("/analytic-charts")
 }

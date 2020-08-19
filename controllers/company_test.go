@@ -63,7 +63,6 @@ func (s *CompanySuite) TestCompanyCreateSuccess() {
 		company = models.CompanyCreatePayload{
 			Name:    "Highland",
 			Address: "48 Nguyen Chanh",
-			Active:  true,
 		}
 		response util.Response
 	)
@@ -74,7 +73,7 @@ func (s *CompanySuite) TestCompanyCreateSuccess() {
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 	responseRecorder := httptest.NewRecorder()
 	c := e.NewContext(req, responseRecorder)
-	c.Set("body", &company)
+	c.Set("body", company)
 
 	// Call CompanyCreate
 	CompanyCreate(c)
@@ -134,7 +133,7 @@ func (s *CompanySuite) TestCompanyUpdate() {
 	c := e.NewContext(req, responseRecorder)
 	c.SetParamNames("id")
 	c.SetParamValues(companyID)
-	c.Set("body", &companyUpdatePayload)
+	c.Set("body", companyUpdatePayload)
 
 	// Call CompanyUpdate
 	CompanyUpdate(c)

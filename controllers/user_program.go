@@ -8,23 +8,21 @@ import (
 	"cashbag-me-mini/util"
 )
 
-// TransactionCreate ...
-func TransactionCreate(c echo.Context) error {
+// UserProgramCreate ....
+func UserProgramCreate(c echo.Context) error {
 	var (
-		body = c.Get("body").(models.TransactionCreatePayload)
+		body = c.Get("body").(models.UserProgramCreatePayload)
 	)
 
 	// Process data
-	rawData, err := services.TransactionCreate(body)
+	rawData, err := services.UserProgramCreate(body)
 
-	//if err
+	// if err																																																																				
 	if err != nil {
 		return util.Response400(c, nil, err.Error())
 	}
 
 	//Success
 	return util.Response200(c, rawData, "")
-
 }
-
 

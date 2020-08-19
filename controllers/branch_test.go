@@ -80,7 +80,7 @@ func (s *BranchSuite) TestBranchCreateSuccess() {
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 	responseRecorder := httptest.NewRecorder()
 	c := e.NewContext(req, responseRecorder)
-	c.Set("body", &branch)
+	c.Set("body", branch)
 
 	// Call BranchCreate
 	BranchCreate(c)
@@ -129,7 +129,6 @@ func (s *BranchSuite) TestBranchUpdate() {
 		branchUpdateBPayload = models.BranchUpdateBPayload{
 			Name:    "Hight BinhDinh",
 			Address: "111 BinhDinh",
-			Active:  false,
 		}
 	)
 
@@ -141,7 +140,7 @@ func (s *BranchSuite) TestBranchUpdate() {
 	c := e.NewContext(req, responseRecorder)
 	c.SetParamNames("id")
 	c.SetParamValues(branchID)
-	c.Set("body", &branchUpdateBPayload)
+	c.Set("body", branchUpdateBPayload)
 
 	// Call BranchUpdate
 	BranchUpdate(c)
