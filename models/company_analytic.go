@@ -29,9 +29,8 @@ type (
 	// CompanyAnalyticDetail ....
 	CompanyAnalyticDetail struct {
 		ID               primitive.ObjectID `json:"_id"`
-		CompanyID        primitive.ObjectID `json:"companyID"`
-		ActiveBranch     int                `json:"activeBranch"`
-		InactiveBranch   int                `json:"inactiveBranch"`
+		Company          string             `json:"company"`
+		Branch           string             `json:"branch"`
 		TotalTransaction int                `json:"totalTransaction"`
 		TotalRevenue     float64            `json:"totalRevenue"`
 		TotalCommission  float64            `json:"totalCommission"`
@@ -39,7 +38,7 @@ type (
 		CountPostpaid    int                `json:"countPostpaid"`
 		TotalUser        int                `json:"totalUser"`
 		UserSilver       int                `json:"userSilver"`
-		USerGolden       int                `json:"userGolden"`
+		UserGolden       int                `json:"userGolden"`
 		UserDiamond      int                `json:"userDiamond"`
 		UpdatedAt        time.Time          `json:"updatedAt"`
 	}

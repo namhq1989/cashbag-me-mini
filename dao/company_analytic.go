@@ -12,6 +12,26 @@ import (
 	"cashbag-me-mini/modules/database"
 )
 
+// CompanyAnalyticList ...
+func CompanyAnalyticList() ([]models.CompanyAnalyticBSON, error) {
+	var (
+		companyAnalyticCol = database.CompanyAnalyticCol()
+		ctx       = context.Background()
+		result    = make([]models.CompanyAnalyticBSON, 0)
+	)
+
+	// Find
+	cursor, err := companyAnalyticCol.Find(ctx, bson.M{})
+
+	// Close cursor
+	defer cursor.Close(ctx)
+
+	// Set result
+	cursor.All(ctx, &result)
+
+	return result, err
+}
+
 // CompanyAnalyticCreate ...
 func CompanyAnalyticCreate(companyID primitive.ObjectID) error {
 	var (

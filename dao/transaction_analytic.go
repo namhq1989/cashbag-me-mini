@@ -13,8 +13,8 @@ import (
 	"cashbag-me-mini/modules/database"
 )
 
-// TransactionAnalytic ...
-func TransactionAnalytic(date time.Time) ([]models.TransactionAnalyticBSON, error) {
+// TransactionAnalyticList ...
+func TransactionAnalyticList(date time.Time) ([]models.TransactionAnalyticBSON, error) {
 	var (
 		transactionAnalyticCol = database.TransactionAnalyticCol()
 		ctx                    = context.Background()
