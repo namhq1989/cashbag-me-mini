@@ -29,7 +29,6 @@ type (
 		Silver    SilverButton       `bson:"silver"`
 		Golden    GoldenButton       `bson:"golden"`
 		Diamond   DiamondButton      `bson:"diamond"`
-		Active    bool               `bson:"active"`
 	}
 	
 	// UserProgramCreatePayload ...

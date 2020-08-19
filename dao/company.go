@@ -121,12 +121,12 @@ func CompanyUpdateBalance(id primitive.ObjectID, balance float64) {
 		log.Println(err)
 	}
 }
-// CompanyUpdateActive ...
-func CompanyUpdateActive(id primitive.ObjectID, active bool) {
+// CompanyUpdateActiveTrue ...
+func CompanyUpdateActiveTrue(id primitive.ObjectID) error{
 	var (
 		filter = bson.M{"_id": id}
 		update = bson.M{"$set": bson.M{
-			"active":active,
+			"active":true,
 		}}
 	)
 
@@ -136,6 +136,7 @@ func CompanyUpdateActive(id primitive.ObjectID, active bool) {
 	if err != nil {
 		log.Println(err)
 	}
+	return err
 }
 
 // CompanyUpdateByID ...

@@ -12,8 +12,8 @@ func userCreatePayloadToBSON(body models.UserCreatePayload) models.UserBSON {
 	)
 	result := models.UserBSON{
 		CompanyID: companyID,
-		Name:     body.Name,
-		Address:  body.Address,
+		Name:      body.Name,
+		Address:   body.Address,
 	}
 	return result
 }
@@ -21,11 +21,8 @@ func userCreatePayloadToBSON(body models.UserCreatePayload) models.UserBSON {
 // UserUpdatePayloadToBSON ...
 func userUpdatePayloadToBSON(body models.UserUpdatePayload) models.UserBSON {
 	result := models.UserBSON{
-		Name:     body.Name,
-		Address:  body.Address,
+		Name:    body.Name,
+		Address: body.Address,
 	}
 	return result
 }
-
-
-

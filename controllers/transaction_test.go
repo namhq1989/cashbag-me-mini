@@ -45,10 +45,11 @@ func (s *TransactionSuite) TestTransactionCreateSuccess() {
 	var (
 		companyID   = util.CompanyID
 		branchID    = util.BranchID
+		//userID      = util.UserID
 		transaction = models.TransactionCreatePayload{
 			CompanyID: companyID,
 			BranchID:  branchID,
-			User:      "hoang",
+			UserID:   "1162626181881",
 			Amount:    10000,
 		}
 		response util.Response
@@ -60,7 +61,7 @@ func (s *TransactionSuite) TestTransactionCreateSuccess() {
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 	responseRecorder := httptest.NewRecorder()
 	c := e.NewContext(req, responseRecorder)
-	c.Set("body", &transaction)
+	c.Set("body", transaction)
 
 	// Call TransactionCreate
 	TransactionCreate(c)
@@ -86,7 +87,7 @@ func (s *TransactionSuite) TestTransactionCreateFailBecauseUser() {
 		transaction = models.TransactionCreatePayload{
 			CompanyID: companyID,
 			BranchID:  branchID,
-			User:      "",
+			UserID:    "",
 			Amount:    10000,
 		}
 		response util.Response
@@ -98,7 +99,7 @@ func (s *TransactionSuite) TestTransactionCreateFailBecauseUser() {
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 	responseRecorder := httptest.NewRecorder()
 	c := e.NewContext(req, responseRecorder)
-	c.Set("body", &transaction)
+	c.Set("body", transaction)
 
 	// Call TransactionCreate
 	TransactionCreate(c)

@@ -3,6 +3,7 @@ package dao
 import (
 	"context"
 
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 
 	"cashbag-me-mini/models"
@@ -27,3 +28,17 @@ func UserProgramCreate(doc models.UserProgramBSON) (models.UserProgramBSON, erro
 	return doc, err
 }
 
+// UserProgramFindByCompanyID ...
+func UserProgramFindByCompanyID(id primitive.ObjectID) (models.UserProgramBSON, error) {
+	var (
+		userProgramCol = database.UserProgramCol()
+		ctx            = context.Background()
+		result         models.UserProgramBSON
+		filter         = bson.M{"companyID": id}
+	)
+
+	// Find
+	err := userProgramCol.FindOne(ctx, filter).Decode(&result)
+
+	return result, err
+}
