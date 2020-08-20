@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"cashbag-me-mini/modules/zookeeper"
 	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
@@ -24,7 +23,6 @@ type CompanySuite struct {
 }
 
 func (s CompanySuite) SetupSuite() {
-	zookeeper.Connect()
 	util.HelperConnect()
 	util.HelperCompanyCreateFake()
 }

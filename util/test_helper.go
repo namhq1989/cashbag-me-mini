@@ -3,6 +3,7 @@ package util
 import (
 	"bytes"
 	"cashbag-me-mini/config"
+	"cashbag-me-mini/modules/zookeeper"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -24,28 +25,27 @@ var (
 	CompanyID = "5f24d45125ea51bc57a8285c"
 	// CompanyAddress for test
 	CompanyAddress = "HaiPhong"
-	// CompanyName for test 
-	CompanyName    = "Hightland"
-	// CompanyBalance for test 
+	// CompanyName for test
+	CompanyName = "Hightland"
+	// CompanyBalance for test
 	CompanyBalance = 10000000
-	// CompanyLoyalty for test 
+	// CompanyLoyalty for test
 	CompanyLoyalty = 10
 	// BranchID for test
 	BranchID = "5f24d45125ea51bc57a8285b"
 	// BranchName for test
-	BranchName="High Quang Tri"
-	// BranchAddress for test 
-	BranchAddress ="Dong Ha"
-	// UserName for test 
-	UserName ="Phuc"
-	// UserAddress for test 
-	UserAddress="48 Nguyen Chanh"
-
-	
+	BranchName = "High Quang Tri"
+	// BranchAddress for test
+	BranchAddress = "Dong Ha"
+	// UserName for test
+	UserName = "Phuc"
+	// UserAddress for test
+	UserAddress = "48 Nguyen Chanh"
 )
 
 // HelperConnect ...
 func HelperConnect() {
+	zookeeper.Connect()
 	envVars := config.GetEnv()
 
 	// Connect
@@ -86,13 +86,13 @@ func HelperCompanyCreateFake() {
 			Address:        CompanyAddress,
 			Balance:        10000000,
 			LoyaltyProgram: 10,
-			Active:         false,
+			Active:         true,
 			CreatedAt:      time.Now(),
 		}
 	)
 
 	// Insert
-	_,err := companyCol.InsertOne(ctx, company)
+	_, err := companyCol.InsertOne(ctx, company)
 	if err != nil {
 		log.Println(err)
 	}
@@ -111,13 +111,13 @@ func HelperBranchCreateFake() {
 			CompanyID: companyID,
 			Name:      BranchName,
 			Address:   BranchAddress,
-			Active:    false,
+			Active:    true,
 			CreatedAt: time.Now(),
 		}
 	)
 
 	// Insert
-	_,err :=branchCol.InsertOne(ctx, branch)
+	_, err := branchCol.InsertOne(ctx, branch)
 	if err != nil {
 		log.Println(err)
 	}
@@ -138,7 +138,27 @@ func HelperUserCreateFake() {
 	)
 
 	//Insert
-	_,err :=userCol.InsertOne(ctx,user)
+	_, err := userCol.InsertOne(ctx, user)
+	if err != nil {
+		log.Println(err)
+	}
+}
+
+// HelperCompanyAnalyticCreateFake ...
+func HelperCompanyAnalyticCreateFake() {
+	var (
+		companyAnalyticCol = database.CompanyAnalyticCol()
+		ctx                = context.Background()
+		companyID, _       = primitive.ObjectIDFromHex(CompanyID)
+		companyAnalytic    = models.CompanyAnalyticBSON{
+			ID:        primitive.NewObjectID(),
+			CompanyID: companyID,
+			UpdatedAt: time.Now(),
+		}
+	)
+
+	// Insert
+	_, err := companyAnalyticCol.InsertOne(ctx, companyAnalytic)
 	if err != nil {
 		log.Println(err)
 	}
