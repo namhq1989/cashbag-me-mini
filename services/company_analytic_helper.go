@@ -43,7 +43,10 @@ func convertToCompanyAnalyticDetail(doc models.CompanyAnalyticBSON) models.Compa
 // companyAnalyticHandleForTransaction ...
 func companyAnalyticHandleForTransaction(transaction models.TransactionBSON, beforeUserLevel string, currentUserLevel string) (err error) {
 	var (
-		companyID = transaction.CompanyID
+		companyID    = transaction.CompanyID
+		silverLevel  = "Silver"
+		goldenLevel  = "Golden"
+		diamondLevel = "Diamond"
 	)
 
 	// Find CompanyAnalytic
@@ -68,23 +71,23 @@ func companyAnalyticHandleForTransaction(transaction models.TransactionBSON, bef
 		}
 	}
 	if beforeUserLevel == "" {
-		if currentUserLevel == "Silver" {
+		if currentUserLevel == silverLevel {
 			companyAnalytic.UserSilver++
-		} else if currentUserLevel == "Golden" {
+		} else if currentUserLevel == goldenLevel {
 			companyAnalytic.UserGolden++
-		} else if currentUserLevel == "Diamond" {
+		} else if currentUserLevel == diamondLevel {
 			companyAnalytic.UserDiamond++
 		}
 	}
-	if beforeUserLevel == "Silver" && currentUserLevel == "Golden" {
+	if beforeUserLevel == silverLevel && currentUserLevel == goldenLevel {
 		companyAnalytic.UserSilver--
 		companyAnalytic.UserGolden++
 	}
-	if beforeUserLevel == "Silver" && currentUserLevel == "Diamond" {
+	if beforeUserLevel == silverLevel && currentUserLevel == diamondLevel {
 		companyAnalytic.UserSilver--
 		companyAnalytic.UserDiamond++
 	}
-	if beforeUserLevel == "Golden" && currentUserLevel == "Diamond" {
+	if beforeUserLevel == goldenLevel && currentUserLevel == diamondLevel {
 		companyAnalytic.UserGolden--
 		companyAnalytic.UserDiamond++
 	}
