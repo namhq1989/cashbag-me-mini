@@ -67,8 +67,8 @@ func (s *BranchSuite) TestBranchCreateSuccess() {
 	var (
 		branch = models.BranchCreatePayload{
 			CompanyID: util.CompanyID,
-			Name:      "Hight SonLa",
-			Address:   "120 SonLa",
+			Name:      util.BranchName,
+			Address:   util.BranchAddress,
 			Active:    false,
 		}
 		response util.Response
