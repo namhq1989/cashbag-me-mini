@@ -4,16 +4,12 @@ services:
         depends_on: 
             - zookeeper
             - redis
+        environment: 
+            - ZOOKEEPER_URI=zookeeper:2181
         build: .
         ports:
             - "8080:8080"
         networks: 
-            - web-go
-    redis:
-        image: redis:alpine
-        container_name: redis
-        ports: ["6379"]
-        networks:
             - web-go
     zookeeper:
         image: zookeeper
@@ -21,10 +17,16 @@ services:
         restart: always
         hostname: zoo1
         volumes:
-            - ./zoo/data:/var/lib/zookeeper/data
+            - /home/hoang/zookeeper:/data
         ports:
             - 2181:2181
         networks: 
             - web-go   
+    redis:
+        image: redis:alpine
+        container_name: redis
+        ports: ["6379"]
+        networks:
+            - web-go
 networks: 
     web-go:
