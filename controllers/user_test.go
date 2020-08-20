@@ -15,7 +15,6 @@ import (
 	"cashbag-me-mini/models"
 	"cashbag-me-mini/modules/database"
 	"cashbag-me-mini/util"
-	"cashbag-me-mini/modules/zookeeper"
 )
 
 type UserSuite struct {
@@ -23,23 +22,25 @@ type UserSuite struct {
 }
 
 func (s UserSuite) SetupSuite() {
-	zookeeper.Connect()
 	util.HelperConnect()
-	util.HelperUserCreateFake()
+	util.HelperCompanyCreateFake()
+	util.HelperCompanyAnalyticCreateFake()
 }
 
 func (s UserSuite) TearDownSuite() {
 	removeOldDataUser()
 }
 func removeOldDataUser() {
-	database.UserCol().DeleteMany(context.Background(), bson.M{})
+	database.CompanyCol().DeleteMany(context.Background(), bson.M{})
+	database.CompanyAnalyticCol().DeleteMany(context.Background(), bson.M{})
 }
 
 func (s *UserSuite) TestUserCreateSuccess() {
 	var (
 		user = models.UserCreatePayload{
-			Name:    util.UserName,
-			Address: util.UserAddress,
+			CompanyID: util.CompanyID,
+			Name:      util.UserName,
+			Address:   util.UserAddress,
 		}
 		response util.Response
 	)
@@ -61,7 +62,7 @@ func (s *UserSuite) TestUserCreateSuccess() {
 	//Test
 	assert.Equal(s.T(), http.StatusOK, responseRecorder.Code)
 	assert.NotEqual(s.T(), nil, response["data"])
-	
+
 }
 
 func TestUserSuite(t *testing.T) {

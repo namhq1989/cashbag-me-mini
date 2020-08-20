@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"cashbag-me-mini/modules/zookeeper"
 	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
@@ -24,10 +23,10 @@ type BranchSuite struct {
 }
 
 func (s BranchSuite) SetupSuite() {
-	zookeeper.Connect()
 	util.HelperConnect()
 	util.HelperBranchCreateFake()
 	util.HelperCompanyCreateFake()
+	util.HelperCompanyAnalyticCreateFake()
 }
 
 func (s BranchSuite) TearDownSuite() {
@@ -37,6 +36,7 @@ func (s BranchSuite) TearDownSuite() {
 func removeOldData() {
 	database.BranchCol().DeleteMany(context.Background(), bson.M{})
 	database.CompanyCol().DeleteMany(context.Background(), bson.M{})
+	database.CompanyAnalyticCol().DeleteMany(context.Background(), bson.M{})
 }
 
 // TestBranchList ...
