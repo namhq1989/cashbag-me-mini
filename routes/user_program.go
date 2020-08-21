@@ -8,6 +8,8 @@ import (
 )
 
 //UserProgram func ...
-func UserProgram(g *echo.Group) {
-	g.POST("", controllers.UserProgramCreate, validations.UserProgramCreate)
+func UserProgram(e *echo.Echo) {
+	routes := e.Group("/user-programs")
+
+	routes.POST("", controllers.UserProgramCreate, validations.UserProgramCreate)
 }

@@ -31,3 +31,8 @@ func Response400(c echo.Context, data interface{}, message string) error {
 	}
 	return c.JSON(http.StatusBadRequest, generateResponse(data, message))
 }
+
+// Response404 not found
+func Response404(c echo.Context, data interface{}, message string) error {
+
+}

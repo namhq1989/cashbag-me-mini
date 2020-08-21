@@ -7,6 +7,8 @@ import (
 )
 
 // TransactionAnalytic ...
-func TransactionAnalytic(g *echo.Group) {
-	g.GET("/", controllers.TransactionAnalyticList)
+func TransactionAnalytic(e *echo.Echo) {
+	routes := e.Group("/transaction-analytics")
+
+	routes.GET("/", controllers.TransactionAnalyticList)
 }

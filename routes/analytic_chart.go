@@ -7,6 +7,8 @@ import (
 )
 
 // AnalyticChart ...
-func AnalyticChart(g *echo.Group) {
-	g.GET("/:id", controllers.AnalyticChart)
+func AnalyticChart(e *echo.Echo) {
+	routes := e.Group("/analytic-charts")
+	
+	routes.GET("/:id", controllers.AnalyticChart)
 }

@@ -8,9 +8,11 @@ import (
 )
 
 // Branch ...
-func Branch(g *echo.Group) {
-	g.GET("", controllers.BranchList)
-	g.POST("", controllers.BranchCreate, validations.BranchCreate)
-	g.PATCH("/:id/active", controllers.BranchChangeActiveStatus, validations.BranchValidateID)
-	g.PUT("/:id", controllers.BranchUpdate, validations.BranchValidateID, validations.BranchUpdate)
+func Branch(e *echo.Echo) {
+	routes := e.Group("/branches")
+	
+	routes.GET("", controllers.BranchList)
+	routes.POST("", controllers.BranchCreate, validations.BranchCreate)
+	routes.PATCH("/:id/active", controllers.BranchChangeActiveStatus, validations.BranchValidateID)
+	routes.PUT("/:id", controllers.BranchUpdate, validations.BranchValidateID, validations.BranchUpdate)
 }

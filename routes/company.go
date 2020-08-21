@@ -8,9 +8,11 @@ import (
 )
 
 // Company ...
-func Company(g *echo.Group) {
-	g.POST("", controllers.CompanyCreate, validations.CompanyCreate)
-	g.GET("", controllers.CompanyList)
-	g.PATCH("/:id/active", controllers.CompanyChangeActiveStatus, validations.CompanyValidateID)
-	g.PUT("/:id", controllers.CompanyUpdate, validations.CompanyValidateID, validations.CompanyUpdate)
+func Company(e *echo.Echo) {
+	routes := e.Group("/companies")
+
+	routes.POST("", controllers.CompanyCreate, validations.CompanyCreate)
+	routes.GET("", controllers.CompanyList)
+	routes.PATCH("/:id/active", controllers.CompanyChangeActiveStatus, validations.CompanyValidateID)
+	routes.PUT("/:id", controllers.CompanyUpdate, validations.CompanyValidateID, validations.CompanyUpdate)
 }
