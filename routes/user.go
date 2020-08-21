@@ -8,7 +8,9 @@ import (
 )
 
 // User ...
-func User(g *echo.Group) {
-	g.POST("", controllers.UserCreate,validations.UserCreate)
-	g.PUT("/:id",controllers.UserUpdate, validations.UserValidateID, validations.UserUpdate)
-}	
+func User(e *echo.Echo) {
+	routes := e.Group("/users")
+
+	routes.POST("", controllers.UserCreate, validations.UserCreate)
+	routes.PUT("/:id", controllers.UserUpdate, validations.UserValidateID, validations.UserUpdate)
+}

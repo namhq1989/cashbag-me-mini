@@ -7,6 +7,8 @@ import (
 )
 
 // CompanyAnalytic ...
-func CompanyAnalytic(g *echo.Group) {
-	g.GET("", controllers.CompanyAnalyticList)
+func CompanyAnalytic(e *echo.Echo) {
+	routes := e.Group("/company-analytics")
+
+	routes.GET("", controllers.CompanyAnalyticList)
 }
