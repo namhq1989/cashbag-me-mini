@@ -52,8 +52,9 @@ func CompanyList() ([]models.CompanyDetail, error) {
 	return result, err
 }
 
+
 // CompanyChangeActiveStatus ...
-func CompanyChangeActiveStatus(companyID primitive.ObjectID, active bool) (models.CompanyBSON, error) {
+func CompanyChangeActiveStatus(companyID primitive.ObjectID, active bool) (doc models.CompanyBSON, err error) {
 	var (
 		// Prepare update data
 		filter = bson.M{"_id": companyID}
@@ -61,8 +62,13 @@ func CompanyChangeActiveStatus(companyID primitive.ObjectID, active bool) (model
 	)
 
 	// Update
-	err := dao.CompanyUpdateByID(filter, update)
-	doc, _ := dao.CompanyFindByID(companyID)
+	err = dao.CompanyUpdateByID(filter, update)
+	if err != nil {
+		err = errors.New("Khong the cap nhat branch")
+		return doc,err
+	}
+
+	doc, _ = dao.CompanyFindByID(companyID)
 
 	return doc, err
 }

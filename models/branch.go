@@ -15,8 +15,8 @@ type (
 		Name      string             `bson:"name"`
 		Address   string             `bson:"address"`
 		Active    bool               `bson:"active"`
-		CreatedAt time.Time          `bson:"createAt"`
-		UpdatedAt time.Time          `bson:"updateAt"`
+		CreatedAt time.Time          `bson:"createdAt"`
+		UpdatedAt time.Time          `bson:"updatedAt"`
 	}
 
 	// BranchDetail ...
@@ -26,8 +26,8 @@ type (
 		Name      string             `json:"name"`
 		Address   string             `json:"address"`
 		Active    bool               `json:"active"`
-		CreatedAt time.Time          `json:"createAt"`
-		UpdatedAt time.Time          `json:"updateAt"`
+		CreatedAt time.Time          `json:"createdAt"`
+		UpdatedAt time.Time          `json:"updatedAt"`
 	}
 
 	// BranchCreatePayload ...

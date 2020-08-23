@@ -1,8 +1,6 @@
 package controllers
 
 import (
-	"time"
-
 	"github.com/labstack/echo/v4"
 	"go.mongodb.org/mongo-driver/bson"
 
@@ -41,8 +39,8 @@ func BranchCreate(c echo.Context) error {
 
 	// Success
 	return util.Response200(c, bson.M{
-		"_id":rawData.ID,
-		"createdAt":rawData.CreatedAt,
+		"_id":       rawData.ID,
+		"createdAt": rawData.CreatedAt,
 	}, "")
 }
 
@@ -53,7 +51,7 @@ func BranchChangeActiveStatus(c echo.Context) error {
 	)
 
 	// Process data
-	_, err := services.BranchChangeActiveStatus(branch.ID, !branch.Active)
+	rawData, err := services.BranchChangeActiveStatus(branch.ID, !branch.Active)
 
 	// if err
 	if err != nil {
@@ -61,9 +59,9 @@ func BranchChangeActiveStatus(c echo.Context) error {
 	}
 
 	// Success
-	return util.Response200(c, bson.M{
-		"active": !branch.Active,
-		"updatedAt":time.Now(),
+	return util.Response200(c,bson.M{
+		"active":    rawData.Active,
+		"updatedAt": rawData.UpdatedAt,
 	}, "")
 }
 
@@ -76,7 +74,7 @@ func BranchUpdate(c echo.Context) error {
 	)
 
 	// Process data
-	_, err := services.BranchUpdate(branchID, body)
+	rawData, err := services.BranchUpdate(branchID, body)
 
 	// if err
 	if err != nil {
@@ -85,6 +83,6 @@ func BranchUpdate(c echo.Context) error {
 
 	// Success
 	return util.Response200(c, bson.M{
-		"updatedAt": time.Now(),
+		"updatedAt": rawData.UpdatedAt,
 	}, "")
 }

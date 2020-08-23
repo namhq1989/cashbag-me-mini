@@ -39,10 +39,10 @@ func BranchCreate(body models.BranchCreatePayload) (models.BranchBSON, error) {
 	branch = branchCreatePayloadToBSON(body)
 	doc, err := dao.BranchCreate(branch)
 
-	//if err 
-	if err !=nil  {
+	//if err
+	if err != nil {
 		err = errors.New("Khong the tao branch ")
-		return doc,err
+		return doc, err
 	}
 
 	// Update CompanyAnalytic
@@ -55,7 +55,7 @@ func BranchCreate(body models.BranchCreatePayload) (models.BranchBSON, error) {
 }
 
 // BranchUpdate ...
-func BranchUpdate(branchID primitive.ObjectID, body models.BranchUpdatePayload) (models.BranchBSON,error) {
+func BranchUpdate(branchID primitive.ObjectID, body models.BranchUpdatePayload) (models.BranchBSON, error) {
 	var (
 		// Prepare update  data
 		filter     = bson.M{"_id": branchID}
@@ -63,31 +63,31 @@ func BranchUpdate(branchID primitive.ObjectID, body models.BranchUpdatePayload) 
 			"name":      body.Name,
 			"address":   body.Address,
 			"updatedAt": time.Now(),
-		}}	
+		}}
 	)
 
 	// Update Branch
 	err := dao.BranchUpdateByID(filter, updateData)
 
-	// find 
+	// find
 	doc, _ := dao.BranchFindByID(branchID)
-	
+
 	return doc, err
 }
 
 // BranchChangeActiveStatus ...
-func BranchChangeActiveStatus(branchID primitive.ObjectID, active bool) (doc models.BranchBSON,err error) {
+func BranchChangeActiveStatus(branchID primitive.ObjectID, active bool) (doc models.BranchBSON, err error) {
 	var (
 		// Prepare update data
 		filter = bson.M{"_id": branchID}
-		update = bson.M{"$set": bson.M{"active": active}}	
+		update = bson.M{"$set": bson.M{"active": active}}
 	)
 
 	// Update
 	err = dao.BranchUpdateByID(filter, update)
 	if err != nil {
 		err = errors.New("Khong the cap nhat branch")
-		return doc,err
+		return doc, err
 	}
 
 	doc, _ = dao.BranchFindByID(branchID)
@@ -95,8 +95,8 @@ func BranchChangeActiveStatus(branchID primitive.ObjectID, active bool) (doc mod
 	// Update CompanyAnalytic
 	errCompanyAnalyticHandle := companyAnalyticHandleForBranchChangeActive(doc)
 	if errCompanyAnalyticHandle != nil {
-			return doc, errCompanyAnalyticHandle
-		}
+		return doc, errCompanyAnalyticHandle
+	}
 
 	return doc, err
 }
