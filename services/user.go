@@ -43,11 +43,12 @@ func UserUpdate(userID primitive.ObjectID, body models.UserUpdatePayload) (model
 			"address":   body.Address,
 			"updatedAt": time.Now(),
 		}}
-		doc, _ = dao.UserFindByID(userID)
+	
 	)
 
 	// Update User
 	err := dao.UserUpdateByID(filter, updateData)
+	doc, _ := dao.UserFindByID(userID)
 
 	return doc, err
 

@@ -42,7 +42,7 @@ func BranchCreate(c echo.Context) error {
 	// Success
 	return util.Response200(c, bson.M{
 		"_id":rawData.ID,
-		"createdAt":time.Now(),
+		"createdAt":rawData.CreatedAt,
 	}, "")
 }
 

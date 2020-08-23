@@ -1,8 +1,6 @@
 package controllers
 
 import (
-	"time"
-
 	"github.com/labstack/echo/v4"
 	"go.mongodb.org/mongo-driver/bson"
 
@@ -27,7 +25,8 @@ func CompanyCreate(c echo.Context) error {
 
 	//Success
 	return util.Response200(c, bson.M{
-		"_id":rawData.ID,
+		"_id":       rawData.ID,
+		"createdAt": rawData.CreatedAt,
 	}, "")
 }
 
@@ -52,7 +51,7 @@ func CompanyChangeActiveStatus(c echo.Context) error {
 	)
 
 	// Process data
-	_, err := services.CompanyChangeActiveStatus(company.ID, !company.Active)
+	rawData, err := services.CompanyChangeActiveStatus(company.ID, !company.Active)
 
 	// if err
 	if err != nil {
@@ -61,8 +60,8 @@ func CompanyChangeActiveStatus(c echo.Context) error {
 
 	// Success
 	return util.Response200(c, bson.M{
-		"active":    !company.Active,
-		"updatedAt": time.Now(),
+		"active":    rawData.Active,
+		"updatedAt": rawData.UpdatedAt,
 	}, "")
 }
 
@@ -75,7 +74,7 @@ func CompanyUpdate(c echo.Context) error {
 	)
 
 	// Process data
-	_, err := services.CompanyUpdate(companyID, body)
+	rawData, err := services.CompanyUpdate(companyID, body)
 
 	// if err
 	if err != nil {
@@ -84,6 +83,6 @@ func CompanyUpdate(c echo.Context) error {
 
 	// Success
 	return util.Response200(c, bson.M{
-		"updatedAt": time.Now(),
+		"updatedAt": rawData.UpdatedAt,
 	}, "")
 }

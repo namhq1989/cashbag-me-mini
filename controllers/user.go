@@ -1,8 +1,6 @@
 package controllers
 
 import (
-	"time"
-
 	"github.com/labstack/echo/v4"
 	"go.mongodb.org/mongo-driver/bson"
 
@@ -26,7 +24,8 @@ func UserCreate(c echo.Context) error {
 
 	//Success
 	return util.Response200(c, bson.M{
-		"_id": rawData.ID,
+		"_id":       rawData.ID,
+		"createdAt": rawData.CreatedAt,
 	}, "")
 
 }
@@ -40,7 +39,7 @@ func UserUpdate(c echo.Context) error {
 	)
 
 	// Process data
-	_, err := services.UserUpdate(userID, body)
+	rawData, err := services.UserUpdate(userID, body)
 
 	// if err
 	if err != nil {
@@ -49,6 +48,6 @@ func UserUpdate(c echo.Context) error {
 
 	//success
 	return util.Response200(c, bson.M{
-		"updatedAt": time.Now(),
+		"updatedAt": rawData.UpdatedAt,
 	}, "")
 }

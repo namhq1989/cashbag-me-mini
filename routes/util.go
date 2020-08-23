@@ -12,7 +12,7 @@ import (
 func CompanyCheckExistedByID(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		var (
-			companyID =c.Get("body").(primitive.ObjectID)
+			companyID =c.Get("companyID").(primitive.ObjectID)
 		)
 		
 		company, _   := dao.CompanyFindByID(companyID)
@@ -32,7 +32,7 @@ func CompanyCheckExistedByID(next echo.HandlerFunc) echo.HandlerFunc {
 func BranchCheckExistedByID(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		var (
-			branchID = c.Get("body").(primitive.ObjectID)
+			branchID = c.Get("branchID").(primitive.ObjectID)
 		)
 
 		branch, _ := dao.BranchFindByID(branchID)
@@ -51,7 +51,7 @@ func BranchCheckExistedByID(next echo.HandlerFunc) echo.HandlerFunc {
 func UserCheckExistedByID(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		var (
-			userID = c.Get("body").(primitive.ObjectID)
+			userID = c.Get("userID").(primitive.ObjectID)
 		)
 
 		user, _ := dao.UserFindByID(userID)

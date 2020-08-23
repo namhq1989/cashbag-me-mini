@@ -58,11 +58,11 @@ func CompanyChangeActiveStatus(companyID primitive.ObjectID, active bool) (model
 		// Prepare update data
 		filter = bson.M{"_id": companyID}
 		update = bson.M{"$set": bson.M{"active": active}}
-		doc, _ = dao.CompanyFindByID(companyID)
 	)
 
 	// Update
 	err := dao.CompanyUpdateByID(filter, update)
+	doc, _ := dao.CompanyFindByID(companyID)
 
 	return doc, err
 }
@@ -96,11 +96,12 @@ func CompanyUpdate(companyID primitive.ObjectID, body models.CompanyUpdatePayloa
 			"postpaid":       body.Postpaid,
 			"updatedAt":      time.Now(),
 		}}
-		doc, _ = dao.CompanyFindByID(companyID)
+	
 	)
 
 	// Update company
 	err := dao.CompanyUpdateByID(filter, updateData)
+	doc, _ := dao.CompanyFindByID(companyID)
 
 	return doc, err
 }

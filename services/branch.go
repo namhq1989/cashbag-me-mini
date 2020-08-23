@@ -44,11 +44,13 @@ func BranchCreate(body models.BranchCreatePayload) (models.BranchBSON, error) {
 		err = errors.New("Khong the tao branch ")
 		return doc,err
 	}
+
 	// Update CompanyAnalytic
 	errCompanyAnalyticHandle := companyAnalyticHandleForBranchCreate(doc)
 	if errCompanyAnalyticHandle != nil {
 		return doc, errCompanyAnalyticHandle
 	}
+
 	return doc, err
 }
 
@@ -61,33 +63,35 @@ func BranchUpdate(branchID primitive.ObjectID, body models.BranchUpdatePayload) 
 			"name":      body.Name,
 			"address":   body.Address,
 			"updatedAt": time.Now(),
-		}}
-		doc, _ = dao.BranchFindByID(branchID)
-		
+		}}	
 	)
 
 	// Update Branch
 	err := dao.BranchUpdateByID(filter, updateData)
 
+	// find 
+	doc, _ := dao.BranchFindByID(branchID)
+	
 	return doc, err
 }
 
 // BranchChangeActiveStatus ...
-func BranchChangeActiveStatus(branchID primitive.ObjectID, active bool) (models.BranchBSON,error) {
+func BranchChangeActiveStatus(branchID primitive.ObjectID, active bool) (doc models.BranchBSON,err error) {
 	var (
 		// Prepare update data
 		filter = bson.M{"_id": branchID}
-		update = bson.M{"$set": bson.M{"active": active}}
-		doc, _ = dao.BranchFindByID(branchID)
+		update = bson.M{"$set": bson.M{"active": active}}	
 	)
 
 	// Update
-	err := dao.BranchUpdateByID(filter, update)
+	err = dao.BranchUpdateByID(filter, update)
 	if err != nil {
 		err = errors.New("Khong the cap nhat branch")
 		return doc,err
 	}
-	
+
+	doc, _ = dao.BranchFindByID(branchID)
+
 	// Update CompanyAnalytic
 	errCompanyAnalyticHandle := companyAnalyticHandleForBranchChangeActive(doc)
 	if errCompanyAnalyticHandle != nil {

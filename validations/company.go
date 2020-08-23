@@ -3,7 +3,6 @@ package validations
 import (
 	"github.com/asaskevich/govalidator"
 	"github.com/labstack/echo/v4"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 
 	"cashbag-me-mini/models"
 	"cashbag-me-mini/util"
@@ -60,7 +59,7 @@ func CompanyValidateID(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		var (
 			id             = c.Param("id")
-			companyID, err = primitive.ObjectIDFromHex(id)
+			companyID, err = util.ValidationObjectID(id)
 		)
 
 		// if err
@@ -69,10 +68,8 @@ func CompanyValidateID(next echo.HandlerFunc) echo.HandlerFunc {
 
 		}
 
-		c.Set("body", companyID)
+		c.Set("companyID", companyID)
 
 		return next(c)
 	}
 }
-
-
