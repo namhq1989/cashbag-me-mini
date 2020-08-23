@@ -2,7 +2,6 @@ package dao
 
 import (
 	"context"
-	"log"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -51,42 +50,16 @@ func CompanyList() ([]models.CompanyBSON, error) {
 	return doc, err
 }
 
-// CompanyUpdate ...
-func CompanyUpdate(id primitive.ObjectID, company models.CompanyBSON) (models.CompanyBSON, error) {
-	var (
-		filter = bson.M{"_id": id}
-		update = bson.M{"$set": bson.M{
-			"name":           company.Name,
-			"address":        company.Address,
-			"active":         company.Active,
-			"balance":        company.Balance,
-			"loyaltyProgram": company.LoyaltyProgram,
-			"postpaid":       company.Postpaid,
-			"updatedAt":      time.Now(),
-		}}
-	)
-
-	// Update
-	err := CompanyUpdateByID(filter, update)
-
-	// Get doc
-	doc, _ := CompanyFindByID(id)
-
-	return doc, err
-}
-
 // CompanyChangeActiveStatus ...
-func CompanyChangeActiveStatus(id primitive.ObjectID) (models.CompanyBSON, error) {
+func CompanyChangeActiveStatus(companyID primitive.ObjectID, active bool) (err error) {
 	var (
-		filter = bson.M{"_id": id}
-		doc, _ = CompanyFindByID(id)
-		update = bson.M{"$set": bson.M{"active": !(doc.Active)}}
+		companyCol = database.CompanyCol()
+		ctx        = context.Background()
 	)
 
-	// Update
-	err := CompanyUpdateByID(filter, update)
+	_, err = companyCol.UpdateOne(ctx, companyID, active)
 
-	return doc, err
+	return err
 }
 
 // CompanyFindByID ...
@@ -104,40 +77,23 @@ func CompanyFindByID(id primitive.ObjectID) (models.CompanyBSON, error) {
 	return result, err
 }
 
-
-// CompanyUpdateBalance ...
-func CompanyUpdateBalance(id primitive.ObjectID, balance float64) {
-	var (
-		filter = bson.M{"_id": id}
-		update = bson.M{"$set": bson.M{
-			"balance": balance,
-		}}
-	)
-
-	// Update
-	err := CompanyUpdateByID(filter, update)
-
-	if err != nil {
-		log.Println(err)
-	}
-}
 // CompanyUpdateActiveTrue ...
-func CompanyUpdateActiveTrue(id primitive.ObjectID) error{
-	var (
-		filter = bson.M{"_id": id}
-		update = bson.M{"$set": bson.M{
-			"active":true,
-		}}
-	)
+// func CompanyUpdateActiveTrue(id primitive.ObjectID) error{
+// 	var (
+// 		filter = bson.M{"_id": id}
+// 		update = bson.M{"$set": bson.M{
+// 			"active":true,
+// 		}}
+// 	)
 
-	// Update
-	err := CompanyUpdateByID(filter, update)
+// 	// Update
+// 	err := CompanyUpdateByID(filter, update)
 
-	if err != nil {
-		log.Println(err)
-	}
-	return err
-}
+// 	if err != nil {
+// 		log.Println(err)
+// 	}
+// 	return err
+// }
 
 // CompanyUpdateByID ...
 func CompanyUpdateByID(filter bson.M, updateData bson.M) error {
@@ -151,5 +107,3 @@ func CompanyUpdateByID(filter bson.M, updateData bson.M) error {
 
 	return err
 }
-
-

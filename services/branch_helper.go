@@ -49,7 +49,7 @@ func branchCreatePayloadToBSON(branchCreatePayload models.BranchCreatePayload) m
 }
 
 // branchUpdatePayloadToBSON ...
-func branchUpdatePayloadToBSON(branchUpdatePayload models.BranchUpdateBPayload) models.BranchBSON {
+func branchUpdatePayloadToBSON(branchUpdatePayload models.BranchUpdatePayload) models.BranchBSON {
 	result := models.BranchBSON{
 		Name:    branchUpdatePayload.Name,
 		Address: branchUpdatePayload.Address,

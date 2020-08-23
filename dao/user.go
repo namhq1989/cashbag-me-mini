@@ -2,7 +2,6 @@ package dao
 
 import (
 	"context"
-	"log"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -28,27 +27,6 @@ func UserCreate(doc models.UserBSON) (models.UserBSON, error) {
 
 	//insert one
 	_, err := collection.InsertOne(ctx, doc)
-	return doc, err
-
-}
-
-// UserUpdate ...
-func UserUpdate(id primitive.ObjectID, user models.UserBSON) (models.UserBSON, error) {
-	var (
-		filter = bson.M{"_id": id}
-		update = bson.M{"$set": bson.M{
-			"name":      user.Name,
-			"address":   user.Address,
-			"updatedAt": time.Now(),
-		}}
-	)
-
-	// Update
-	err := UserUpdateByID(filter, update)
-
-	// Get doc
-	doc, _ := UserFindByID(id)
-
 	return doc, err
 
 }
@@ -80,23 +58,3 @@ func UserUpdateByID(filter bson.M, updateData bson.M) error {
 
 	return err
 }
-
-// UserUpdateSpendingAndLevel ...
-func UserUpdateSpendingAndLevel(id primitive.ObjectID,level string, spending float64) error {
-	var (
-		filter = bson.M{"_id": id}
-		update = bson.M{"$set": bson.M{
-			"level":level,
-			"spending": spending,
-		}}
-	)
-
-	// Update
-	err := UserUpdateByID(filter, update)
-
-	if err != nil {
-		log.Println(err)
-	}
-	return err
-}
-

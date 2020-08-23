@@ -77,14 +77,14 @@ func TransactionCreate(body models.TransactionCreatePayload) (transaction models
 	if err == nil {
 		if !transaction.Postpaid {
 			balanceCurrent := balance - transaction.Commission
-			dao.CompanyUpdateBalance(transaction.CompanyID, balanceCurrent)
+			CompanyUpdateBalance(transaction.CompanyID, balanceCurrent)
 		}
 
 		// Handle TransactionAnalytic
 		TransactionAnalyticHandle(transaction)
 
 		// Update spending && level for User
-		err = dao.UserUpdateSpendingAndLevel(transaction.UserID, currentUserLevel, currentUserSpending)
+		err = UserUpdateSpendingAndLevel(transaction.UserID, currentUserLevel, currentUserSpending)
 		if err != nil {
 			return
 		}
