@@ -13,6 +13,6 @@ func Branch(e *echo.Echo) {
 	
 	routes.GET("", controllers.BranchList)
 	routes.POST("", controllers.BranchCreate, validations.BranchCreate)
-	routes.PATCH("/:id/active", controllers.BranchChangeActiveStatus, validations.BranchValidateID)
+	routes.PATCH("/:id/active", controllers.BranchChangeActiveStatus, validations.BranchValidateID,Checkext,CheckExit)
 	routes.PUT("/:id", controllers.BranchUpdate, validations.BranchValidateID, validations.BranchUpdate)
 }

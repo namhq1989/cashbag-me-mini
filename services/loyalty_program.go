@@ -22,7 +22,7 @@ func UserProgramCreate(body models.UserProgramCreatePayload) (userProgram models
 		return
 	}
 
-	// validate golden
+	// validate goldenack
 	golden := goldenValidate(silverButton, goldenButton)
 	if !golden {
 		err = errors.New("Muc vang khong hop li")
