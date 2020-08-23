@@ -3,9 +3,7 @@ package validations
 import (
 	"github.com/asaskevich/govalidator"
 	"github.com/labstack/echo/v4"
-	"go.mongodb.org/mongo-driver/bson/primitive"
-	
-	"cashbag-me-mini/dao"
+
 	"cashbag-me-mini/models"
 	"cashbag-me-mini/util"
 )
@@ -28,6 +26,7 @@ func CompanyCreate(next echo.HandlerFunc) echo.HandlerFunc {
 
 		//Success
 		c.Set("body", doc)
+
 		return next(c)
 	}
 }
@@ -50,6 +49,7 @@ func CompanyUpdate(next echo.HandlerFunc) echo.HandlerFunc {
 
 		//Success
 		c.Set("body", doc)
+
 		return next(c)
 	}
 }
@@ -58,15 +58,17 @@ func CompanyUpdate(next echo.HandlerFunc) echo.HandlerFunc {
 func CompanyValidateID(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		var (
-			id           = c.Param("id")
-			companyID, _ = primitive.ObjectIDFromHex(id)
-			company, _   = dao.CompanyFindByID(companyID)
+			id             = c.Param("id")
+			companyID, err = util.ValidationObjectID(id)
 		)
 
-		// Validate ID
-		if company.ID.IsZero() {
-			return util.Response400(c, nil, "ID khong hop le")
+		// if err
+		if err != nil {
+			return util.Response400(c, nil, "ID company khong hop le ")
+
 		}
+
+		c.Set("companyID", companyID)
 
 		return next(c)
 	}

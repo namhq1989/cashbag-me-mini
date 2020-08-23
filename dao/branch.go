@@ -50,51 +50,26 @@ func BranchCreate(doc models.BranchBSON) (models.BranchBSON, error) {
 	return doc, err
 }
 
-//BranchChangeActiveStatus ...
-func BranchChangeActiveStatus(branchID primitive.ObjectID) (models.BranchBSON, error) {
-	var (
-		active bool
-		filter = bson.M{"_id": branchID}
-		doc, _ = BranchFindByID(branchID)
-	)
-
-	// Change Active status
-	active = !(doc.Active)
-	doc.Active = active
-	update := bson.M{"$set": bson.M{"active": active}}
-	err := BranchUpdateByID(filter, update)
-
-	return doc, err
-}
-
-// BranchUpdate ...
-func BranchUpdate(branchID primitive.ObjectID, body models.BranchBSON) (models.BranchBSON, error) {
-	var (
-		filter     = bson.M{"_id": branchID}
-		updateData = bson.M{"$set": bson.M{
-			"name":     body.Name,
-			"address":  body.Address,
-			"updatedAt": time.Now(),
-		}}
-	)
-
-	// Update
-	err := BranchUpdateByID(filter, updateData)
-
-	// Get doc
-	doc, _ := BranchFindByID(branchID)
-
-	return doc, err
-}
-
-// BranchUpdateByID ...
-func BranchUpdateByID(filter bson.M, updateData bson.M) error {
+// BranchChangeActiveStatus ...
+func BranchChangeActiveStatus(branchID primitive.ObjectID,active bool) (err error) {
 	var (
 		branchCol = database.BranchCol()
 		ctx       = context.Background()
 	)
 
-	_, err := branchCol.UpdateOne(ctx, filter, updateData)
+	_, err = branchCol.UpdateOne(ctx,branchID,active)
+
+	return err
+}
+
+// BranchUpdateByID ...
+func BranchUpdateByID(filter bson.M, updateData bson.M) (err error) {
+	var (
+		branchCol = database.BranchCol()
+		ctx       = context.Background()
+	)
+
+	_, err = branchCol.UpdateOne(ctx, filter, updateData)
 
 	return err
 }

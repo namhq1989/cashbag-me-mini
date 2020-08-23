@@ -28,15 +28,3 @@ func companyCreatePayloadToBSON(body models.CompanyCreatePayload) models.Company
 	return result
 }
 
-// companyUpdatePayloadToBSON ...
-func companyUpdatePayloadToBSON(body models.CompanyUpdatePayload) models.CompanyBSON {
-	result := models.CompanyBSON{
-		Name:           body.Name,
-		Address:        body.Address,
-		Balance:        body.Balance,
-		LoyaltyProgram: body.LoyaltyProgram,
-		Active:         body.Active,
-		Postpaid:       body.Postpaid,
-	}
-	return result
-}

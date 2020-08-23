@@ -126,7 +126,7 @@ func (s *BranchSuite) TestBranchUpdate() {
 	var (
 		response             util.Response
 		branchID             = util.BranchID
-		branchUpdateBPayload = models.BranchUpdateBPayload{
+		branchUpdateBPayload = models.BranchUpdatePayload{
 			Name:    "Hight BinhDinh",
 			Address: "111 BinhDinh",
 		}

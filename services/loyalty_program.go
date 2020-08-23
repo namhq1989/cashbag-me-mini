@@ -42,7 +42,7 @@ func UserProgramCreate(body models.UserProgramCreatePayload) (userProgram models
 	doc, err := dao.UserProgramCreate(userProgram)
 	
 	if err == nil {
-		errCompanyActive := dao.CompanyUpdateActiveTrue(doc.CompanyID)
+		errCompanyActive := CompanyUpdateActiveTrue(doc.CompanyID)
 		if errCompanyActive != nil{
 			return doc,err
 		}

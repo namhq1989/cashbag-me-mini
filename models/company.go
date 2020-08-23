@@ -36,13 +36,13 @@ type (
 	// CompanyCreatePayload ...
 	CompanyCreatePayload struct {
 		Name    string `json:"name" valid:"stringlength(3|30),type(string)"`
-		Address string `json:"address" valid:"stringlength(3|100),type(string)"`
+		Address string `json:"address" `
 	}
 
 	// CompanyUpdatePayload ...
 	CompanyUpdatePayload struct {
 		Name           string  `json:"name" valid:"stringlength(3|30),type(string)"`
-		Address        string  `json:"address" valid:"stringlength(3|100),type(string)"`
+		Address        string  `json:"address" `
 		Balance        float64 `json:"balance" valid:"required"`
 		LoyaltyProgram float64 `json:"loyaltyProgram" valid:"required"`
 		Active         bool    `json:"active"`
