@@ -108,7 +108,7 @@ func postpaidLogHandle(countPostpaid int, companyID primitive.ObjectID) (err err
 	}
 	if countPostpaid > 6 {
 		log.Println("Số đơn hàng trả sau vượt mức cho phép và deactive company")
-		_, err = dao.CompanyChangeActiveStatus(companyID)
+		// _,err = CompanyChangeActiveStatus(companyID,)
 		return
 	}
 	return

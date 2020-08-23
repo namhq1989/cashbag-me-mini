@@ -1,6 +1,10 @@
 package services
 
 import (
+	"errors"
+	"time"
+
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 
 	"cashbag-me-mini/dao"
@@ -35,39 +39,64 @@ func BranchCreate(body models.BranchCreatePayload) (models.BranchBSON, error) {
 	branch = branchCreatePayloadToBSON(body)
 	doc, err := dao.BranchCreate(branch)
 
-	// Update CompanyAnalytic
-	if err == nil {
-		errCompanyAnalyticHandle := companyAnalyticHandleForBranchCreate(doc)
-		if errCompanyAnalyticHandle != nil {
-			return doc, errCompanyAnalyticHandle
-		}
+	//if err
+	if err != nil {
+		err = errors.New("Khong the tao branch ")
+		return doc, err
 	}
+
+	// Update CompanyAnalytic
+	errCompanyAnalyticHandle := companyAnalyticHandleForBranchCreate(doc)
+	if errCompanyAnalyticHandle != nil {
+		return doc, errCompanyAnalyticHandle
+	}
+
 	return doc, err
 }
 
 // BranchUpdate ...
-func BranchUpdate(BranchID primitive.ObjectID, body models.BranchUpdateBPayload) (models.BranchBSON, error) {
+func BranchUpdate(branchID primitive.ObjectID, body models.BranchUpdatePayload) (models.BranchBSON, error) {
 	var (
-		branch = branchUpdatePayloadToBSON(body)
+		// Prepare update  data
+		filter     = bson.M{"_id": branchID}
+		updateData = bson.M{"$set": bson.M{
+			"name":      body.Name,
+			"address":   body.Address,
+			"updatedAt": time.Now(),
+		}}
 	)
 
 	// Update Branch
-	doc, err := dao.BranchUpdate(BranchID, branch)
+	err := dao.BranchUpdateByID(filter, updateData)
+
+	// find
+	doc, _ := dao.BranchFindByID(branchID)
 
 	return doc, err
 }
 
 // BranchChangeActiveStatus ...
-func BranchChangeActiveStatus(branchID primitive.ObjectID) (models.BranchBSON, error) {
-	// Change Active Status
-	doc, err := dao.BranchChangeActiveStatus(branchID)
+func BranchChangeActiveStatus(branchID primitive.ObjectID, active bool) (doc models.BranchBSON, err error) {
+	var (
+		// Prepare update data
+		filter = bson.M{"_id": branchID}
+		update = bson.M{"$set": bson.M{"active": active}}
+	)
+
+	// Update
+	err = dao.BranchUpdateByID(filter, update)
+	if err != nil {
+		err = errors.New("Khong the cap nhat branch")
+		return doc, err
+	}
+
+	doc, _ = dao.BranchFindByID(branchID)
 
 	// Update CompanyAnalytic
-	if err == nil {
-		errCompanyAnalyticHandle := companyAnalyticHandleForBranchChangeActive(doc)
-		if errCompanyAnalyticHandle != nil {
-			return doc, errCompanyAnalyticHandle
-		}
+	errCompanyAnalyticHandle := companyAnalyticHandleForBranchChangeActive(doc)
+	if errCompanyAnalyticHandle != nil {
+		return doc, errCompanyAnalyticHandle
 	}
+
 	return doc, err
 }

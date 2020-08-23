@@ -2,8 +2,7 @@ package controllers
 
 import (
 	"github.com/labstack/echo/v4"
-
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/bson"
 
 	"cashbag-me-mini/models"
 	"cashbag-me-mini/services"
@@ -39,18 +38,20 @@ func BranchCreate(c echo.Context) error {
 	}
 
 	// Success
-	return util.Response200(c, rawData, "")
+	return util.Response200(c, bson.M{
+		"_id":       rawData.ID,
+		"createdAt": rawData.CreatedAt,
+	}, "")
 }
 
 // BranchChangeActiveStatus ...
 func BranchChangeActiveStatus(c echo.Context) error {
 	var (
-		id          = c.Param("id")
-		branchID, _ = primitive.ObjectIDFromHex(id)
+		branch = c.Get("branch").(models.BranchBSON)
 	)
 
 	// Process data
-	rawData, err := services.BranchChangeActiveStatus(branchID)
+	rawData, err := services.BranchChangeActiveStatus(branch.ID, !branch.Active)
 
 	// if err
 	if err != nil {
@@ -58,14 +59,17 @@ func BranchChangeActiveStatus(c echo.Context) error {
 	}
 
 	// Success
-	return util.Response200(c, rawData, "")
+	return util.Response200(c,bson.M{
+		"active":    rawData.Active,
+		"updatedAt": rawData.UpdatedAt,
+	}, "")
 }
 
 // BranchUpdate ...
 func BranchUpdate(c echo.Context) error {
 	var (
 		id          = c.Param("id")
-		body        = c.Get("body").(models.BranchUpdateBPayload)
+		body        = c.Get("body").(models.BranchUpdatePayload)
 		branchID, _ = util.ValidationObjectID(id)
 	)
 
@@ -78,5 +82,7 @@ func BranchUpdate(c echo.Context) error {
 	}
 
 	// Success
-	return util.Response200(c, rawData, "")
+	return util.Response200(c, bson.M{
+		"updatedAt": rawData.UpdatedAt,
+	}, "")
 }

@@ -17,12 +17,3 @@ func userCreatePayloadToBSON(body models.UserCreatePayload) models.UserBSON {
 	}
 	return result
 }
-
-// UserUpdatePayloadToBSON ...
-func userUpdatePayloadToBSON(body models.UserUpdatePayload) models.UserBSON {
-	result := models.UserBSON{
-		Name:    body.Name,
-		Address: body.Address,
-	}
-	return result
-}
