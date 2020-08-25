@@ -10,35 +10,30 @@ import (
 	"cashbag-me-mini/modules/database"
 )
 
-// UserProgramCreate ...
-func UserProgramCreate(doc models.UserProgramBSON) (models.UserProgramBSON, error) {
+// LoyaltyProgramCreate ...
+func LoyaltyProgramCreate(doc models.LoyaltyProgramBSON) (models.LoyaltyProgramBSON, error) {
 	var (
-		userProgramCol = database.UserProgramCol()
-		ctx            = context.Background()
+		loyaltyProgramCol = database.LoyaltyProgramCol()
+		ctx               = context.Background()
 	)
 
-	//add information
-	if doc.ID.IsZero() {
-		doc.ID = primitive.NewObjectID()
-	}
-
 	//insert
-	_, err := userProgramCol.InsertOne(ctx, doc)
+	_, err := loyaltyProgramCol.InsertOne(ctx, doc)
 
 	return doc, err
 }
 
-// UserProgramFindByCompanyID ...
-func UserProgramFindByCompanyID(id primitive.ObjectID) (models.UserProgramBSON, error) {
+// LoyaltyProgramFindByCompanyID ...
+func LoyaltyProgramFindByCompanyID(id primitive.ObjectID) (models.LoyaltyProgramBSON, error) {
 	var (
-		userProgramCol = database.UserProgramCol()
-		ctx            = context.Background()
-		result         models.UserProgramBSON
-		filter         = bson.M{"companyID": id}
+		loyaltyProgramCol = database.LoyaltyProgramCol()
+		ctx               = context.Background()
+		result            models.LoyaltyProgramBSON
+		filter            = bson.M{"companyID": id}
 	)
 
 	// Find
-	err := userProgramCol.FindOne(ctx, filter).Decode(&result)
+	err := loyaltyProgramCol.FindOne(ctx, filter).Decode(&result)
 
 	return result, err
 }

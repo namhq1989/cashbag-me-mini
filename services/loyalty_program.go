@@ -1,53 +1,30 @@
 package services
 
 import (
-	"errors"
-
 	"cashbag-me-mini/dao"
 	"cashbag-me-mini/models"
 )
 
-// UserProgramCreate ...
-func UserProgramCreate(body models.UserProgramCreatePayload) (userProgram models.UserProgramBSON, err error) {
-	var (
-		silverButton  = silverProgramToSilverButton(body)
-		goldenButton  = goldenProgramToGoldenButton(body)
-		diamondButton = diamondProgramToDiamondButton(body)	
-	)
+// LoyaltyProgramCreate ...
+func LoyaltyProgramCreate(body models.LoyaltyProgramCreatePayload) (loyaltyProgram models.LoyaltyProgramBSON, err error) {
 
-	// validate silver
-	silver := silverValidate(silverButton)
-	if !silver {
-		err = errors.New("Muc bac khong hop li")
+	// Validate Milestones
+	err = validateLoyaltyProgramMilestones(body)
+	if err != nil {
 		return
 	}
 
-	// validate goldenack
-	golden := goldenValidate(silverButton, goldenButton)
-	if !golden {
-		err = errors.New("Muc vang khong hop li")
+	// create userProgram
+	loyaltyProgram = loyaltyProgramCreatePayloadToBSON(body)
+	loyaltyProgram, err = dao.LoyaltyProgramCreate(loyaltyProgram)
+	if err != nil {
 		return
 	}
 
-	// validate diamond
-	diamond := diamondValidate(goldenButton, diamondButton)
-	if !diamond {
-		err = errors.New("Muc kim cuong khong hop li")
+	err = CompanyUpdateActiveTrue(loyaltyProgram.CompanyID)
+	if err != nil {
 		return
 	}
-	
-	//create userProgram
 
-	userProgram = userProgramCreatePayloadToBSON(body)
-	doc, err := dao.UserProgramCreate(userProgram)
-	
-	if err == nil {
-		errCompanyActive := CompanyUpdateActiveTrue(doc.CompanyID)
-		if errCompanyActive != nil{
-			return doc,err
-		}
-	}
-
-	return doc, err
+	return
 }
-

@@ -6,29 +6,30 @@ import (
 
 // Collection name
 const (
-	company              = "companies"
-	branch               = "branches"
-	transaction          = "transactions"
-	transactionAnalytics = "transactionAnalytics"
-	user                 = "users"
-	userProgram          = "userPrograms"
-	companyAnalytics     = "companyAnalytics"
-	testCharts           = "testCharts"
+	companies                = "companies"
+	branches                 = "branches"
+	transactions             = "transactions"
+	transactionAnalytics     = "transactionAnalytics"
+	users                    = "users"
+	loyaltyPrograms          = "loyaltyPrograms"
+	companyAnalytics         = "companyAnalytics"
+	testCharts               = "testCharts"
+	loyaltyProgramUserStatus = "loyaltyProgramUserStatus"
 )
 
 // CompanyCol ...
 func CompanyCol() *mongo.Collection {
-	return db.Collection(company)
+	return db.Collection(companies)
 }
 
 // BranchCol ...
 func BranchCol() *mongo.Collection {
-	return db.Collection(branch)
+	return db.Collection(branches)
 }
 
 // TransactionCol ...
 func TransactionCol() *mongo.Collection {
-	return db.Collection(transaction)
+	return db.Collection(transactions)
 }
 
 // TransactionAnalyticCol ...
@@ -38,12 +39,12 @@ func TransactionAnalyticCol() *mongo.Collection {
 
 // UserCol ...
 func UserCol() *mongo.Collection {
-	return db.Collection(user)
+	return db.Collection(users)
 }
 
-// UserProgramCol ...
-func UserProgramCol() *mongo.Collection {
-	return db.Collection(userProgram)
+// LoyaltyProgramCol ...
+func LoyaltyProgramCol() *mongo.Collection {
+	return db.Collection(loyaltyPrograms)
 }
 
 // CompanyAnalyticCol ...
@@ -54,4 +55,9 @@ func CompanyAnalyticCol() *mongo.Collection {
 // AnalyticChartCol ...
 func AnalyticChartCol() *mongo.Collection {
 	return db.Collection(testCharts)
+}
+
+// LoyaltyProgramUserStatusCol ...
+func LoyaltyProgramUserStatusCol() *mongo.Collection {
+	return db.Collection(loyaltyProgramUserStatus)
 }

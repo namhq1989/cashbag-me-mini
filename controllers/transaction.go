@@ -11,11 +11,14 @@ import (
 // TransactionCreate ...
 func TransactionCreate(c echo.Context) error {
 	var (
-		body = c.Get("body").(models.TransactionCreatePayload)
+		body    = c.Get("body").(models.TransactionCreatePayload)
+		company = c.Get("company").(models.CompanyBSON)
+		branch  = c.Get("branch").(models.BranchBSON)
+		user    = c.Get("user").(models.UserBSON)
 	)
 
 	// Process data
-	rawData, err := services.TransactionCreate(body)
+	rawData, err := services.TransactionCreate(body, company, branch, user)
 
 	//if err
 	if err != nil {
@@ -26,5 +29,3 @@ func TransactionCreate(c echo.Context) error {
 	return util.Response200(c, rawData, "")
 
 }
-
-

@@ -3,68 +3,71 @@ package services
 import (
 	"cashbag-me-mini/models"
 	"cashbag-me-mini/util"
+	"errors"
+	"time"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-// UserCreatePayloadToBSON ...
-func userProgramCreatePayloadToBSON(body models.UserProgramCreatePayload) models.UserProgramBSON {
+// loyaltyProgramCreatePayloadToBSON ...
+func loyaltyProgramCreatePayloadToBSON(body models.LoyaltyProgramCreatePayload) models.LoyaltyProgramBSON {
 	var (
 		companyID, _ = util.ValidationObjectID(body.CompanyID)
-		silverButton  = silverProgramToSilverButton(body)
-		goldenButton  = goldenProgramToGoldenButton(body)
-		diamondButton = diamondProgramToDiamondButton(body)
+		silver       = "silver"
+		gold         = "gold"
+		diamond      = "diamond"
+		milestones   []models.LoyaltyProgramMilestone
 	)
 
-	// UserProgramBSON ...
-	result := models.UserProgramBSON{
-		CompanyID: companyID,
-		Silver:    silverButton,
-		Golden:    goldenButton,
-		Diamond:   diamondButton,
+	// Define milestones
+	silverMilestone := models.LoyaltyProgramMilestone{
+		ID:              silver,
+		Expense:         body.SilverExpense,
+		CashbackPercent: body.SilverCashbackPercent,
+	}
+	goldMilestone := models.LoyaltyProgramMilestone{
+		ID:              gold,
+		Expense:         body.GoldExpense,
+		CashbackPercent: body.GoldCashbackPercent,
+	}
+	diamondMilestone := models.LoyaltyProgramMilestone{
+		ID:              diamond,
+		Expense:         body.DiamondExpense,
+		CashbackPercent: body.DiamondCashbackPercent,
+	}
+	milestones = append(milestones, silverMilestone, goldMilestone, diamondMilestone)
+
+	// LoyaltyProgramBSON ...
+	result := models.LoyaltyProgramBSON{
+		ID:         primitive.NewObjectID(),
+		CompanyID:  companyID,
+		Milestones: milestones,
+		CreatedAt:  time.Now(),
 	}
 	return result
 }
 
-func silverProgramToSilverButton(body models.UserProgramCreatePayload) models.SilverButton {
-	result := models.SilverButton{
-		Spending:   body.SilverSpending,
-		Commission: body.SilverCommission,
+func validateLoyaltyProgramMilestones(body models.LoyaltyProgramCreatePayload) (err error) {
+	var (
+		silverExpense          = body.SilverExpense
+		silverCashbackPercent  = body.SilverCashbackPercent
+		goldExpense            = body.GoldExpense
+		goldCashbackPercent    = body.GoldCashbackPercent
+		diamondExpense         = body.DiamondExpense
+		diamondCashbackPercent = body.DiamondCashbackPercent
+	)
+	// validate
+	if silverExpense <= 0 || silverCashbackPercent <= 0 {
+		err = errors.New("silver milestone khong hop li")
+		return
 	}
-	return result
-}
-
-func goldenProgramToGoldenButton(body models.UserProgramCreatePayload) models.GoldenButton {
-	result := models.GoldenButton{
-		Spending:   body.GoldenSpending,
-		Commission: body.GoldenCommission,
+	if goldExpense <= silverExpense || goldCashbackPercent <= silverCashbackPercent {
+		err = errors.New("golden milestone khong hop li")
+		return
 	}
-	return result
-}
-
-func diamondProgramToDiamondButton(body models.UserProgramCreatePayload) models.DiamondButton {
-	result := models.DiamondButton{
-		Spending:   body.DiamondSpending,
-		Commission: body.DiamondCommission,
+	if diamondExpense <= goldExpense || diamondCashbackPercent <= goldCashbackPercent {
+		err = errors.New("diamond milestone khong hop li")
+		return
 	}
-	return result
-}
-
-func silverValidate(silver models.SilverButton) bool {
-	if silver.Spending <= 1000 || silver.Commission <= 1 {
-		return false
-	}
-	return true
-}
-
-func goldenValidate(silverButton models.SilverButton, goldenButton models.GoldenButton) bool {
-	if goldenButton.Spending <= silverButton.Spending || goldenButton.Commission <= silverButton.Commission {
-		return false
-	}
-	return true
-}
-
-func diamondValidate(goldenButton models.GoldenButton, diamondButton models.DiamondButton) bool {
-	if diamondButton.Spending <= goldenButton.Spending || diamondButton.Commission <= goldenButton.Commission {
-		return false
-	}
-	return true
+	return
 }

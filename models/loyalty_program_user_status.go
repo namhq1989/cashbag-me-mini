@@ -11,10 +11,11 @@ type (
 	// LoyaltyProgramUserStatusBSON ...
 	LoyaltyProgramUserStatusBSON struct {
 		ID             primitive.ObjectID      `bson:"_id"`
-		CompanyID      float64                 `bson:"companyID"`
-		UserID         float64                 `bson:"userID"`
+		CompanyID      primitive.ObjectID      `bson:"companyID"`
+		UserID         primitive.ObjectID      `bson:"userID"`
 		Milestone      LoyaltyProgramMilestone `bson:"milestone"`
 		CurrentExpense float64                 `bson:"currentExpense"`
+		UpdatedAt      time.Time               `bson:"updatedAt"`
 		CreatedAt      time.Time               `bson:"createdAt"`
 	}
 )

@@ -9,7 +9,7 @@ import (
 type (
 
 	// CompanyanalyticMember ...
-	CompanyanalyticMember struct {
+	CompanyAnalyticMember struct {
 		ID    string
 		Total int
 	}
@@ -19,14 +19,13 @@ type (
 		ID               primitive.ObjectID      `bson:"_id"`
 		CompanyID        primitive.ObjectID      `bson:"companyID"`
 		ActiveBranch     int                     `bson:"activeBranch"`
-		InactiveBranch   int                     `bson:"inactiveBranch"`
+		TotalBranch      int                     `bson:"totalBranch"`
 		TotalTransaction int                     `bson:"totalTransaction"`
 		TotalRevenue     float64                 `bson:"totalRevenue"`
 		TotalCommission  float64                 `bson:"totalCommission"`
 		TotalDebt        float64                 `bson:"totalDebt"`
 		CountPostpaid    int                     `bson:"countPostpaid"`
-		TotalUser        int                     `bson:"totalUser"`
-		Members          []CompanyanalyticMember `bson:"members"`
+		Members          []CompanyAnalyticMember `bson:"members"`
 		UpdatedAt        time.Time               `bson:"updatedAt"`
 	}
 
@@ -40,8 +39,7 @@ type (
 		TotalCommission  float64                 `json:"totalCommission"`
 		TotalDebt        float64                 `json:"totalDebt"`
 		CountPostpaid    int                     `json:"countPostpaid"`
-		TotalUser        int                     `json:"totalUser"`
-		Members          []CompanyanalyticMember `json:"members"`
+		Members          []CompanyAnalyticMember `json:"members"`
 		UpdatedAt        time.Time               `json:"updatedAt"`
 	}
 )

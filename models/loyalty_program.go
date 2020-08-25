@@ -21,17 +21,16 @@ type (
 		CompanyID  primitive.ObjectID        `bson:"companyID"`
 		Milestones []LoyaltyProgramMilestone `bson:"milestones"`
 		CreatedAt  time.Time                 `bson:"createdAt"`
-		UpdatedAt  time.Time                 `bson:"updatedAt"`
 	}
 
-	// UserProgramCreatePayload ...
-	UserProgramCreatePayload struct {
-		CompanyID         string  `json:"companyID"`
-		SilverSpending    float64 `json:"silverSpending"`
-		SilverCommission  float64 `json:"silverCommission"`
-		GoldenSpending    float64 `json:"goldenSpending"`
-		GoldenCommission  float64 `json:"goldenCommission"`
-		DiamondSpending   float64 `json:"diamondSpending"`
-		DiamondCommission float64 `json:"diamondCommission"`
+	// LoyaltyProgramCreatePayload ...
+	LoyaltyProgramCreatePayload struct {
+		CompanyID              string  `json:"companyID"`
+		SilverExpense          float64 `json:"silverExpense"`
+		SilverCashbackPercent  float64 `json:"silverCashbackPercent"`
+		GoldExpense            float64 `json:"goldExpense"`
+		GoldCashbackPercent    float64 `json:"goldCashbackPercent"`
+		DiamondExpense         float64 `json:"diamondExpense"`
+		DiamondCashbackPercent float64 `json:"diamondCashbackPercent"`
 	}
 )

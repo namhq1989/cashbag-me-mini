@@ -24,11 +24,11 @@ func CompanyCreate(body models.CompanyCreatePayload) (models.CompanyBSON, error)
 		err = errors.New("Khong the tao company")
 		return doc, err
 	}
+
 	// Create company analytic
-	errCompanyAnalyticCreate := dao.CompanyAnalyticCreate(doc.ID)
-	if errCompanyAnalyticCreate != nil {
-		errCompanyAnalyticCreate = errors.New("Khong The Tao Company Analytic")
-		return doc, errCompanyAnalyticCreate
+	err = companyCreateCompanyAnalytic(doc.ID)
+	if err != nil {
+		return doc, err
 	}
 
 	return doc, err
@@ -52,7 +52,6 @@ func CompanyList() ([]models.CompanyDetail, error) {
 	return result, err
 }
 
-
 // CompanyChangeActiveStatus ...
 func CompanyChangeActiveStatus(companyID primitive.ObjectID, active bool) (doc models.CompanyBSON, err error) {
 	var (
@@ -64,17 +63,16 @@ func CompanyChangeActiveStatus(companyID primitive.ObjectID, active bool) (doc m
 	// Update
 	err = dao.CompanyUpdateByID(filter, update)
 	if err != nil {
-		err = errors.New("Khong the cap nhat branch")
-		return doc,err
+		err = errors.New("Khong the cap nhat company")
+		return doc, err
 	}
-
 	doc, _ = dao.CompanyFindByID(companyID)
 
 	return doc, err
 }
 
-// CompanyUpdateBalance ..
-func CompanyUpdateBalance(companyID primitive.ObjectID, balance float64) error {
+// companyUpdateBalance ..
+func companyUpdateBalance(companyID primitive.ObjectID, balance float64) error {
 	var (
 		filter = bson.M{"_id": companyID}
 		update = bson.M{"$set": bson.M{
@@ -89,27 +87,29 @@ func CompanyUpdateBalance(companyID primitive.ObjectID, balance float64) error {
 }
 
 // CompanyUpdate ...
-func CompanyUpdate(companyID primitive.ObjectID, body models.CompanyUpdatePayload) (models.CompanyBSON, error) {
+func CompanyUpdate(companyID primitive.ObjectID, body models.CompanyUpdatePayload) (doc models.CompanyBSON, err error) {
 	var (
-		// Prepare update  data
 		filter     = bson.M{"_id": companyID}
 		updateData = bson.M{"$set": bson.M{
-			"name":           body.Name,
-			"address":        body.Address,
-			"balance":        body.Balance,
-			"loyaltyProgram": body.LoyaltyProgram,
-			"active":         body.Active,
-			"postpaid":       body.Postpaid,
-			"updatedAt":      time.Now(),
+			"name":            body.Name,
+			"address":         body.Address,
+			"balance":         body.Balance,
+			"cashbackPercent": body.CashbackPercent,
+			"active":          body.Active,
+			"paidType":        body.PaidType,
+			"updatedAt":       time.Now(),
 		}}
-	
 	)
 
 	// Update company
-	err := dao.CompanyUpdateByID(filter, updateData)
-	doc, _ := dao.CompanyFindByID(companyID)
+	err = dao.CompanyUpdateByID(filter, updateData)
+	if err != nil {
+		err = errors.New("Khong the cap nhat company")
+		return
+	}
+	doc, _ = dao.CompanyFindByID(companyID)
 
-	return doc, err
+	return
 }
 
 // CompanyUpdateActiveTrue ...

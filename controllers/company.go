@@ -68,9 +68,9 @@ func CompanyChangeActiveStatus(c echo.Context) error {
 // CompanyUpdate ...
 func CompanyUpdate(c echo.Context) error {
 	var (
-		id           = c.Param("id")
-		body         = c.Get("body").(models.CompanyUpdatePayload)
-		companyID, _ = util.ValidationObjectID(id)
+		body      = c.Get("body").(models.CompanyUpdatePayload)
+		company   = c.Get("company").(models.CompanyBSON)
+		companyID = company.ID
 	)
 
 	// Process data

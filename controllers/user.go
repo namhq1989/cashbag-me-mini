@@ -33,9 +33,9 @@ func UserCreate(c echo.Context) error {
 // UserUpdate ...
 func UserUpdate(c echo.Context) error {
 	var (
-		id        = c.Param("id")
-		body      = c.Get("body").(models.UserUpdatePayload)
-		userID, _ = util.ValidationObjectID(id)
+		body   = c.Get("body").(models.UserUpdatePayload)
+		user   = c.Get("user").(models.UserBSON)
+		userID = user.ID
 	)
 
 	// Process data
