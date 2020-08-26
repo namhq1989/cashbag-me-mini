@@ -30,12 +30,13 @@ func (s TransactionSuite) TearDownSuite() {
 func removeOldDataTransaction() {
 	database.BranchCol().DeleteMany(context.Background(), bson.M{})
 	database.CompanyCol().DeleteMany(context.Background(), bson.M{})
+	database.UserCol().DeleteMany(context.Background(), bson.M{})
 	database.TransactionCol().DeleteMany(context.Background(), bson.M{})
 	database.TransactionAnalyticCol().DeleteMany(context.Background(), bson.M{})
 }
 
 func (s *TransactionSuite) TestTransactionCreateSuccess() {
-	s.T().Skip()
+	
 }
 
 func TestTransactionSuite(t *testing.T) {

@@ -4,16 +4,13 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
-	"go.mongodb.org/mongo-driver/bson"
 
-	"context"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
 	"cashbag-me-mini/models"
-	"cashbag-me-mini/modules/database"
 	"cashbag-me-mini/util"
 )
 
@@ -23,23 +20,20 @@ type UserSuite struct {
 
 func (s UserSuite) SetupSuite() {
 	util.HelperConnect()
-	util.HelperCompanyCreateFake()
-	util.HelperCompanyAnalyticCreateFake()
 }
 
 func (s UserSuite) TearDownSuite() {
 	removeOldDataUser()
 }
 func removeOldDataUser() {
-	database.CompanyCol().DeleteMany(context.Background(), bson.M{})
-	database.CompanyAnalyticCol().DeleteMany(context.Background(), bson.M{})
+
 }
 
 func (s *UserSuite) TestUserCreateSuccess() {
 	var (
 		user = models.UserCreatePayload{
-			Name:      util.UserName,
-			Address:   util.UserAddress,
+			Name:    "phuc",
+			Address: "Quang Tri",
 		}
 		response util.Response
 	)

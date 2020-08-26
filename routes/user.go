@@ -12,6 +12,6 @@ func User(e *echo.Echo) {
 	routes := e.Group("/users")
 
 	routes.POST("", controllers.UserCreate, validations.UserCreate)
-	routes.PUT("/:id", controllers.UserUpdate, validations.UserValidateID, UserCheckExistedByID, validations.UserUpdate)
-	routes.GET("/:id/transactions", controllers.TransactionFindByUserID,validations.UserValidateID,UserCheckExistedByID)
+	routes.PUT("/:id", controllers.UserUpdate, validations.UserValidateID, userCheckExistedByID, validations.UserUpdate)
+	routes.GET("/:id/transactions", controllers.TransactionFindByUserID,validations.UserValidateID,userCheckExistedByID)
 }
