@@ -28,4 +28,10 @@ type (
 		Name    string `json:"name" valid:"stringlength(3|30),type(string)"`
 		Address string `json:"address" valid:"stringlength(3|30),type(string)"`
 	}
+
+	// UserBrief ...
+	UserBrief struct {
+		ID   primitive.ObjectID `json:"_id"`
+		Name string             `json:"name"`
+	}
 )

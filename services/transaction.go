@@ -1,9 +1,15 @@
 package services
 
 import (
+	"sync"
+	"sort"
+	
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	
 	"cashbag-me-mini/config"
 	"cashbag-me-mini/models"
 	"cashbag-me-mini/modules/redis"
+	"cashbag-me-mini/dao"
 )
 
 // TransactionCreate ...
@@ -76,3 +82,46 @@ func TransactionCreate(body models.TransactionCreatePayload, company models.Comp
 
 	return
 }
+
+// TransactionFindByUserID ...
+func TransactionFindByUserID(userID primitive.ObjectID) ( []models.TransactionDetail,  error) {
+	var (
+		result = make([]models.TransactionDetail, 0)
+		wg sync.WaitGroup		
+	)
+
+	// Find
+	transactions, err := dao.TransactionFindByUserID(userID)
+	total :=len(transactions)
+	
+	// Return if not found
+	if total == 0 {
+		return result,err
+	}
+
+	// Add process
+	wg.Add(total)
+
+	for index := range transactions {
+		go func (index int){
+			defer wg.Done()
+
+			// Convert to TransactionDetail
+			transaction := convertToTransactionDetail(transactions[index])
+
+			// Append
+			result =append(result, transaction)	
+			} (index)	
+		}
+	
+	// Wait process
+	wg.Wait()
+
+	// Sort again
+	sort.Slice(result, func(i, j int) bool {
+		return result[i].CreatedAt.After(result[j].CreatedAt)
+	})
+
+	return result, err
+}
+
