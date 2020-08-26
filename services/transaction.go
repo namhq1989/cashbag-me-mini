@@ -30,11 +30,13 @@ func TransactionCreate(body models.TransactionCreatePayload, company models.Comp
 	}
 	redis.Set(config.RedisKeyUser, userString)
 
-	// Check UserMilestone Next
-	currentUserMilestone, beforeUserMilestone, currentUserExpense, err := checkUserMilestoneNext(companyID, userID, body.Amount)
+	// Get TransactionUserMilestoneAndExpense
+	transactionUserMilestone, err := getTransactionUserMilestoneAndExpense(companyID, userID, body.Amount)
 	if err != nil {
 		return
 	}
+	currentUserMilestone := transactionUserMilestone.CurrentUserMilestone
+	beforeUserMilestone := transactionUserMilestone.BeforeUserMilestone
 
 	// Calculate commission
 	commission := calculateTransactionCommison(company.CashbackPercent, currentUserMilestone.CashbackPercent, body.Amount)
@@ -61,7 +63,7 @@ func TransactionCreate(body models.TransactionCreatePayload, company models.Comp
 	}
 
 	// Update LoyaltyProgramUserStatus
-	err = loyaltyProgramUserStatusUpdateAfterCreateTransaction(currentUserMilestone, beforeUserMilestone, currentUserExpense, companyID, userID)
+	err = loyaltyProgramUserStatusUpdateAfterCreateTransaction(transactionUserMilestone, companyID, userID)
 	if err != nil {
 		return
 	}

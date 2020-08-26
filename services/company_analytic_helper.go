@@ -7,7 +7,6 @@ import (
 	"cashbag-me-mini/models"
 )
 
-// convertToCompanyAnalyticDetail ...
 func convertToCompanyAnalyticDetail(doc models.CompanyAnalyticBSON) models.CompanyAnalyticDetail {
 	var (
 		company, _     = dao.CompanyFindByID(doc.CompanyID)

@@ -71,21 +71,6 @@ func CompanyChangeActiveStatus(companyID primitive.ObjectID, active bool) (doc m
 	return doc, err
 }
 
-// companyUpdateBalance ..
-func companyUpdateBalance(companyID primitive.ObjectID, balance float64) error {
-	var (
-		filter = bson.M{"_id": companyID}
-		update = bson.M{"$set": bson.M{
-			"balance": balance,
-		}}
-	)
-
-	// update
-	err := dao.CompanyUpdateByID(filter, update)
-
-	return err
-}
-
 // CompanyUpdate ...
 func CompanyUpdate(companyID primitive.ObjectID, body models.CompanyUpdatePayload) (doc models.CompanyBSON, err error) {
 	var (

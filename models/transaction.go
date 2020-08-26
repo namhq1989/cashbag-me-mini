@@ -42,4 +42,12 @@ type (
 		UserID    string  `json:"userID"`
 		Amount    float64 `json:"amount"`
 	}
+
+	// TransactionUserMilestoneAndExpense ...
+	TransactionUserMilestoneAndExpense struct {
+		CurrentUserMilestone LoyaltyProgramMilestone
+		BeforeUserMilestone  LoyaltyProgramMilestone
+		CurrentUserExpense   float64
+		BeforeUserExpense    float64
+	}
 )
