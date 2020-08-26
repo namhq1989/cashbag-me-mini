@@ -1,12 +1,13 @@
 package services
 
 import (
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"cashbag-me-mini/dao"
 	"cashbag-me-mini/models"
 )
 
 // LoyaltyProgramCreate ...
-func LoyaltyProgramCreate(body models.LoyaltyProgramCreatePayload) (loyaltyProgram models.LoyaltyProgramBSON, err error) {
+func LoyaltyProgramCreate(body models.LoyaltyProgramCreatePayload, companyID primitive.ObjectID) (loyaltyProgram models.LoyaltyProgramBSON, err error) {
 
 	// Validate Milestones
 	err = validateLoyaltyProgramMilestones(body)
@@ -15,7 +16,7 @@ func LoyaltyProgramCreate(body models.LoyaltyProgramCreatePayload) (loyaltyProgr
 	}
 
 	// create userProgram
-	loyaltyProgram = loyaltyProgramCreatePayloadToBSON(body)
+	loyaltyProgram = loyaltyProgramCreatePayloadToBSON(body,companyID)
 	loyaltyProgram, err = dao.LoyaltyProgramCreate(loyaltyProgram)
 	if err != nil {
 		return

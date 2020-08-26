@@ -11,5 +11,5 @@ import (
 func UserProgram(e *echo.Echo) {
 	routes := e.Group("/loyalty-programs")
 
-	routes.POST("", controllers.LoyaltyProgramCreate, validations.LoyaltyProgramCreate, CompanyCheckExistedByID)
+	routes.POST("", controllers.LoyaltyProgramCreate, validations.LoyaltyProgramCreate, companyCheckExistedByID)
 }

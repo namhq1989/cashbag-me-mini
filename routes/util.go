@@ -8,8 +8,7 @@ import (
 	"cashbag-me-mini/util"
 )
 
-// CompanyCheckExistedByID ...
-func CompanyCheckExistedByID(next echo.HandlerFunc) echo.HandlerFunc {
+func companyCheckExistedByID(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		var (
 			companyID =c.Get("companyID").(primitive.ObjectID)
@@ -27,9 +26,7 @@ func CompanyCheckExistedByID(next echo.HandlerFunc) echo.HandlerFunc {
 	}
 }
 
-
-// BranchCheckExistedByID ...
-func BranchCheckExistedByID(next echo.HandlerFunc) echo.HandlerFunc {
+func branchCheckExistedByID(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		var (
 			branchID = c.Get("branchID").(primitive.ObjectID)
@@ -47,8 +44,7 @@ func BranchCheckExistedByID(next echo.HandlerFunc) echo.HandlerFunc {
 	}
 }
 
-// UserCheckExistedByID ...
-func UserCheckExistedByID(next echo.HandlerFunc) echo.HandlerFunc {
+func userCheckExistedByID(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		var (
 			userID = c.Get("userID").(primitive.ObjectID)

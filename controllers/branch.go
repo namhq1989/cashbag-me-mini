@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"github.com/labstack/echo/v4"
 	"go.mongodb.org/mongo-driver/bson"
 
@@ -27,10 +28,11 @@ func BranchList(c echo.Context) error {
 func BranchCreate(c echo.Context) error {
 	var (
 		body = c.Get("body").(models.BranchCreatePayload)
+		companyID = c.Get("companyID").(primitive.ObjectID)
 	)
 
 	// Process data
-	rawData, err := services.BranchCreate(body)
+	rawData, err := services.BranchCreate(body,companyID)
 
 	// if err
 	if err != nil {
