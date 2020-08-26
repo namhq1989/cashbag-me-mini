@@ -1,0 +1,60 @@
+{
+    "data": [
+        {
+            "_id": "5f450b4feabc8a06b13705be",
+            "name": "Highland",
+            "address": "Nguyen chanhs",
+            "balance": 0,
+            "loyaltyProgram": 0,
+            "active": false,
+            "postpaid": false,
+            "createdAt": "2020-08-25T12:59:59.014Z",
+            "updatedAt": "0001-01-01T00:00:00Z"
+        }
+    ],
+    "message": "Thanh Cong!"
+}
+
+
+{
+    "$id":"detail_companies.json",
+    "type":"object",
+    "required":["_id","name","address","balance","loyaltyProgram","active","postpaid","createdAt","updatedAt"],
+    "properties":{
+        "_id":{
+            "type":"string",
+            "pattern":"^[1-9][0-9]*$" ,
+        },
+        "name":{
+            "type":"string",
+        },
+         "address":{
+            "type":"string",
+         },
+         "balance":{
+             "type":"float64",
+         },
+         "loyaltyProgram":{
+             "type":"float64",
+         },
+         "active":{
+             "type":"boolean",
+         },
+         "postpaid":{
+             "type":"boolean",
+         },
+         "createdAt":{
+             "type":"string",
+            "schema":{"format":"date-time"},
+            "tests":[
+                {
+                    
+                }
+            ] 
+         },
+         "updatedAt":{
+             "type":"string",
+             "format":"date-time",
+         }
+    }
+}
