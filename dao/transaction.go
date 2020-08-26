@@ -5,7 +5,6 @@ import (
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo/options"
 
 	"cashbag-me-mini/models"
 	"cashbag-me-mini/modules/database"
@@ -32,13 +31,10 @@ func TransactionFindByUserID(userID primitive.ObjectID) ([]models.TransactionBSO
 		ctx       = context.Background()
 		filter    = bson.M{"userID": userID}
 		result     = make([]models.TransactionBSON, 0)
-		findOptions = options.Find()
 	)
-
-	findOptions.SetSort(bson.D{primitive.E{Key: "createdAt", Value: -1}})
 	
 	// Find
-	cursor,err := transactionCol.Find(ctx, filter,findOptions)
+	cursor,err := transactionCol.Find(ctx, filter)
 
 	// Close cursor
 	defer cursor.Close(ctx)
