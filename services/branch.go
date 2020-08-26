@@ -46,16 +46,16 @@ func BranchCreate(body models.BranchCreatePayload) (models.BranchBSON, error) {
 	}
 
 	// Update CompanyAnalytic
-	errCompanyAnalyticHandle := companyAnalyticHandleForBranchCreate(doc)
-	if errCompanyAnalyticHandle != nil {
-		return doc, errCompanyAnalyticHandle
+	err = branchCreateUpdateCompanyAnalytic(doc)
+	if err != nil {
+		return doc, err
 	}
 
 	return doc, err
 }
 
 // BranchUpdate ...
-func BranchUpdate(branchID primitive.ObjectID, body models.BranchUpdatePayload) (models.BranchBSON, error) {
+func BranchUpdate(branchID primitive.ObjectID, body models.BranchUpdatePayload) (doc models.BranchBSON, err error) {
 	var (
 		// Prepare update  data
 		filter     = bson.M{"_id": branchID}
@@ -67,12 +67,14 @@ func BranchUpdate(branchID primitive.ObjectID, body models.BranchUpdatePayload) 
 	)
 
 	// Update Branch
-	err := dao.BranchUpdateByID(filter, updateData)
+	err = dao.BranchUpdateByID(filter, updateData)
+	if err != nil {
+		err = errors.New("Khong the cap nhat branch")
+		return
+	}
+	doc, _ = dao.BranchFindByID(branchID)
 
-	// find
-	doc, _ := dao.BranchFindByID(branchID)
-
-	return doc, err
+	return
 }
 
 // BranchChangeActiveStatus ...
@@ -87,16 +89,15 @@ func BranchChangeActiveStatus(branchID primitive.ObjectID, active bool) (doc mod
 	err = dao.BranchUpdateByID(filter, update)
 	if err != nil {
 		err = errors.New("Khong the cap nhat branch")
-		return doc, err
+		return
 	}
-
 	doc, _ = dao.BranchFindByID(branchID)
 
 	// Update CompanyAnalytic
-	errCompanyAnalyticHandle := companyAnalyticHandleForBranchChangeActive(doc)
-	if errCompanyAnalyticHandle != nil {
-		return doc, errCompanyAnalyticHandle
+	err = branchChangeActiveStatusUpdateCompanyAnalytic(doc)
+	if err != nil {
+		return
 	}
 
-	return doc, err
+	return
 }

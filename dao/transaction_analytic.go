@@ -3,11 +3,9 @@ package dao
 import (
 	"cashbag-me-mini/util"
 	"context"
-	"log"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 
 	"cashbag-me-mini/models"
 	"cashbag-me-mini/modules/database"
@@ -36,8 +34,8 @@ func TransactionAnalyticList(date time.Time) ([]models.TransactionAnalyticBSON, 
 	return result, err
 }
 
-// TransactionAnalyticFilter ...
-func TransactionAnalyticFilter(transaction models.TransactionBSON) (models.TransactionAnalyticBSON, bool) {
+// TransactionAnalyticFilterByDate ...
+func TransactionAnalyticFilterByDate(transaction models.TransactionBSON) (models.TransactionAnalyticBSON, error) {
 	var (
 		transactionAnalyticCol = database.TransactionAnalyticCol()
 		ctx                    = context.Background()
@@ -52,63 +50,23 @@ func TransactionAnalyticFilter(transaction models.TransactionBSON) (models.Trans
 
 	// Find
 	err := transactionAnalyticCol.FindOne(ctx, filter).Decode(&tranAnalytic)
-
 	if err != nil {
-		return tranAnalytic, false
+		return tranAnalytic, err
 	}
 
-	return tranAnalytic, true
+	return tranAnalytic, err
 }
 
 // TransactionAnalyticCreate ...
-func TransactionAnalyticCreate(transaction models.TransactionBSON) {
+func TransactionAnalyticCreate(transactionAnalytic models.TransactionAnalyticBSON) error {
 	var (
 		transactionAnalyticCol = database.TransactionAnalyticCol()
 		ctx                    = context.Background()
-		startOfDate            = util.BeginningOfDay(transaction.CreatedAt)
 	)
-
-	// Set transactionAnalytic
-	transactionAnalytic := models.TransactionAnalyticBSON{
-		ID:               primitive.NewObjectID(),
-		CompanyID:        transaction.CompanyID,
-		BranchID:         transaction.BranchID,
-		Date:             startOfDate,
-		TotalTransaction: 1,
-		TotalRevenue:     transaction.Amount,
-		TotalCommission:  transaction.Commission,
-		UpdateAt:         time.Now(),
-	}
 
 	// Create
 	_, err := transactionAnalyticCol.InsertOne(ctx, transactionAnalytic)
-	if err != nil {
-		log.Println(err)
-	}
-}
-
-// TransactionAnalyticUpdate ...
-func TransactionAnalyticUpdate(transactionAnalytic models.TransactionAnalyticBSON, transaction models.TransactionBSON) {
-
-	// Set for update Transaction Analytic
-	transactionAnalytic.TotalTransaction++
-	transactionAnalytic.TotalRevenue += transaction.Amount
-	transactionAnalytic.TotalCommission += transaction.Commission
-
-	// Update Transaction Analytic
-	filter := bson.M{"_id": transactionAnalytic.ID}
-	update := bson.M{"$set": bson.M{
-		"totalTransaction": transactionAnalytic.TotalTransaction,
-		"totalRevenue":     transactionAnalytic.TotalRevenue,
-		"totalCommission":  transactionAnalytic.TotalCommission,
-		"updateAt":         time.Now(),
-	}}
-
-	// Update
-	err := TransactionAnalyticUpdateByID(filter, update)
-	if err != nil {
-		log.Println(err)
-	}
+	return err
 }
 
 // TransactionAnalyticUpdateByID ...

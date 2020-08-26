@@ -9,28 +9,28 @@ import (
 type (
 	// CompanyBSON ...
 	CompanyBSON struct {
-		ID             primitive.ObjectID `bson:"_id"`
-		Name           string             `bson:"name"`
-		Address        string             `bson:"address"`
-		Balance        float64            `bson:"balance" `
-		LoyaltyProgram float64            `bson:"loyaltyProgram" `
-		Active         bool               `bson:"active" `
-		Postpaid       bool               `bson:"postpaid"`
-		CreatedAt      time.Time          `bson:"createdAt"`
-		UpdatedAt      time.Time          `bson:"updatedAt"`
+		ID              primitive.ObjectID `bson:"_id"`
+		Name            string             `bson:"name"`
+		Address         string             `bson:"address"`
+		Balance         float64            `bson:"balance" `
+		CashbackPercent float64            `bson:"cashbackPercent" `
+		Active          bool               `bson:"active" `
+		PaidType        string             `bson:"paidType"`
+		CreatedAt       time.Time          `bson:"createdAt"`
+		UpdatedAt       time.Time          `bson:"updatedAt"`
 	}
 
 	// CompanyDetail ...
 	CompanyDetail struct {
-		ID             primitive.ObjectID `json:"_id"`
-		Name           string             `json:"name"`
-		Address        string             `json:"address"`
-		Balance        float64            `json:"balance"`
-		LoyaltyProgram float64            `json:"loyaltyProgram"`
-		Active         bool               `json:"active"`
-		Postpaid       bool               `json:"postpaid"`
-		CreatedAt      time.Time          `json:"createdAt"`
-		UpdatedAt      time.Time          `json:"updatedAt"`
+		ID              primitive.ObjectID `json:"_id"`
+		Name            string             `json:"name"`
+		Address         string             `json:"address"`
+		Balance         float64            `json:"balance"`
+		CashbackPercent float64            `json:"cashbackPercent"`
+		Active          bool               `json:"active"`
+		PaidType        string             `json:"paidType"`
+		CreatedAt       time.Time          `json:"createdAt"`
+		UpdatedAt       time.Time          `json:"updatedAt"`
 	}
 
 	// CompanyCreatePayload ...
@@ -41,12 +41,12 @@ type (
 
 	// CompanyUpdatePayload ...
 	CompanyUpdatePayload struct {
-		Name           string  `json:"name" valid:"stringlength(3|30),type(string)"`
-		Address        string  `json:"address" `
-		Balance        float64 `json:"balance" valid:"required"`
-		LoyaltyProgram float64 `json:"loyaltyProgram" valid:"required"`
-		Active         bool    `json:"active"`
-		Postpaid       bool    `json:"postpaid"`
+		Name            string  `json:"name" valid:"stringlength(3|30),type(string)"`
+		Address         string  `json:"address" valid:"stringlength(3|30),type(string)"`
+		Balance         float64 `json:"balance" valid:"required"`
+		CashbackPercent float64 `json:"cashbackPercent" valid:"required"`
+		Active          bool    `json:"active"`
+		PaidType        string  `json:"paidType" valid:"stringlength(3|30),type(string)"`
 	}
 
 	// CompanyBrief ...

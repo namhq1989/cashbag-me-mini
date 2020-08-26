@@ -11,5 +11,5 @@ import (
 func Transaction(e *echo.Echo) {
 	routes := e.Group("/transactions")
 
-	routes.POST("", controllers.TransactionCreate, validations.TransactionCreate)
+	routes.POST("", controllers.TransactionCreate, validations.TransactionCreate, CompanyCheckExistedByID, BranchCheckExistedByID, UserCheckExistedByID)
 }

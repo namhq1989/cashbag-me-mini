@@ -2,18 +2,19 @@ package services
 
 import (
 	"cashbag-me-mini/models"
-	"cashbag-me-mini/util"
+	"time"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 // UserCreatePayloadToBSON ...
 func userCreatePayloadToBSON(body models.UserCreatePayload) models.UserBSON {
-	var (
-		companyID, _ = util.ValidationObjectID(body.CompanyID)
-	)
+
 	result := models.UserBSON{
-		CompanyID: companyID,
+		ID:        primitive.NewObjectID(),
 		Name:      body.Name,
 		Address:   body.Address,
+		CreatedAt: time.Now(),
 	}
 	return result
 }

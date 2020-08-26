@@ -2,7 +2,6 @@ package dao
 
 import (
 	"context"
-	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -18,14 +17,7 @@ func UserCreate(doc models.UserBSON) (models.UserBSON, error) {
 		ctx        = context.Background()
 	)
 
-	//add information
-	if doc.ID.IsZero() {
-		doc.ID = primitive.NewObjectID()
-	}
-
-	doc.CreatedAt = time.Now()
-
-	//insert one
+	// Insert one
 	_, err := collection.InsertOne(ctx, doc)
 	return doc, err
 

@@ -2,7 +2,6 @@ package dao
 
 import (
 	"context"
-	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -38,28 +37,10 @@ func BranchCreate(doc models.BranchBSON) (models.BranchBSON, error) {
 		ctx       = context.Background()
 	)
 
-	// Add information
-	if doc.ID.IsZero() {
-		doc.ID = primitive.NewObjectID()
-	}
-	doc.CreatedAt = time.Now()
-
 	// Insert
 	_, err := branchCol.InsertOne(ctx, doc)
 
 	return doc, err
-}
-
-// BranchChangeActiveStatus ...
-func BranchChangeActiveStatus(branchID primitive.ObjectID,active bool) (err error) {
-	var (
-		branchCol = database.BranchCol()
-		ctx       = context.Background()
-	)
-
-	_, err = branchCol.UpdateOne(ctx,branchID,active)
-
-	return err
 }
 
 // BranchUpdateByID ...

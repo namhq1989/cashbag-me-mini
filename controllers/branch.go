@@ -59,7 +59,7 @@ func BranchChangeActiveStatus(c echo.Context) error {
 	}
 
 	// Success
-	return util.Response200(c,bson.M{
+	return util.Response200(c, bson.M{
 		"active":    rawData.Active,
 		"updatedAt": rawData.UpdatedAt,
 	}, "")
@@ -68,9 +68,9 @@ func BranchChangeActiveStatus(c echo.Context) error {
 // BranchUpdate ...
 func BranchUpdate(c echo.Context) error {
 	var (
-		id          = c.Param("id")
-		body        = c.Get("body").(models.BranchUpdatePayload)
-		branchID, _ = util.ValidationObjectID(id)
+		body     = c.Get("body").(models.BranchUpdatePayload)
+		branch   = c.Get("branch").(models.BranchBSON)
+		branchID = branch.ID
 	)
 
 	// Process data
