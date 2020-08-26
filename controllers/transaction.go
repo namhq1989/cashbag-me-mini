@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"github.com/labstack/echo/v4"
+	"go.mongodb.org/mongo-driver/bson"
 
 	"cashbag-me-mini/models"
 	"cashbag-me-mini/services"
@@ -25,7 +26,9 @@ func TransactionCreate(c echo.Context) error {
 		return util.Response400(c, nil, err.Error())
 	}
 
-	//Success
-	return util.Response200(c, rawData, "")
+	return util.Response200(c, bson.M{
+		"_id":       rawData.ID,
+		"createdAt": rawData.CreatedAt,
+	}, "")
 
 }

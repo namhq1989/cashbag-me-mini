@@ -66,10 +66,10 @@ func (s *BranchSuite) TestBranchList() {
 func (s *BranchSuite) TestBranchCreateSuccess() {
 	var (
 		branch = models.BranchCreatePayload{
-			CompanyID: util.CompanyID,
+			CompanyID: util.CompanyString,
 			Name:      "Hight SonLa",
 			Address:   "120 SonLa",
-			Active:    false,
+			Active:    true,
 		}
 		response util.Response
 	)
@@ -81,6 +81,7 @@ func (s *BranchSuite) TestBranchCreateSuccess() {
 	responseRecorder := httptest.NewRecorder()
 	c := e.NewContext(req, responseRecorder)
 	c.Set("body", branch)
+	c.Set("companyID", util.CompanyID)
 
 	// Call BranchCreate
 	BranchCreate(c)
@@ -98,7 +99,6 @@ func (s *BranchSuite) TestBranchCreateSuccess() {
 func (s *BranchSuite) TestBranchChangeActiveStatus() {
 	var (
 		response util.Response
-		branchID = util.BranchID
 	)
 
 	// Create Context
@@ -106,8 +106,7 @@ func (s *BranchSuite) TestBranchChangeActiveStatus() {
 	req := httptest.NewRequest(http.MethodGet, "/branches/:id/active", nil)
 	responseRecorder := httptest.NewRecorder()
 	c := e.NewContext(req, responseRecorder)
-	c.SetParamNames("id")
-	c.SetParamValues(branchID)
+	c.Set("branch", util.Branch)
 
 	// Call BranchChangeActiveStatus
 	BranchChangeActiveStatus(c)
@@ -125,7 +124,6 @@ func (s *BranchSuite) TestBranchChangeActiveStatus() {
 func (s *BranchSuite) TestBranchUpdate() {
 	var (
 		response             util.Response
-		branchID             = util.BranchID
 		branchUpdateBPayload = models.BranchUpdatePayload{
 			Name:    "Hight BinhDinh",
 			Address: "111 BinhDinh",
@@ -138,9 +136,8 @@ func (s *BranchSuite) TestBranchUpdate() {
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 	responseRecorder := httptest.NewRecorder()
 	c := e.NewContext(req, responseRecorder)
-	c.SetParamNames("id")
-	c.SetParamValues(branchID)
 	c.Set("body", branchUpdateBPayload)
+	c.Set("branch", util.Branch)
 
 	// Call BranchUpdate
 	BranchUpdate(c)

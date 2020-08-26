@@ -87,8 +87,7 @@ func (s *CompanySuite) TestCompanyCreateSuccess() {
 
 func (s *CompanySuite) TestCompanyChangeActiveStatus() {
 	var (
-		response  util.Response
-		companyID = util.CompanyID
+		response util.Response
 	)
 
 	//Create context
@@ -96,8 +95,7 @@ func (s *CompanySuite) TestCompanyChangeActiveStatus() {
 	req, _ := http.NewRequest(http.MethodPatch, "/companies/:id/active", nil)
 	responseRecorder := httptest.NewRecorder()
 	c := e.NewContext(req, responseRecorder)
-	c.SetParamNames("id")
-	c.SetParamValues(companyID)
+	c.Set("company", util.Company)
 
 	//Call CompanyChangeActiveStatus
 	CompanyChangeActiveStatus(c)
@@ -113,13 +111,12 @@ func (s *CompanySuite) TestCompanyChangeActiveStatus() {
 func (s *CompanySuite) TestCompanyUpdate() {
 	var (
 		response             util.Response
-		companyID            = util.CompanyID
 		companyUpdatePayload = models.CompanyUpdatePayload{
-			Name:           "the coffee house",
-			Address:        "67 Nguyen Huy Tuong",
-			Balance:        100000,
-			LoyaltyProgram: 100,
-			Active:         false,
+			Name:            "the coffee house",
+			Address:         "67 Nguyen Huy Tuong",
+			Balance:         100000,
+			CashbackPercent: 10,
+			Active:          true,
 		}
 	)
 
@@ -129,9 +126,8 @@ func (s *CompanySuite) TestCompanyUpdate() {
 	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
 	responseRecorder := httptest.NewRecorder()
 	c := e.NewContext(req, responseRecorder)
-	c.SetParamNames("id")
-	c.SetParamValues(companyID)
 	c.Set("body", companyUpdatePayload)
+	c.Set("company", util.Company)
 
 	// Call CompanyUpdate
 	CompanyUpdate(c)

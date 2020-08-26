@@ -21,26 +21,52 @@ import (
 )
 
 var (
+	// CompanyString for test
+	CompanyString = "5f24d45125ea51bc57a8285c"
+
 	// CompanyID for test
-	CompanyID = "5f24d45125ea51bc57a8285c"
-	// CompanyAddress for test
-	CompanyAddress = "HaiPhong"
-	// CompanyName for test
-	CompanyName = "Hightland"
-	// CompanyBalance for test
-	CompanyBalance = 10000000
-	// CompanyLoyalty for test
-	CompanyLoyalty = 10
+	CompanyID, _ = primitive.ObjectIDFromHex(CompanyString)
+
+	// Company for test
+	Company    = models.CompanyBSON{
+		ID:              CompanyID,
+		Name:            "Hightland",
+		Address:         "HaiPhong",
+		Balance:         10000000,
+		CashbackPercent: 10,
+		Active:          true,
+		PaidType:        "prepaid",
+		CreatedAt:       time.Now(),
+	}
+
+	// BranchString for test
+	BranchString = "5f24d45125ea51bc57a8285b"
+
 	// BranchID for test
-	BranchID = "5f24d45125ea51bc57a8285b"
-	// BranchName for test
-	BranchName = "High Quang Tri"
-	// BranchAddress for test
-	BranchAddress = "Dong Ha"
-	// UserName for test
-	UserName = "Phuc"
-	// UserAddress for test
-	UserAddress = "48 Nguyen Chanh"
+	BranchID, _ = primitive.ObjectIDFromHex(BranchString)
+
+	// Branch for test
+	Branch    = models.BranchBSON{
+		ID:        BranchID,
+		CompanyID: CompanyID,
+		Name:      "High Quang Tri",
+		Address:   "Dong Ha",
+		Active:    true,
+		CreatedAt: time.Now(),
+	}
+
+	// UserString for test
+	UserString = "5f24d45125ea51bc57a8285a"
+
+	// UserID for test
+	UserID, _ = primitive.ObjectIDFromHex(UserString)
+
+	// User for test
+	User    = models.UserBSON{
+		ID:      UserID,
+		Name:    "Phuc",
+		Address: "48 Nguyen Chanh",
+	}
 )
 
 // HelperConnect ...
@@ -77,22 +103,12 @@ func HelperToIOReader(i interface{}) io.Reader {
 // HelperCompanyCreateFake ...
 func HelperCompanyCreateFake() {
 	var (
-		companyCol   = database.CompanyCol()
-		ctx          = context.Background()
-		companyID, _ = primitive.ObjectIDFromHex(CompanyID)
-		company      = models.CompanyBSON{
-			ID:      companyID,
-			Name:    CompanyName,
-			Address: CompanyAddress,
-			Balance: 10000000,
-			//LoyaltyProgram: 10,
-			Active:    true,
-			CreatedAt: time.Now(),
-		}
+		companyCol = database.CompanyCol()
+		ctx        = context.Background()
 	)
 
 	// Insert
-	_, err := companyCol.InsertOne(ctx, company)
+	_, err := companyCol.InsertOne(ctx, Company)
 	if err != nil {
 		log.Println(err)
 	}
@@ -102,22 +118,12 @@ func HelperCompanyCreateFake() {
 // HelperBranchCreateFake ...
 func HelperBranchCreateFake() {
 	var (
-		branchCol    = database.BranchCol()
-		ctx          = context.Background()
-		companyID, _ = primitive.ObjectIDFromHex(CompanyID)
-		branchID, _  = primitive.ObjectIDFromHex(BranchID)
-		branch       = models.BranchBSON{
-			ID:        branchID,
-			CompanyID: companyID,
-			Name:      BranchName,
-			Address:   BranchAddress,
-			Active:    true,
-			CreatedAt: time.Now(),
-		}
+		branchCol = database.BranchCol()
+		ctx       = context.Background()
 	)
 
 	// Insert
-	_, err := branchCol.InsertOne(ctx, branch)
+	_, err := branchCol.InsertOne(ctx, Branch)
 	if err != nil {
 		log.Println(err)
 	}
@@ -128,15 +134,10 @@ func HelperUserCreateFake() {
 	var (
 		userCol = database.UserCol()
 		ctx     = context.Background()
-		user    = models.UserBSON{
-			ID:      primitive.NewObjectID(),
-			Name:    UserName,
-			Address: UserAddress,
-		}
 	)
 
 	//Insert
-	_, err := userCol.InsertOne(ctx, user)
+	_, err := userCol.InsertOne(ctx, User)
 	if err != nil {
 		log.Println(err)
 	}
@@ -147,10 +148,9 @@ func HelperCompanyAnalyticCreateFake() {
 	var (
 		companyAnalyticCol = database.CompanyAnalyticCol()
 		ctx                = context.Background()
-		companyID, _       = primitive.ObjectIDFromHex(CompanyID)
 		companyAnalytic    = models.CompanyAnalyticBSON{
 			ID:        primitive.NewObjectID(),
-			CompanyID: companyID,
+			CompanyID: CompanyID,
 			UpdatedAt: time.Now(),
 		}
 	)
@@ -167,11 +167,9 @@ func HelperTransactionAnalyticFindByID() models.TransactionAnalyticBSON {
 	var (
 		transactionAnalyticCol = database.TransactionAnalyticCol()
 		ctx                    = context.Background()
-		branchID, _            = primitive.ObjectIDFromHex(BranchID)
-		companyID, _           = primitive.ObjectIDFromHex(CompanyID)
 		filter                 = bson.M{
-			"companyID": companyID,
-			"branchID":  branchID,
+			"companyID": CompanyID,
+			"branchID":  BranchID,
 		}
 		result models.TransactionAnalyticBSON
 	)
