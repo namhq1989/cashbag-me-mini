@@ -81,13 +81,13 @@ func HelperCompanyCreateFake() {
 		ctx          = context.Background()
 		companyID, _ = primitive.ObjectIDFromHex(CompanyID)
 		company      = models.CompanyBSON{
-			ID:             companyID,
-			Name:           CompanyName,
-			Address:        CompanyAddress,
-			Balance:        10000000,
-			LoyaltyProgram: 10,
-			Active:         true,
-			CreatedAt:      time.Now(),
+			ID:      companyID,
+			Name:    CompanyName,
+			Address: CompanyAddress,
+			Balance: 10000000,
+			//LoyaltyProgram: 10,
+			Active:    true,
+			CreatedAt: time.Now(),
 		}
 	)
 
@@ -126,14 +126,12 @@ func HelperBranchCreateFake() {
 // HelperUserCreateFake ..
 func HelperUserCreateFake() {
 	var (
-		userCol      = database.UserCol()
-		ctx          = context.Background()
-		companyID, _ = primitive.ObjectIDFromHex(CompanyID)
-		user         = models.UserBSON{
-			ID:        primitive.NewObjectID(),
-			CompanyID: companyID,
-			Name:      UserName,
-			Address:   UserAddress,
+		userCol = database.UserCol()
+		ctx     = context.Background()
+		user    = models.UserBSON{
+			ID:      primitive.NewObjectID(),
+			Name:    UserName,
+			Address: UserAddress,
 		}
 	)
 

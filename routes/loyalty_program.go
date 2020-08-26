@@ -9,7 +9,7 @@ import (
 
 //UserProgram func ...
 func UserProgram(e *echo.Echo) {
-	routes := e.Group("/user-programs")
+	routes := e.Group("/loyalty-programs")
 
-	routes.POST("", controllers.UserProgramCreate, validations.UserProgramCreate)
+	routes.POST("", controllers.LoyaltyProgramCreate, validations.LoyaltyProgramCreate, CompanyCheckExistedByID)
 }

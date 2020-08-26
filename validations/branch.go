@@ -4,7 +4,6 @@ import (
 	"github.com/asaskevich/govalidator"
 	"github.com/labstack/echo/v4"
 
-	"cashbag-me-mini/dao"
 	"cashbag-me-mini/models"
 	"cashbag-me-mini/util"
 )
@@ -32,17 +31,9 @@ func BranchCreate(next echo.HandlerFunc) echo.HandlerFunc {
 			return util.Response400(c, nil, err.Error())
 		}
 
-		// Validate existed in db
-		company, err := dao.CompanyFindByID(companyID)
-		if err != nil {
-			return util.Response400(c, nil, err.Error())
-		}
-		if company.ID.IsZero() {
-			return util.Response400(c, nil, "Khong tim thay Cong Ty")
-		}
-
 		// Success
 		c.Set("body", doc)
+		c.Set("companyID", companyID)
 		return next(c)
 	}
 }

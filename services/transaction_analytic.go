@@ -1,7 +1,11 @@
 package services
 
 import (
+	"time"
+
 	"github.com/jinzhu/now"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 
 	"cashbag-me-mini/dao"
 	"cashbag-me-mini/models"
@@ -28,14 +32,61 @@ func TransactionAnalyticList(date string) ([]models.TransactionAnalyticDetail, e
 	return result, err
 }
 
-// TransactionAnalyticHandle ...
-func TransactionAnalyticHandle(transaction models.TransactionBSON) {
-	tranAnalytic, check := dao.TransactionAnalyticFilter(transaction)
-	if check == false {
-		dao.TransactionAnalyticCreate(transaction)
-	} else {
-		dao.TransactionAnalyticUpdate(tranAnalytic, transaction)
+// transactionAnalyticUpdateAfterCreateTransaction ...
+func transactionAnalyticUpdateAfterCreateTransaction(transaction models.TransactionBSON) (err error) {
+	tranAnalytic, err := dao.TransactionAnalyticFilterByDate(transaction)
+	if err != nil {
+		err = transactionAnalyticCreate(transaction)
+		return err
 	}
+	err = transactionAnalyticUpdate(tranAnalytic, transaction)
+	return err
+}
+
+// transactionAnalyticCreate ...
+func transactionAnalyticCreate(transaction models.TransactionBSON) error {
+	var (
+		startOfDate = util.BeginningOfDay(transaction.CreatedAt)
+	)
+
+	// Set transactionAnalytic
+	transactionAnalytic := models.TransactionAnalyticBSON{
+		ID:               primitive.NewObjectID(),
+		CompanyID:        transaction.CompanyID,
+		BranchID:         transaction.BranchID,
+		Date:             startOfDate,
+		TotalTransaction: 1,
+		TotalRevenue:     transaction.Amount,
+		TotalCommission:  transaction.Commission,
+		UpdateAt:         time.Now(),
+	}
+
+	// Create transactionAnalytic
+	err := dao.TransactionAnalyticCreate(transactionAnalytic)
+
+	return err
+}
+
+// transactionAnalyticUpdate ...
+func transactionAnalyticUpdate(transactionAnalytic models.TransactionAnalyticBSON, transaction models.TransactionBSON) error {
+
+	// Set for update Transaction Analytic
+	transactionAnalytic.TotalTransaction++
+	transactionAnalytic.TotalRevenue += transaction.Amount
+	transactionAnalytic.TotalCommission += transaction.Commission
+
+	// Update Transaction Analytic
+	filter := bson.M{"_id": transactionAnalytic.ID}
+	update := bson.M{"$set": bson.M{
+		"totalTransaction": transactionAnalytic.TotalTransaction,
+		"totalRevenue":     transactionAnalytic.TotalRevenue,
+		"totalCommission":  transactionAnalytic.TotalCommission,
+		"updateAt":         time.Now(),
+	}}
+
+	// Update
+	err := dao.TransactionAnalyticUpdateByID(filter, update)
+	return err
 }
 
 // convertToTransactionAnalyticDetail ...

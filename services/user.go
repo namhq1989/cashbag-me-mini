@@ -24,12 +24,6 @@ func UserCreate(body models.UserCreatePayload) (models.UserBSON, error) {
 		return doc, err
 	}
 
-	// Update CompanyAnalytic
-	errCompanyAnalyticHandle := companyAnalyticHandleForUserCreate(doc)
-	if errCompanyAnalyticHandle != nil {
-		return doc, errCompanyAnalyticHandle
-	}
-
 	return doc, err
 }
 
@@ -43,7 +37,6 @@ func UserUpdate(userID primitive.ObjectID, body models.UserUpdatePayload) (model
 			"address":   body.Address,
 			"updatedAt": time.Now(),
 		}}
-	
 	)
 
 	// Update User
@@ -52,20 +45,4 @@ func UserUpdate(userID primitive.ObjectID, body models.UserUpdatePayload) (model
 
 	return doc, err
 
-}
-
-// UserUpdateSpendingAndLevel ...
-func UserUpdateSpendingAndLevel(id primitive.ObjectID, level string, spending float64) error {
-	var (
-		filter     = bson.M{"_id": id}
-		updateData = bson.M{"$set": bson.M{
-			"level":    level,
-			"spending": spending,
-		}}
-	)
-
-	// Update
-	err := dao.UserUpdateByID(filter, updateData)
-
-	return err
 }

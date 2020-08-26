@@ -1,16 +1,18 @@
 package controllers
 
 import (
-	"github.com/labstack/echo/v4"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/suite"
-
 	"context"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
+	"fmt"
+
+	"github.com/labstack/echo/v4"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/suite"
+	"github.com/xeipuuv/gojsonschema"
 	"go.mongodb.org/mongo-driver/bson"
 
 	"cashbag-me-mini/models"
@@ -36,7 +38,8 @@ func removeOldDataCompany() {
 
 func (s *CompanySuite) TestCompanyList() {
 	var (
-		response util.Response
+		response     util.Response
+		schemaLoader = gojsonschema.NewReferenceLoader("file:///home/phuc/cashbag-me-mini/src/detail_companies.json")
 	)
 
 	//Create Context
@@ -47,13 +50,27 @@ func (s *CompanySuite) TestCompanyList() {
 
 	// Call CompanyList
 	CompanyList(c)
-
+	documentLoader := gojsonschema.NewGoLoader(&response)
 	// Parse
 	json.Unmarshal(rec.Body.Bytes(), &response)
-
+	
+	
 	//Test
 	assert.Equal(s.T(), http.StatusOK, rec.Code)
 	assert.Equal(s.T(), "Thanh Cong!", response["message"])
+	result, err := gojsonschema.Validate(schemaLoader, documentLoader)
+	if err != nil {
+		fmt.Println("err1")	
+	}
+
+	if result.Valid() {
+		fmt.Printf("The document is valid\n")
+	} else {
+		fmt.Printf("The document is not valid. see errors :\n")
+		for _, desc := range result.Errors() {
+			fmt.Printf("- %s\n", desc)
+		}
+	}
 }
 
 func (s *CompanySuite) TestCompanyCreateSuccess() {
@@ -115,11 +132,11 @@ func (s *CompanySuite) TestCompanyUpdate() {
 		response             util.Response
 		companyID            = util.CompanyID
 		companyUpdatePayload = models.CompanyUpdatePayload{
-			Name:           "the coffee house",
-			Address:        "67 Nguyen Huy Tuong",
-			Balance:        100000,
-			LoyaltyProgram: 100,
-			Active:         false,
+			Name:            "the coffee house",
+			Address:         "67 Nguyen Huy Tuong",
+			Balance:         100000,
+			CashbackPercent: 100,
+			Active:          false,
 		}
 	)
 

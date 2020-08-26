@@ -10,9 +10,9 @@ import (
 // Branch ...
 func Branch(e *echo.Echo) {
 	routes := e.Group("/branches")
-	
+
 	routes.GET("", controllers.BranchList)
-	routes.POST("", controllers.BranchCreate, validations.BranchCreate)
-	routes.PATCH("/:id/active", controllers.BranchChangeActiveStatus,validations.BranchValidateID,BranchCheckExistedByID)
-	routes.PUT("/:id", controllers.BranchUpdate,validations.BranchValidateID, BranchCheckExistedByID,validations.BranchUpdate)
+	routes.POST("", controllers.BranchCreate, validations.BranchCreate, CompanyCheckExistedByID)
+	routes.PATCH("/:id/active", controllers.BranchChangeActiveStatus, validations.BranchValidateID, BranchCheckExistedByID)
+	routes.PUT("/:id", controllers.BranchUpdate, validations.BranchValidateID, BranchCheckExistedByID, validations.BranchUpdate)
 }

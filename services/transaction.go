@@ -1,100 +1,125 @@
 package services
 
 import (
-	"errors"
-
+	"sync"
+	"sort"
+	
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	
 	"cashbag-me-mini/config"
-	"cashbag-me-mini/dao"
 	"cashbag-me-mini/models"
 	"cashbag-me-mini/modules/redis"
-	"cashbag-me-mini/util"
+	"cashbag-me-mini/dao"
 )
 
 // TransactionCreate ...
-func TransactionCreate(body models.TransactionCreatePayload) (transaction models.TransactionBSON, err error) {
+func TransactionCreate(body models.TransactionCreatePayload, company models.CompanyBSON, branch models.BranchBSON, user models.UserBSON) (transaction models.TransactionBSON, err error) {
 	var (
-		user         = body.UserID
-		companyID, _ = util.ValidationObjectID(body.CompanyID)
-		branchID, _  = util.ValidationObjectID(body.BranchID)
-		userID, _    = util.ValidationObjectID(body.UserID)
-		company, _   = dao.CompanyFindByID(companyID)
-		branch, _    = dao.BranchFindByID(branchID)
-		balance      = company.Balance
+		prepaid    = "prepaid"
+		userString = body.UserID
+		companyID  = company.ID
+		branchID   = branch.ID
+		userID     = user.ID
+		balance    = company.Balance
 	)
 
 	// Check active company & branch
-	if !company.Active {
-		err = errors.New("Company da dung hoat dong")
-		return
-	}
-	if !branch.Active {
-		err = errors.New("Branch da dung hoat dong")
-		return
-	}
-
-	// Validate request
-	userReq := redis.Get(config.RedisKeyUser)
-	if userReq == user {
-		err = errors.New("User Dang Thuc hien giao dich")
-		return
-	}
-	redis.Set(config.RedisKeyUser, body.UserID)
-
-	// Get userInformation
-	userInformation, err := getUserInformation(companyID, userID, body.Amount)
+	err = transactionCheckActive(company.Active, branch.Active)
 	if err != nil {
 		return
 	}
-	userProgram := userInformation.UserProgram
-	currentUserSpending := userInformation.CurrentUserSpending
-	currentUserLevel := userInformation.CurrentUserLevel
-	beforeUserLevel := userInformation.BeforeUserLevel
 
-	// Calculate commission
-	commission := calculateTransactionCommison(company.LoyaltyProgram, userProgram, body.Amount)
+	// Check User Request
+	err = transactionCheckUserRequest(userString)
+	if err != nil {
+		return
+	}
+	redis.Set(config.RedisKeyUser, userString)
 
-	// Convert Transaction
-	transaction = transactionCreatePayloadToBSON(body)
-
-	// Check balance && Xử lý postpaid
-	if balance < commission {
-		if !company.Postpaid {
-			err = errors.New("So tien hoan tra cua cong ty da het")
-			return
-		}
-		transaction.Postpaid = true
+	// Check UserMilestone Next
+	currentUserMilestone, beforeUserMilestone, currentUserExpense, err := checkUserMilestoneNext(companyID, userID, body.Amount)
+	if err != nil {
+		return
 	}
 
-	// Add information Transaction
-	transaction.Commission = commission
-	transaction.LoyaltyProgram = company.LoyaltyProgram
-	transaction.UserProgram = userProgram
+	// Calculate commission
+	commission := calculateTransactionCommison(company.CashbackPercent, currentUserMilestone.CashbackPercent, body.Amount)
 
-	// Create Transaction
-	transaction, err = dao.TransactionCreate(transaction)
+	// Convert Transaction
+	transaction = transactionCreatePayloadToBSON(body, companyID, branchID, userID)
 
-	// Update balance & transactionAnalytic
-	if err == nil {
-		if !transaction.Postpaid {
-			balanceCurrent := balance - transaction.Commission
-			CompanyUpdateBalance(transaction.CompanyID, balanceCurrent)
-		}
+	// Add information for Transaction
+	transaction = transactionAddInformation(transaction, commission, company.CashbackPercent, currentUserMilestone.CashbackPercent, company.PaidType)
 
-		// Handle TransactionAnalytic
-		TransactionAnalyticHandle(transaction)
+	if company.PaidType == prepaid {
+		err = createPrepaidTransaction(transaction, balance)
+	} else {
+		err = createPostpaidTransaction(transaction)
+	}
+	if err != nil {
+		return
+	}
 
-		// Update spending && level for User
-		err = UserUpdateSpendingAndLevel(transaction.UserID, currentUserLevel, currentUserSpending)
-		if err != nil {
-			return
-		}
+	// Update TransactionAnalytic
+	err = transactionAnalyticUpdateAfterCreateTransaction(transaction)
+	if err != nil {
+		return
+	}
 
-		// Update CompanyAnalytic
-		err = companyAnalyticHandleForTransaction(transaction, beforeUserLevel, currentUserLevel)
-		if err != nil {
-			return
-		}
+	// Update LoyaltyProgramUserStatus
+	err = loyaltyProgramUserStatusUpdateAfterCreateTransaction(currentUserMilestone, beforeUserMilestone, currentUserExpense, companyID, userID)
+	if err != nil {
+		return
+	}
+
+	// Update CompanyAnalytic
+	err = companyAnalyticUpdateAfterCreateTransaction(transaction, currentUserMilestone, beforeUserMilestone)
+	if err != nil {
+		return
 	}
 
 	return
 }
+
+// TransactionFindByUserID ...
+func TransactionFindByUserID(userID primitive.ObjectID) ( []models.TransactionDetail,  error) {
+	var (
+		result = make([]models.TransactionDetail, 0)
+		wg sync.WaitGroup		
+	)
+
+	// Find
+	transactions, err := dao.TransactionFindByUserID(userID)
+	total :=len(transactions)
+	
+	// Return if not found
+	if total == 0 {
+		return result,err
+	}
+
+	// Add process
+	wg.Add(total)
+
+	for index := range transactions {
+		go func (index int){
+			defer wg.Done()
+
+			// Convert to TransactionDetail
+			transaction := convertToTransactionDetail(transactions[index])
+
+			// Append
+			result =append(result, transaction)	
+			} (index)	
+		}
+	
+	// Wait process
+	wg.Wait()
+
+	// Sort again
+	sort.Slice(result, func(i, j int) bool {
+		return result[i].CreatedAt.After(result[j].CreatedAt)
+	})
+
+	return result, err
+}
+

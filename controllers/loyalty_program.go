@@ -8,16 +8,16 @@ import (
 	"cashbag-me-mini/util"
 )
 
-// UserProgramCreate ....
-func UserProgramCreate(c echo.Context) error {
+// LoyaltyProgramCreate ....
+func LoyaltyProgramCreate(c echo.Context) error {
 	var (
-		body = c.Get("body").(models.UserProgramCreatePayload)
+		body = c.Get("body").(models.LoyaltyProgramCreatePayload)
 	)
 
 	// Process data
-	rawData, err := services.UserProgramCreate(body)
+	rawData, err := services.LoyaltyProgramCreate(body)
 
-	// if err																																																																				
+	// if err
 	if err != nil {
 		return util.Response400(c, nil, err.Error())
 	}
@@ -25,4 +25,3 @@ func UserProgramCreate(c echo.Context) error {
 	//Success
 	return util.Response200(c, rawData, "")
 }
-

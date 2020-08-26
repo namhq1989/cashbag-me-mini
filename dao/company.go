@@ -2,7 +2,6 @@ package dao
 
 import (
 	"context"
-	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -17,12 +16,6 @@ func CompanyCreate(doc models.CompanyBSON) (models.CompanyBSON, error) {
 		companyCol = database.CompanyCol()
 		ctx        = context.Background()
 	)
-
-	// Add update information
-	if doc.ID.IsZero() {
-		doc.ID = primitive.NewObjectID()
-	}
-	doc.CreatedAt = time.Now()
 
 	// Insert
 	_, err := companyCol.InsertOne(ctx, doc)
@@ -48,18 +41,6 @@ func CompanyList() ([]models.CompanyBSON, error) {
 	cursor.All(ctx, &doc)
 
 	return doc, err
-}
-
-// CompanyChangeActiveStatus ...
-func CompanyChangeActiveStatus(companyID primitive.ObjectID, active bool) (err error) {
-	var (
-		companyCol = database.CompanyCol()
-		ctx        = context.Background()
-	)
-
-	_, err = companyCol.UpdateOne(ctx, companyID, active)
-
-	return err
 }
 
 // CompanyFindByID ...

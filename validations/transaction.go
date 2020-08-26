@@ -1,8 +1,6 @@
 package validations
 
 import (
-	"cashbag-me-mini/dao"
-
 	"github.com/asaskevich/govalidator"
 	"github.com/labstack/echo/v4"
 
@@ -39,40 +37,15 @@ func TransactionCreate(next echo.HandlerFunc) echo.HandlerFunc {
 		}
 
 		// Validate user object id
-		userID,err :=util.ValidationObjectID(doc.UserID)
+		userID, err := util.ValidationObjectID(doc.UserID)
 		if err != nil {
 			return util.Response400(c, nil, err.Error())
 		}
-
-		// Validate company existed in db
-		company, err := dao.CompanyFindByID(companyID)
-		if company.ID.IsZero() {
-			return util.Response400(c, nil, "Khong tim thay Cong Ty ")
-		}
-		if err != nil {
-			return util.Response400(c, nil, err.Error())
-		}
-
-		// Validate branch existed in db
-		branch, err := dao.BranchFindByID(branchID)
-		if branch.ID.IsZero() {
-			return util.Response400(c, nil, "Khong tim thay Chi Nhanh")
-		}
-		if err != nil {
-			return util.Response400(c, nil, err.Error())
-		}
-
-		// Validate user existed in db
-		user, err := dao.UserFindByID(userID)
-		if user.ID.IsZero() {
-			return util.Response400(c, nil, "Khong tim thay Nguoi Dung")
-		}
-		if err != nil {
-			return util.Response400(c, nil, err.Error())
-		}
-
 
 		// Success
+		c.Set("companyID", companyID)
+		c.Set("branchID", branchID)
+		c.Set("userID", userID)
 		c.Set("body", doc)
 		return next(c)
 	}
