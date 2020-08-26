@@ -38,7 +38,6 @@ func removeOldDataUser() {
 func (s *UserSuite) TestUserCreateSuccess() {
 	var (
 		user = models.UserCreatePayload{
-			CompanyID: util.CompanyID,
 			Name:      util.UserName,
 			Address:   util.UserAddress,
 		}

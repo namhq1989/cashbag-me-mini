@@ -24,9 +24,9 @@ type (
 	//TransactionDetail ...
 	TransactionDetail struct {
 		ID                       primitive.ObjectID `json:"_id"`
-		CompanyID                primitive.ObjectID `json:"companyID"`
-		BranchID                 primitive.ObjectID `json:"branchID"`
-		UserID                   primitive.ObjectID `json:"userID"`
+		Company                  string             `json:"company"`
+		Branch                   string             `json:"branch"`
+		User                     string             `json:"user"`
 		Amount                   float64            `json:"amount"`
 		Commission               float64            `json:"commission"`
 		CompanyCashbackPercent   float64            `json:"companyCashbackPercent"`
