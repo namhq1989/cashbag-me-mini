@@ -28,7 +28,7 @@ var (
 	CompanyID, _ = primitive.ObjectIDFromHex(CompanyString)
 
 	// Company for test
-	Company    = models.CompanyBSON{
+	Company = models.CompanyBSON{
 		ID:              CompanyID,
 		Name:            "Hightland",
 		Address:         "HaiPhong",
@@ -46,7 +46,7 @@ var (
 	BranchID, _ = primitive.ObjectIDFromHex(BranchString)
 
 	// Branch for test
-	Branch    = models.BranchBSON{
+	Branch = models.BranchBSON{
 		ID:        BranchID,
 		CompanyID: CompanyID,
 		Name:      "High Quang Tri",
@@ -62,7 +62,7 @@ var (
 	UserID, _ = primitive.ObjectIDFromHex(UserString)
 
 	// User for test
-	User    = models.UserBSON{
+	User = models.UserBSON{
 		ID:      UserID,
 		Name:    "Phuc",
 		Address: "48 Nguyen Chanh",
@@ -178,4 +178,80 @@ func HelperTransactionAnalyticFindByID() models.TransactionAnalyticBSON {
 	transactionAnalyticCol.FindOne(ctx, filter).Decode(&result)
 
 	return result
+}
+
+// HelperLoyaltyProgramFake ...
+func HelperLoyaltyProgramFake() {
+	var (
+		loyaltyProgramCol = database.LoyaltyProgramCol()
+		ctx               = context.Background()
+		milestones        []models.LoyaltyProgramMilestone
+	)
+
+	silverMilestone := models.LoyaltyProgramMilestone{
+		ID:              "silver",
+		Expense:         50000,
+		CashbackPercent: 5,
+	}
+	goldMilestone := models.LoyaltyProgramMilestone{
+		ID:              "gold",
+		Expense:         100000,
+		CashbackPercent: 10,
+	}
+	diamondMilestone := models.LoyaltyProgramMilestone{
+		ID:              "diamond",
+		Expense:         150000,
+		CashbackPercent: 15,
+	}
+	milestones = append(milestones, silverMilestone, goldMilestone, diamondMilestone)
+
+	// set loyaltyProgram
+	loyaltyProgram := models.LoyaltyProgramBSON{
+		ID:         primitive.NewObjectID(),
+		CompanyID:  CompanyID,
+		Milestones: milestones,
+		CreatedAt:  time.Now(),
+	}
+
+	// Insert
+	_, err := loyaltyProgramCol.InsertOne(ctx, loyaltyProgram)
+	if err != nil {
+		log.Println(err)
+	}
+}
+
+// HelperCompanyAnalyticFake ...
+func HelperCompanyAnalyticFake() {
+	var (
+		CompanyAnalyticCol = database.CompanyAnalyticCol()
+		ctx                = context.Background()
+		silver             = "silver"
+		gold               = "gold"
+		diamond            = "diamond"
+		silverMember       = models.CompanyAnalyticMember{
+			ID: silver,
+		}
+		goldMember = models.CompanyAnalyticMember{
+			ID: gold,
+		}
+		diamondMember = models.CompanyAnalyticMember{
+			ID: diamond,
+		}
+		members []models.CompanyAnalyticMember
+	)
+
+	members = append(members, silverMember, goldMember, diamondMember)
+
+	companyAnalytic := models.CompanyAnalyticBSON{
+		ID:        primitive.NewObjectID(),
+		CompanyID: CompanyID,
+		Members:   members,
+		UpdatedAt: time.Now(),
+	}
+
+	// Insert
+	_, err := CompanyAnalyticCol.InsertOne(ctx, companyAnalytic)
+	if err != nil {
+		log.Println(err)
+	}
 }
