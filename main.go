@@ -19,6 +19,7 @@ func init() {
 	database.Connect()
 	redis.Connect()
 }
+
 func main() {
 	envVars := config.GetEnv()
 	server := echo.New()

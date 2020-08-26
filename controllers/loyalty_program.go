@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"github.com/labstack/echo/v4"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 
 	"cashbag-me-mini/models"
 	"cashbag-me-mini/services"
@@ -11,11 +12,12 @@ import (
 // LoyaltyProgramCreate ....
 func LoyaltyProgramCreate(c echo.Context) error {
 	var (
-		body = c.Get("body").(models.LoyaltyProgramCreatePayload)
+		body      = c.Get("body").(models.LoyaltyProgramCreatePayload)
+		companyID = c.Get("companyID").(primitive.ObjectID)
 	)
 
 	// Process data
-	rawData, err := services.LoyaltyProgramCreate(body)
+	rawData, err := services.LoyaltyProgramCreate(body, companyID)
 
 	// if err
 	if err != nil {

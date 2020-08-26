@@ -2,21 +2,18 @@ package services
 
 import (
 	"cashbag-me-mini/models"
-	"cashbag-me-mini/util"
 	"errors"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-// loyaltyProgramCreatePayloadToBSON ...
-func loyaltyProgramCreatePayloadToBSON(body models.LoyaltyProgramCreatePayload) models.LoyaltyProgramBSON {
+func loyaltyProgramCreatePayloadToBSON(body models.LoyaltyProgramCreatePayload, companyID primitive.ObjectID) models.LoyaltyProgramBSON {
 	var (
-		companyID, _ = util.ValidationObjectID(body.CompanyID)
-		silver       = "silver"
-		gold         = "gold"
-		diamond      = "diamond"
-		milestones   []models.LoyaltyProgramMilestone
+		silver     = "silver"
+		gold       = "gold"
+		diamond    = "diamond"
+		milestones []models.LoyaltyProgramMilestone
 	)
 
 	// Define milestones

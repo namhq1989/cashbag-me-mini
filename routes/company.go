@@ -13,7 +13,7 @@ func Company(e *echo.Echo) {
 
 	routes.POST("", controllers.CompanyCreate, validations.CompanyCreate)
 	routes.GET("", controllers.CompanyList)
-	routes.PATCH("/:id/active", controllers.CompanyChangeActiveStatus,validations.CompanyValidateID,CompanyCheckExistedByID)
-	routes.PUT("/:id", controllers.CompanyUpdate, validations.CompanyValidateID,CompanyCheckExistedByID, validations.CompanyUpdate)
+	routes.PATCH("/:id/active", controllers.CompanyChangeActiveStatus,validations.CompanyValidateID,companyCheckExistedByID)
+	routes.PUT("/:id", controllers.CompanyUpdate, validations.CompanyValidateID,companyCheckExistedByID, validations.CompanyUpdate)
 }
 

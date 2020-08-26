@@ -1,7 +1,6 @@
 package services
 
 import (
-	"cashbag-me-mini/util"
 	"errors"
 	"time"
 
@@ -37,10 +36,7 @@ func convertToBranchDetail(branch models.BranchBSON) models.BranchDetail {
 	return result
 }
 
-func branchCreatePayloadToBSON(branchCreatePayload models.BranchCreatePayload) models.BranchBSON {
-	var (
-		companyID, _ = util.ValidationObjectID(branchCreatePayload.CompanyID)
-	)
+func branchCreatePayloadToBSON(branchCreatePayload models.BranchCreatePayload, companyID primitive.ObjectID) models.BranchBSON {
 	result := models.BranchBSON{
 		ID:        primitive.NewObjectID(),
 		CompanyID: companyID,

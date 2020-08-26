@@ -14,7 +14,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-// transactionCreatePayloadToBSON ...
 func transactionCreatePayloadToBSON(body models.TransactionCreatePayload, companyID, branchID, userID primitive.ObjectID) models.TransactionBSON {
 
 	result := models.TransactionBSON{
@@ -48,7 +47,7 @@ func transactionCheckUserRequest(userString string) (err error) {
 	return
 }
 
-func calculateTransactionCommison(CompanyCashbackPercent float64, MilestoneCashbackPercent float64, amount float64) float64 {
+func calculateTransactionCommison(CompanyCashbackPercent, MilestoneCashbackPercent, amount float64) float64 {
 	var (
 		commission float64
 	)
@@ -57,12 +56,13 @@ func calculateTransactionCommison(CompanyCashbackPercent float64, MilestoneCashb
 	return commission
 }
 
-func checkUserMilestoneNext(companyID primitive.ObjectID, userID primitive.ObjectID, amount float64) (currentUserMilestone models.LoyaltyProgramMilestone, beforeUserMilestone models.LoyaltyProgramMilestone, currentUserExpense float64, err error) {
+func getTransactionUserMilestoneAndExpense(companyID, userID primitive.ObjectID, amount float64) (transactionUserMilestone models.TransactionUserMilestoneAndExpense, err error) {
 
 	// Get loyaltyProgramUserStatus
 	loyaltyProgramUserStatus, err := dao.LoyaltyProgramUserStatusFindByCompanyIDAndUserID(companyID, userID)
-	currentUserExpense = loyaltyProgramUserStatus.CurrentExpense + amount
-	beforeUserMilestone = loyaltyProgramUserStatus.Milestone
+	transactionUserMilestone.BeforeUserExpense = loyaltyProgramUserStatus.CurrentExpense
+	transactionUserMilestone.CurrentUserExpense = loyaltyProgramUserStatus.CurrentExpense + amount
+	transactionUserMilestone.BeforeUserMilestone = loyaltyProgramUserStatus.Milestone
 
 	// Get loyaltyProgram
 	loyaltyProgram, err := dao.LoyaltyProgramFindByCompanyID(companyID)
@@ -77,8 +77,8 @@ func checkUserMilestoneNext(companyID primitive.ObjectID, userID primitive.Objec
 
 	// Check currentUserMilestone
 	for _, milestone := range milestones {
-		if currentUserExpense >= milestone.Expense {
-			currentUserMilestone = milestone
+		if transactionUserMilestone.CurrentUserExpense >= milestone.Expense {
+			transactionUserMilestone.CurrentUserMilestone = milestone
 			break
 		}
 	}
@@ -86,7 +86,7 @@ func checkUserMilestoneNext(companyID primitive.ObjectID, userID primitive.Objec
 	return
 }
 
-func transactionAddInformation(transaction models.TransactionBSON, commission float64, companyCashbackPercent float64, milestoneCashbackPercent float64, paidType string) models.TransactionBSON {
+func transactionAddInformation(transaction models.TransactionBSON, commission, companyCashbackPercent, milestoneCashbackPercent float64, paidType string) models.TransactionBSON {
 	transaction.Commission = commission
 	transaction.CompanyCashbackPercent = companyCashbackPercent
 	transaction.MilestoneCashbackPercent = milestoneCashbackPercent
@@ -108,6 +108,7 @@ func createPrepaidTransaction(transaction models.TransactionBSON, balance float6
 		return
 	}
 
+	// Update Balance
 	balanceCurrent := balance - transaction.Commission
 	err = companyUpdateBalance(transaction.CompanyID, balanceCurrent)
 	if err != nil {
@@ -123,36 +124,31 @@ func createPostpaidTransaction(transaction models.TransactionBSON) (err error) {
 	return
 }
 
-func loyaltyProgramUserStatusUpdateAfterCreateTransaction(currentUserMilestone, beforeUserMilestone models.LoyaltyProgramMilestone, currentUserExpense float64, companyID primitive.ObjectID, userID primitive.ObjectID) (err error) {
+func loyaltyProgramUserStatusUpdateAfterCreateTransaction(transactionUserMilestone models.TransactionUserMilestoneAndExpense, companyID, userID primitive.ObjectID) (err error) {
+	var (
+		beforeUserMilestone  = transactionUserMilestone.BeforeUserMilestone
+		currentUserMilestone = transactionUserMilestone.CurrentUserMilestone
+		beforeUserExpense    = transactionUserMilestone.BeforeUserExpense
+		currentUserExpense   = transactionUserMilestone.CurrentUserExpense
+	)
 
-	// Check upgrade
-	if currentUserMilestone.ID == beforeUserMilestone.ID {
-		filter := bson.M{"milestone": beforeUserMilestone}
-		update := bson.M{"$set": bson.M{
-			"currentExpense": currentUserExpense,
-			"updatedAt":      time.Now(),
-		}}
-		err = dao.LoyaltyProgramUserStatusUpdate(filter, update)
-		if err != nil {
-			return
-		}
+	// No upgrade Milestone for case nil Milestone
+	if beforeUserExpense == 0 {
+		err = createLoyaltyProgramUserStatus(currentUserMilestone, currentUserExpense, companyID, userID)
 		return
 	}
 
-	// Pass Milestone
-	loyaltyProgramUserStatusCreate := models.LoyaltyProgramUserStatusBSON{
-		ID:             primitive.NewObjectID(),
-		CompanyID:      companyID,
-		UserID:         userID,
-		Milestone:      currentUserMilestone,
-		CurrentExpense: currentUserExpense,
-		CreatedAt:      time.Now(),
+	// No upgrade Milestone
+	if currentUserMilestone.ID == beforeUserMilestone.ID {
+		err = updateLoyaltyProgramUserStatus(beforeUserMilestone, currentUserExpense, userID)
+		return
 	}
-	_, err = dao.LoyaltyProgramUserStatusCreate(loyaltyProgramUserStatusCreate)
+
+	// Upgrade Milestone
+	err = createLoyaltyProgramUserStatus(currentUserMilestone, currentUserExpense, companyID, userID)
 	return
 }
 
-// companyAnalyticUpdateAfterCreateTransaction ...
 func companyAnalyticUpdateAfterCreateTransaction(transaction models.TransactionBSON, currentUserMilestone, beforeUserMilestone models.LoyaltyProgramMilestone) (err error) {
 	var (
 		postpaid      = "postpaid"
@@ -188,6 +184,7 @@ func companyAnalyticUpdateAfterCreateTransaction(transaction models.TransactionB
 	if currentUserMilestone.ID == beforeUserMilestone.ID {
 		err = companyAnalyticUpdateNoUpgradeMilestone(companyAnalytic)
 	} else {
+
 		//  Update CompanyAnalytic case upgrade milestone
 		err = companyAnalyticUpdateUpgradeMilestone(companyAnalytic, currentUserMilestone, beforeUserMilestone)
 	}
@@ -250,7 +247,6 @@ func companyAnalyticUpdateUpgradeMilestone(companyAnalytic models.CompanyAnalyti
 	return
 }
 
-// postpaidLog
 func postpaidLog(countPostpaid int, companyID primitive.ObjectID) (err error) {
 	if countPostpaid > 3 {
 		log.Println("Số đơn hàng trả sau vượt mức cho phép")

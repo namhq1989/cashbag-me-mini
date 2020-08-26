@@ -6,6 +6,7 @@ import (
 	"errors"
 	"time"
 
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -68,4 +69,18 @@ func companyCreateCompanyAnalytic(companyID primitive.ObjectID) (err error) {
 		return
 	}
 	return
+}
+
+func companyUpdateBalance(companyID primitive.ObjectID, balance float64) error {
+	var (
+		filter = bson.M{"_id": companyID}
+		update = bson.M{"$set": bson.M{
+			"balance": balance,
+		}}
+	)
+
+	// update
+	err := dao.CompanyUpdateByID(filter, update)
+
+	return err
 }

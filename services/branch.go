@@ -30,13 +30,13 @@ func BranchList() ([]models.BranchDetail, error) {
 }
 
 // BranchCreate ...
-func BranchCreate(body models.BranchCreatePayload) (models.BranchBSON, error) {
+func BranchCreate(body models.BranchCreatePayload, companyID primitive.ObjectID) (models.BranchBSON, error) {
 	var (
 		branch models.BranchBSON
 	)
 
 	// Create Branch
-	branch = branchCreatePayloadToBSON(body)
+	branch = branchCreatePayloadToBSON(body, companyID)
 	doc, err := dao.BranchCreate(branch)
 
 	//if err

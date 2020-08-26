@@ -18,4 +18,5 @@ type (
 		UpdatedAt      time.Time               `bson:"updatedAt"`
 		CreatedAt      time.Time               `bson:"createdAt"`
 	}
+	
 )
