@@ -1,9 +1,13 @@
 package controllers
 
 import (
+	"fmt"
+	"log"
+
 	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
+	"github.com/xeipuuv/gojsonschema"
 
 	"context"
 	"encoding/json"
@@ -36,7 +40,8 @@ func removeOldDataCompany() {
 
 func (s *CompanySuite) TestCompanyList() {
 	var (
-		response util.Response
+		response     util.Response
+		schemaLoader = gojsonschema.NewReferenceLoader("file:///home/phuc/cashbag-me-mini/src/detail_companies.json")
 	)
 
 	//Create Context
@@ -50,10 +55,28 @@ func (s *CompanySuite) TestCompanyList() {
 
 	// Parse
 	json.Unmarshal(rec.Body.Bytes(), &response)
+	log.Println("1", response)
+	documentLoader := gojsonschema.NewGoLoader(response)
+	log.Println("2", documentLoader)
 
 	//Test
 	assert.Equal(s.T(), http.StatusOK, rec.Code)
 	assert.Equal(s.T(), "Thanh Cong!", response["message"])
+	result, err := gojsonschema.Validate(schemaLoader, documentLoader)
+	log.Println("3", result)
+	if err != nil {
+		fmt.Println("err1", err)
+	}
+
+	if result.Valid() {
+		fmt.Printf("The document is valid\n")
+	} else {
+		fmt.Printf("The document is not valid. see errors :\n")
+		for _, desc := range result.Errors() {
+			fmt.Printf("- %s\n", desc)
+		}
+
+	}
 }
 
 func (s *CompanySuite) TestCompanyCreateSuccess() {
