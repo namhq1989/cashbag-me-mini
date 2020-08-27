@@ -1,9 +1,12 @@
 package controllers
 
 import (
+	"fmt"
+
 	"github.com/labstack/echo/v4"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
+	"github.com/xeipuuv/gojsonschema"
 
 	"context"
 	"encoding/json"
@@ -33,10 +36,10 @@ func (s CompanySuite) TearDownSuite() {
 func removeOldDataCompany() {
 	database.CompanyCol().DeleteMany(context.Background(), bson.M{})
 }
-
 func (s *CompanySuite) TestCompanyList() {
 	var (
-		response util.Response
+		response     util.Response
+		schemaLoader = gojsonschema.NewReferenceLoader("file:///home/hoang/Documents/cashbag-me-mini/src/detail_companies.json")
 	)
 
 	//Create Context
@@ -50,6 +53,22 @@ func (s *CompanySuite) TestCompanyList() {
 
 	// Parse
 	json.Unmarshal(rec.Body.Bytes(), &response)
+	documentLoader := gojsonschema.NewGoLoader(response)
+
+	result, err := gojsonschema.Validate(schemaLoader, documentLoader)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	if result.Valid() {
+		fmt.Printf("The document is valid\n")
+	} else {
+		fmt.Printf("The document is not valid. see errors :\n")
+		for _, desc := range result.Errors() {
+			fmt.Printf("- %s\n", desc)
+		}
+
+	}
 
 	//Test
 	assert.Equal(s.T(), http.StatusOK, rec.Code)
