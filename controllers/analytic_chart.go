@@ -2,17 +2,16 @@ package controllers
 
 import (
 	"github.com/labstack/echo/v4"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 
 	"cashbag-me-mini/services"
 	"cashbag-me-mini/util"
 )
 
-
 // AnalyticChart ...
 func AnalyticChart(c echo.Context) error {
 	var (
-		id          = c.Param("id")
-		companyID, _ = util.ValidationObjectID(id)
+		companyID = c.Get("companyID").(primitive.ObjectID)
 	)
 
 	// Process data
