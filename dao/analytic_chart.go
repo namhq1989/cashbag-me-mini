@@ -1,9 +1,7 @@
 package dao
 
 import (
-	"cashbag-me-mini/util"
 	"context"
-	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -13,20 +11,11 @@ import (
 )
 
 // AnalyticChart ...
-func AnalyticChart(companyID primitive.ObjectID) ([]models.AnalyticChartBSON, error) {
+func AnalyticChart(companyID primitive.ObjectID, filter bson.M) ([]models.AnalyticChartBSON, error) {
 	var (
 		analyticChartCol = database.AnalyticChartCol()
 		ctx              = context.Background()
 		result           = make([]models.AnalyticChartBSON, 0)
-		toDate           = time.Now()
-		fromDate         = util.BeginningOfDay(toDate).AddDate(0, 0, -7)
-		filter           = bson.M{
-			"companyID": companyID,
-			"date": bson.M{
-				"$gt": fromDate,
-				"$lt": toDate,
-			},
-		}
 	)
 
 	//Find
