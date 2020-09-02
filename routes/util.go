@@ -6,6 +6,7 @@ import (
 
 	"cashbag-me-mini/dao"
 	"cashbag-me-mini/util"
+	grpcuser "cashbag-me-mini/grpc/user"
 )
 
 func companyCheckExistedByID(next echo.HandlerFunc) echo.HandlerFunc {
@@ -48,16 +49,16 @@ func userCheckExistedByID(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		var (
 			userID = c.Get("userID").(primitive.ObjectID)
+			userString=userID.Hex()
 		)
 
-		user, _ := dao.UserFindByID(userID)
-
-		// check existed
-		if user.ID.IsZero() {
+		user, err := grpcuser.GetUserBriefByID(userString)
+		if err != nil{
 			return util.Response404(c, nil, "Khong tim thay user")
 		}
 
 		c.Set("user", user)
 		return next(c)
 	}
+	
 }

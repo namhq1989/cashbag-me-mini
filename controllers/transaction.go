@@ -16,7 +16,7 @@ func TransactionCreate(c echo.Context) error {
 		body    = c.Get("body").(models.TransactionCreatePayload)
 		company = c.Get("company").(models.CompanyBSON)
 		branch  = c.Get("branch").(models.BranchBSON)
-		user    = c.Get("user").(models.UserBSON)
+		user    = c.Get("user").(models.UserBrief)
 	)
 
 	// Process data

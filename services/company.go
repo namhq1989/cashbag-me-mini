@@ -19,7 +19,6 @@ func CompanyCreate(body models.CompanyCreatePayload) (models.CompanyBSON, error)
 
 	// Create company
 	doc, err := dao.CompanyCreate(company)
-
 	if err != nil {
 		err = errors.New("Khong the tao company")
 		return doc, err

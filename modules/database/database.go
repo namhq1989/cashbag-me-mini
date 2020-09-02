@@ -35,8 +35,8 @@ func Connect() {
 		log.Println(err)
 	}
 	client=cl
-	db = cl.Database(envVars.Database.Name)
-	fmt.Println("Database Connected to", envVars.Database.Name)
+	db = cl.Database(envVars.Database.TransactonName)
+	fmt.Println("Database Connected to", envVars.Database.TransactonName)
 }
 
 // GetClient ...

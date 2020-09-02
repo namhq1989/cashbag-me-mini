@@ -13,7 +13,7 @@ import (
 )
 
 // TransactionCreate ...
-func TransactionCreate(body models.TransactionCreatePayload, company models.CompanyBSON, branch models.BranchBSON, user models.UserBSON) (transaction models.TransactionBSON, err error) {
+func TransactionCreate(body models.TransactionCreatePayload, company models.CompanyBSON, branch models.BranchBSON, user models.UserBrief) (transaction models.TransactionBSON, err error) {
 	var (
 		prepaid    = "prepaid"
 		userString = body.UserID
