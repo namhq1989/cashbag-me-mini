@@ -259,11 +259,10 @@ func postpaidLog(countPostpaid int, companyID primitive.ObjectID) (err error) {
 	return
 }
 
-func convertToTransactionDetail(transaction models.TransactionBSON) models.TransactionDetail {
+func convertToTransactionDetail(transaction models.TransactionBSON,user models.UserBrief) models.TransactionDetail {
 	var (
 		company, _  = dao.CompanyFindByID(transaction.CompanyID)
 		branch, _   = dao.BranchFindByID(transaction.BranchID)
-		user, _     = dao.UserFindByID(transaction.UserID)
 		companyName = company.Name
 		branchName  = branch.Name
 		userName    = user.Name

@@ -1,19 +1,17 @@
 package services
 
 import (
-	"sync"
 	"sort"
-	
-	"go.mongodb.org/mongo-driver/bson/primitive"
-	
+	"sync"
+
 	"cashbag-me-mini/config"
+	"cashbag-me-mini/dao"
 	"cashbag-me-mini/models"
 	"cashbag-me-mini/modules/redis"
-	"cashbag-me-mini/dao"
 )
 
 // TransactionCreate ...
-func TransactionCreate(body models.TransactionCreatePayload, company models.CompanyBSON, branch models.BranchBSON, user models.UserBSON) (transaction models.TransactionBSON, err error) {
+func TransactionCreate(body models.TransactionCreatePayload, company models.CompanyBSON, branch models.BranchBSON, user models.UserBrief) (transaction models.TransactionBSON, err error) {
 	var (
 		prepaid    = "prepaid"
 		userString = body.UserID
@@ -84,36 +82,36 @@ func TransactionCreate(body models.TransactionCreatePayload, company models.Comp
 }
 
 // TransactionFindByUserID ...
-func TransactionFindByUserID(userID primitive.ObjectID) ( []models.TransactionDetail,  error) {
+func TransactionFindByUserID(user models.UserBrief) ([]models.TransactionDetail, error) {
 	var (
 		result = make([]models.TransactionDetail, 0)
-		wg sync.WaitGroup		
+		wg     sync.WaitGroup
 	)
 
 	// Find
-	transactions, err := dao.TransactionFindByUserID(userID)
-	total :=len(transactions)
-	
+	transactions, err := dao.TransactionFindByUserID(user.ID)
+	total := len(transactions)
+
 	// Return if not found
 	if total == 0 {
-		return result,err
+		return result, err
 	}
 
 	// Add process
 	wg.Add(total)
 
 	for index := range transactions {
-		go func (index int){
+		go func(index int) {
 			defer wg.Done()
 
 			// Convert to TransactionDetail
-			transaction := convertToTransactionDetail(transactions[index])
+			transaction := convertToTransactionDetail(transactions[index], user)
 
 			// Append
-			result =append(result, transaction)	
-			} (index)	
-		}
-	
+			result = append(result, transaction)
+		}(index)
+	}
+
 	// Wait process
 	wg.Wait()
 
@@ -124,4 +122,3 @@ func TransactionFindByUserID(userID primitive.ObjectID) ( []models.TransactionDe
 
 	return result, err
 }
-

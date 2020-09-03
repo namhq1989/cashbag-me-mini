@@ -4,3 +4,5 @@ run:
 	go run *.go
 test:
 	go test ./... -v
+gen-user:
+	protoc proto/user.proto --go_out=plugins=grpc:.

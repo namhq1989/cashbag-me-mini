@@ -10,13 +10,13 @@ type ENV struct {
 	ZookeeperTestURI string
 
 	// App port
-	AppPort string
+	AppTransactionPort string
 
 	// Database
 	Database struct {
-		URI      string
-		Name     string
-		TestName string
+		URI            string
+		TransactionName string
+		TestName       string
 	}
 
 	// Redis
@@ -25,7 +25,8 @@ type ENV struct {
 		Pass string
 	}
 
-	UserString string
+	// GRPC
+	GRPCUri string
 }
 
 var env ENV

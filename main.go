@@ -41,5 +41,5 @@ func main() {
 
 	routes.Boostrap(server)
 
-	server.Logger.Fatal(server.Start(envVars.AppPort))
+	server.Logger.Fatal(server.Start(envVars.AppTransactionPort))
 }
