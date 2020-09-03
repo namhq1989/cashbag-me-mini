@@ -9,6 +9,7 @@ import (
 	userpb "cashbag-me-mini/proto/models/user"
 )
 
+// CreateClient ...
 func CreateClient() (*grpc.ClientConn, userpb.UserServiceClient) {
 	envVars := config.GetEnv()
 
