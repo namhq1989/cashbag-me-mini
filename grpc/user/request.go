@@ -24,6 +24,7 @@ func GetUserBriefByID(userID string) (UserBrief models.UserBrief, err error) {
 		return
 	}
 
+	// Convert to user brief
 	userBrief := convertToUserBrief(result.UserBrief)
 
 	return userBrief, nil
