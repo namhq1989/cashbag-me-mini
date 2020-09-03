@@ -6,7 +6,7 @@ import (
 	"google.golang.org/grpc"
 
 	"cashbag-me-mini/config"
-	userpb "cashbag-me-mini/proto"
+	userpb "cashbag-me-mini/proto/models/user"
 )
 
 func CreateClient() (*grpc.ClientConn, userpb.UserServiceClient) {

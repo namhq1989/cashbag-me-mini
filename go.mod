@@ -2,7 +2,10 @@ module cashbag-me-mini
 
 go 1.14
 
+replace cashbag-me-mini/proto v0.0.0 => ./proto
+
 require (
+	cashbag-me-mini/proto v0.0.0 
 	github.com/asaskevich/govalidator v0.0.0-20200428143746-21a406dcc535
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
 	github.com/go-delve/delve v1.5.0 // indirect
