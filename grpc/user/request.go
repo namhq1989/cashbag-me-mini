@@ -3,7 +3,6 @@ package grpcuser
 import (
 	"context"
 	"errors"
-	"log"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -24,12 +23,10 @@ func GetUserBriefByID(userID string) (UserBrief models.UserBrief, err error) {
 	result, err := client.GetUserBriefByID(ctx, &userpb.GetUserBriefByIDRequest{Id: userID})
 	if err != nil {
 		err = errors.New("Khong the get user brief by id")
-		return 
+		return
 	}
 
 	userBrief := convertToUserBrief(result.UserBrief)
-
-	log.Println(userBrief)
 
 	return userBrief, nil
 }

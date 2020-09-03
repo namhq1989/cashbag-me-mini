@@ -1,13 +1,13 @@
 package zookeeper
 
 import (
-	"cashbag-me-mini/config"
+	"fmt"
 	"os"
+	"time"
 
 	"github.com/samuel/go-zookeeper/zk"
 
-	"fmt"
-	"time"
+	"cashbag-me-mini/config"
 )
 
 var conn *zk.Conn
@@ -34,7 +34,7 @@ func Connect() {
 	databaseURI, _, _ := conn.Get("/database/uri")
 	envVars.Database.URI = string(databaseURI)
 	databaseTransactionName, _, _ := conn.Get("/database/name/transaction")
-	envVars.Database.TransactonName = string(databaseTransactionName)
+	envVars.Database.TransactionName = string(databaseTransactionName)
 	databaseTestName, _, _ := conn.Get("/database/test/name")
 	envVars.Database.TestName = string(databaseTestName)
 

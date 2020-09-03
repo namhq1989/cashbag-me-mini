@@ -2,6 +2,7 @@ package services
 
 import (
 	"errors"
+	"log"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -20,6 +21,7 @@ func CompanyCreate(body models.CompanyCreatePayload) (models.CompanyBSON, error)
 	// Create company
 	doc, err := dao.CompanyCreate(company)
 	if err != nil {
+		log.Println(err)
 		err = errors.New("Khong the tao company")
 		return doc, err
 	}

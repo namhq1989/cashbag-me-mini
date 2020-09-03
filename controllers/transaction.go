@@ -3,7 +3,6 @@ package controllers
 import (
 	"github.com/labstack/echo/v4"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 
 	"cashbag-me-mini/models"
 	"cashbag-me-mini/services"
@@ -37,11 +36,11 @@ func TransactionCreate(c echo.Context) error {
 // TransactionFindByUserID ...
 func TransactionFindByUserID(c echo.Context) error {
 	var (
-		userID = c.Get("userID").(primitive.ObjectID)
+		user = c.Get("user").(models.UserBrief)
 	)
 
 	// process data
-	rawData, err := services.TransactionFindByUserID(userID)
+	rawData, err := services.TransactionFindByUserID(user)
 
 	// if err
 	if err != nil {

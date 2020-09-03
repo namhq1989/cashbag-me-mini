@@ -6,7 +6,6 @@ import (
 	"google.golang.org/grpc"
 
 	"cashbag-me-mini/config"
-
 	userpb "cashbag-me-mini/proto"
 )
 
@@ -21,6 +20,5 @@ func CreateClient() (*grpc.ClientConn, userpb.UserServiceClient) {
 
 	client := userpb.NewUserServiceClient(clientConn)
 
-	log.Printf("service client %f",client)
 	return clientConn, client
 }

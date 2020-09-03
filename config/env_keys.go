@@ -15,7 +15,7 @@ type ENV struct {
 	// Database
 	Database struct {
 		URI            string
-		TransactonName string
+		TransactionName string
 		TestName       string
 	}
 
